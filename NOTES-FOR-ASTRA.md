@@ -44,7 +44,7 @@ The UI works without images. These slots are already marked in code with `data-a
 | --- | --- | --- |
 | `hero-matchday` | Optional texture under the featured match colour field (football-01). The field is a navy (#13204A) → red (#C8102E) gradient, so the image must work blended at ~25% opacity: 2400×1100 px, night stadium / crowd silhouette, low detail, no real logos, kits or sponsors. Keep the left 60% calm (huge team names) |
 | `player-costa` (later) | Daniel Costa on the match page / Bet Builder | Fictional player, waist-up cutout, transparent PNG ~1200×1500, Northbridge kit (navy and white stripes, no badge) |
-| `og-share` | Link preview for Netlify / the case study | 1200×630, Ternside wordmark in Barlow Condensed on navy, plus one ticket visual |
+| `og-share` | Link preview for Netlify / the case study | 1200×630, "Ternside." wordmark (Inter Tight) on the canvas colour, plus one bet pass on a team-colour field |
 
 Team crests are generated in code (geometric SVG emblems from `app/src/data/catalog.ts`), so they need no images.
 

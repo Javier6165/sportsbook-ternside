@@ -1,3 +1,5 @@
+import { EXTRA_COMPETITIONS, buildExtraEvents } from './catalog-extra'
+
 // Fictional catalogue. All teams, players, competitions and prices are invented.
 // football-01 (and the tennis-01 / basketball-01 / football-02 / football-03 prices)
 // come from Astra's fixtures.json; the rest widens the catalogue so the product
@@ -22,6 +24,7 @@ export interface Participant {
   short: string
   crest?: Crest
   country?: string
+  color?: string
 }
 
 export interface Selection {
@@ -65,6 +68,9 @@ export interface SportEvent {
   form?: [string, string]
   venue?: string
   stage?: string
+  popular?: boolean
+  /** Plain-language read of why the prices sit where they do (AI-style summary, authored for the demo). */
+  brief?: string[]
 }
 
 export interface Competition {
@@ -81,13 +87,15 @@ export const SPORTS: { id: SportId; name: string }[] = [
   { id: 'basketball', name: 'Basketball' },
 ]
 
-export const COMPETITIONS: Competition[] = [
+const CORE_COMPETITIONS: Competition[] = [
   { id: 'continental-cup', sport: 'football', name: 'Continental Cup', short: 'Cont. Cup', region: 'Europe' },
   { id: 'premier-division', sport: 'football', name: 'Premier Division', short: 'Prem. Div.', region: 'England' },
   { id: 'primera-iberica', sport: 'football', name: 'Primera Ibérica', short: 'Primera', region: 'Iberia' },
   { id: 'riviera-masters', sport: 'tennis', name: 'Riviera Masters', short: 'Riviera', region: 'Men’s tour' },
   { id: 'cbl', sport: 'basketball', name: 'Continental League', short: 'CBL', region: 'Basketball · Europe' },
 ]
+
+export const COMPETITIONS: Competition[] = [...CORE_COMPETITIONS, ...EXTRA_COMPETITIONS.map(({ teams: _t, ...c }) => c)]
 
 const t = (id: string, name: string, short: string, crest: Crest): Participant => ({ id, name, short, crest })
 
@@ -120,7 +128,8 @@ export const TEAMS = {
   kestrel: t('kestrel', 'Kestrel Bay', 'KBY', { shape: 'shield', pattern: 'band', c1: '#065F46', c2: '#A7F3D0', mark: 'K' }),
 }
 
-const player = (id: string, name: string, country: string): Participant => ({ id, name, short: name, country })
+const FLAG: Record<string, string> = { ESP: '#C8102E', ARG: '#4F9BDB', SWE: '#0B5FA5', GBR: '#1E2F6E', IRL: '#169B62', JPN: '#BC002D', FRA: '#0055A4', GER: '#2B2B2B' }
+const player = (id: string, name: string, country: string): Participant => ({ id, name, short: name, country, color: FLAG[country] })
 
 const P = {
   vega: player('vega', 'M. Vega', 'ESP'),
@@ -213,7 +222,7 @@ function football(
 
 const T = TEAMS
 
-export const EVENTS: SportEvent[] = [
+const CORE_EVENTS: SportEvent[] = [
   // ——— Continental Cup · Tuesday ———
   {
     id: 'football-01',
@@ -227,6 +236,12 @@ export const EVENTS: SportEvent[] = [
     stage: 'Group C · Matchday 3',
     venue: 'Riverside Park',
     form: ['WWDWL', 'LWWDW'],
+    brief: [
+      'Northbridge are favourites mostly on home form: four wins and a draw in their last five at Riverside Park.',
+      'Southport aren’t in bad shape either — three wins in five — which is why the away price is 3.60 and not much longer.',
+      'Both teams’ recent games have been high-scoring, so Over 2.5 goals is the shorter side of that line at 1.80.',
+      'Daniel Costa has had two or more shots on target in four of his last six starts, so his 2+ line sits just under 2.00.',
+    ],
     markets: [
       result('2.10', '3.40', '3.60', T.northbridge, T.southport),
       totals('1.80', '2.00'),
@@ -431,6 +446,14 @@ export const EVENTS: SportEvent[] = [
     markets: [winner('1.62', '2.30', T.marisol, T.kestrel, 'Includes overtime', 'Winner')],
   },
 ]
+
+export const EVENTS: SportEvent[] = [...CORE_EVENTS, ...buildExtraEvents()]
+
+const POPULAR = ['football-01', 'football-cc-02', 'football-02', 'football-03', 'tennis-01', 'basketball-01', 'football-ib-live', 'football-cc-live', 'tennis-live']
+EVENTS.forEach((e) => (e.popular = POPULAR.includes(e.id)))
+
+/** Team/player accent colour used for colour-of-the-game fields. */
+export const teamColor = (p: Participant) => p.crest?.c1 ?? p.color ?? '#2948FF'
 
 export const FEATURED_EVENT_ID = 'football-01'
 

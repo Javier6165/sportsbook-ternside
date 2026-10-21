@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ternside — identity directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@700;900&family=Inter+Tight:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+@font-face { font-family: Inter; src: url(/src/assets/fonts/Inter-Variable.ttf); font-weight: 100 900; }
+@font-face { font-family: Barlow; src: url(/src/assets/fonts/BarlowCondensed-SemiBold.ttf); font-weight: 600; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: Inter, system-ui, sans-serif; background: #e9eaee; color: #111; -webkit-font-smoothing: antialiased; }
+.tn { font-variant-numeric: tabular-nums; }
+.label { max-width: 1240px; margin: 56px auto 14px; padding: 0 20px; display: flex; align-items: baseline; gap: 14px; }
+.label b { font: 700 13px Inter; letter-spacing: .12em; text-transform: uppercase; color: #2948ff; }
+.label h2 { font: 700 30px 'Inter Tight'; letter-spacing: -.02em; }
+.label p { color: #5c6475; font-size: 15px; margin-left: auto; max-width: 520px; text-align: right; }
+.frame { max-width: 1240px; margin: 0 auto; border-radius: 28px; overflow: hidden; box-shadow: 0 40px 80px -40px rgba(0,0,0,.35); }
+
+/* ——— A · Colour of the game ——— */
+.A { background: #f4f4f6; padding: 28px; font-family: 'Inter Tight', Inter, sans-serif; }
+.A .nav { display:flex; align-items:center; gap: 22px; margin-bottom: 26px; }
+.A .logo { font: 800 26px 'Inter Tight'; letter-spacing: -.045em; }
+.A .logo i { font-style: normal; color: #2948ff; }
+.A .seg { display:flex; background:#e6e7eb; border-radius: 99px; padding: 4px; }
+.A .seg span { padding: 8px 16px; border-radius: 99px; font-weight: 600; font-size: 14px; color:#5c6475 }
+.A .seg span.on { background:#fff; color:#111; box-shadow: 0 1px 3px rgba(0,0,0,.12) }
+.A .bal { margin-left:auto; font-weight:700; font-size: 15px } .A .bal small { display:block; font-size:11px; color:#8a90a0; font-weight:600 }
+.A .grid { display:grid; grid-template-columns: 1fr 380px; gap: 20px; }
+.A .hero { position:relative; border-radius: 30px; overflow:hidden; color:#fff; padding: 34px; min-height: 470px;
+  background: linear-gradient(105deg, #13204A 0%, #1b2d6b 38%, #8a1530 62%, #C8102E 100%); }
+.A .hero::before { content:''; position:absolute; inset:0; background: radial-gradient(60% 80% at 20% 110%, rgba(255,255,255,.18), transparent 60%), radial-gradient(50% 70% at 90% -10%, rgba(246,195,67,.35), transparent 60%); }
+.A .ghost { position:absolute; width: 380px; opacity:.13; top: -30px; }
+.A .meta { position:relative; font-weight:600; font-size: 14px; opacity:.85; display:flex; gap: 10px; align-items:center }
+.A .meta span { background: rgba(255,255,255,.16); padding: 6px 12px; border-radius: 99px; backdrop-filter: blur(10px) }
+.A h1 { position:relative; font: 800 76px/0.92 'Inter Tight'; letter-spacing: -.05em; margin-top: 26px; }
+.A h1 em { font-style: normal; opacity: .55 }
+.A .ko { position:relative; margin-top: 18px; font-size: 18px; font-weight: 600; opacity: .9 }
+.A .odds { position:absolute; left:34px; right:34px; bottom: 34px; display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.A .odd { background: rgba(255,255,255,.95); color:#111; border-radius: 20px; padding: 14px 18px; display:flex; justify-content:space-between; align-items:center }
+.A .odd small { font-size: 13px; font-weight:600; color:#5c6475 }
+.A .odd b { font: 700 26px 'Inter Tight'; letter-spacing: -.03em }
+.A .odd.on { background:#2948ff; color:#fff } .A .odd.on small { color: rgba(255,255,255,.75) }
+.pass { position:relative; background:#fff; border-radius: 26px; overflow:hidden; box-shadow: 0 20px 50px -24px rgba(16,24,43,.35); }
+.pass .top { height: 92px; background: linear-gradient(105deg, #13204A, #C8102E); color:#fff; padding: 18px 22px; display:flex; justify-content:space-between }
+.pass .top b { font: 800 22px 'Inter Tight'; letter-spacing: -.03em } .pass .top small { display:block; font-size: 12.5px; opacity:.8; margin-top: 3px; font-weight: 600 }
+.pass .top .price { text-align:right; font: 800 40px/1 'Inter Tight'; letter-spacing:-.04em } .pass .top .price small { font-size: 11px; letter-spacing: .1em; text-transform: uppercase }
+.pass ol { list-style:none; padding: 18px 22px 8px; }
+.pass li { display:flex; gap: 12px; padding-bottom: 14px; position:relative }
+.pass li::before { content:''; width: 14px; height: 14px; border-radius: 99px; border: 2.5px solid #2948ff; flex: none; margin-top: 3px; background:#fff; z-index: 1 }
+.pass li:not(:last-child)::after { content:''; position:absolute; left: 6px; top: 16px; bottom: 0; width: 2px; background: #dfe4ff }
+.pass li b { font-weight:700; font-size: 15.5px; display:block } .pass li span { font-size: 13px; color:#6b7385 }
+.pass .perf { position:relative; height: 28px; margin: 4px 0; }
+.pass .perf::before { content:''; position:absolute; left: 18px; right: 18px; top: 50%; border-top: 2px dashed #e1e3e8 }
+.pass .perf i { position:absolute; top:0; width: 28px; height:28px; border-radius: 99px; background:#f4f4f6 } .pass .perf i:first-child { left:-14px } .pass .perf i:last-child { right:-14px }
+.pass .stub { padding: 6px 22px 22px; display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pass .stub small { font-size: 12px; color:#6b7385; font-weight:600 } .pass .stub b { display:block; font: 700 24px 'Inter Tight'; letter-spacing:-.03em }
+.pass .cta { grid-column: span 2; background:#111; color:#fff; border-radius: 16px; text-align:center; padding: 15px; font-weight:700; font-size: 15.5px }
+.A .live { grid-column: span 2; display:grid; grid-template-columns: repeat(3,1fr); gap: 14px }
+.A .lc { background:#fff; border-radius: 24px; padding: 18px; position:relative; overflow:hidden }
+.A .lc .bar { position:absolute; left:0; right:0; top:0; height: 5px }
+.A .lc .row { display:flex; justify-content:space-between; font-weight:700; font-size: 16px; margin-top: 6px }
+.A .lc .row b { font: 800 22px 'Inter Tight' }
+.A .lc .min { font-size: 12.5px; font-weight:700; color:#e0284f }
+.A .lc .os { display:grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-top: 14px }
+.A .lc .os span { background:#f1f2f5; border-radius: 12px; text-align:center; padding: 9px 0; font-weight: 700; font-size: 15px }
+
+/* ——— B · Floodlight ——— */
+.B { background: #05070c; color:#fff; padding: 28px; position:relative; overflow:hidden; font-family: Inter }
+.B::before { content:''; position:absolute; width: 900px; height: 900px; left: -200px; top: -500px; background: radial-gradient(closest-side, rgba(41,72,255,.45), transparent); }
+.B::after { content:''; position:absolute; width: 700px; height: 700px; right: -200px; top: -380px; background: radial-gradient(closest-side, rgba(198,255,61,.14), transparent); }
+.B > * { position:relative; z-index:1 }
+.B .nav { display:flex; align-items:center; gap: 24px; margin-bottom: 24px }
+.B .logo { font: 600 32px Barlow; letter-spacing: -.01em }
+.B .nav a { color: rgba(255,255,255,.55); font-weight: 600; font-size: 14px } .B .nav a.on { color:#C6FF3D }
+.B .board { border: 1px solid rgba(255,255,255,.1); border-radius: 26px; background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01)); padding: 28px; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap: 20px }
+.B .team { font: 600 58px/.9 Barlow; text-transform: uppercase; letter-spacing: -.005em } .B .team.r { text-align:right }
+.B .team small { display:block; font: 600 13px Inter; letter-spacing: .14em; color: rgba(255,255,255,.45); margin-bottom: 10px }
+.B .clock { text-align:center; font-family: Doto; font-weight: 900; font-size: 92px; line-height: .9; color:#C6FF3D; text-shadow: 0 0 24px rgba(198,255,61,.55) }
+.B .clock small { display:block; font: 600 12px Inter; letter-spacing: .2em; color: rgba(255,255,255,.5); text-shadow:none; margin-top: 10px }
+.B .lower { display:grid; grid-template-columns: 1fr 380px; gap: 18px; margin-top: 18px }
+.B .mk { border: 1px solid rgba(255,255,255,.1); border-radius: 22px; padding: 20px }
+.B .mk h3 { font: 600 13px Inter; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 14px }
+.B .os { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px }
+.B .o { border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); padding: 14px 16px; display:flex; justify-content:space-between; align-items:center }
+.B .o small { color: rgba(255,255,255,.6); font-weight:600; font-size: 13px }
+.B .o b { font-family: Doto; font-weight: 900; font-size: 30px; color:#fff }
+.B .o.on { border-color:#C6FF3D; background: rgba(198,255,61,.1) } .B .o.on b { color:#C6FF3D; text-shadow: 0 0 14px rgba(198,255,61,.6) }
+.B .rows { margin-top: 14px; display:grid; gap: 8px }
+.B .r2 { display:grid; grid-template-columns: 70px 1fr 90px 90px 90px; gap: 10px; align-items:center; padding: 10px 4px; border-top: 1px solid rgba(255,255,255,.07); font-size: 14.5px; font-weight: 600 }
+.B .r2 .t { font-family: Doto; font-weight: 900; font-size: 20px; color: rgba(255,255,255,.6) }
+.B .r2 span.p { text-align:center; font-family: Doto; font-weight:900; font-size: 20px; background: rgba(255,255,255,.04); border-radius: 10px; padding: 6px 0 }
+.B .tk { border-radius: 22px; background: #0d121d; border: 1px solid rgba(255,255,255,.1); padding: 20px }
+.B .tk h4 { font: 600 24px Barlow; text-transform: uppercase; display:flex; justify-content:space-between } .B .tk h4 b { font-family: Doto; font-weight: 900; font-size: 34px; color:#C6FF3D }
+.B .tk li { list-style:none; padding: 10px 0 10px 22px; border-top: 1px solid rgba(255,255,255,.07); position:relative; font-weight:600; font-size: 14.5px }
+.B .tk li::before { content:''; position:absolute; left:0; top: 15px; width: 10px; height: 10px; border-radius: 2px; background:#2948ff; box-shadow: 0 0 10px #2948ff }
+.B .tk li span { display:block; font-size: 12.5px; color: rgba(255,255,255,.5); font-weight: 500 }
+.B .tk .cta { margin-top: 14px; background:#C6FF3D; color:#05070c; border-radius: 14px; text-align:center; padding: 14px; font-weight: 800 }
+
+/* ——— C · Kit & stamp ——— */
+.C { background:#f2efe7; padding: 28px; color:#12161f; font-family: Inter }
+.C .nav { display:flex; align-items:center; gap: 22px; margin-bottom: 22px; border-bottom: 2px solid #12161f; padding-bottom: 16px }
+.C .logo { font: 600 36px Barlow; } .C .nav a { font-weight:700; font-size: 14px; text-transform: uppercase; letter-spacing: .06em }
+.C .grid { display:grid; grid-template-columns: 1fr 360px; gap: 22px }
+.C .hero { display:grid; grid-template-columns: 1fr 1fr; border: 2px solid #12161f; min-height: 440px }
+.C .side { padding: 26px; position:relative; overflow:hidden; color:#fff }
+.C .side.h { background: repeating-linear-gradient(90deg, #13204A 0 34px, #e8edf7 34px 54px); }
+.C .side.a { background: linear-gradient(90deg, #C8102E 50%, #F6C343 50%); }
+.C .side .name { position:absolute; left: 22px; bottom: 22px; right: 22px; background:#12161f; padding: 14px 16px; font: 600 46px/.9 Barlow; text-transform: uppercase }
+.C .side .name small { display:block; font: 700 12px Inter; letter-spacing:.12em; color:#f6c343; margin-bottom: 6px }
+.C .vs { position:absolute; }
+.C .strip { grid-column: span 2; display:grid; grid-template-columns: repeat(3,1fr); border-top: 2px solid #12161f; background:#fff }
+.C .strip div { padding: 16px 18px; display:flex; justify-content:space-between; align-items:center; font-weight: 700; border-right: 2px solid #12161f }
+.C .strip div:last-child { border-right: 0 } .C .strip b { font: 600 34px Barlow } .C .strip .on { background:#2948ff; color:#fff }
+.C .tkt { background:#fff; border: 2px solid #12161f; position:relative }
+.C .tkt .hd { padding: 16px 18px; border-bottom: 2px dashed #12161f; display:flex; justify-content:space-between; align-items:flex-end }
+.C .tkt .hd b { font: 600 30px/1 Barlow; text-transform: uppercase } .C .tkt .hd .p { font: 600 48px/1 Barlow }
+.C .tkt li { list-style:none; padding: 12px 18px; border-bottom: 1px solid #d9d4c6; font-weight: 700 } .C .tkt li span { display:block; font-weight: 500; font-size: 13px; color:#666 }
+.C .stamp { position:absolute; right: 20px; bottom: 90px; transform: rotate(-12deg); border: 4px solid #14653a; color:#14653a; padding: 6px 14px; font: 600 38px Barlow; text-transform: uppercase; border-radius: 8px; opacity: .85 }
+.C .tkt .ft { padding: 16px 18px; display:flex; justify-content:space-between; font-weight: 700 }
+.C .tkt .ft b { font: 600 30px Barlow }
+</style>
+</head>
+<body>
+
+<div class="label"><b>A</b><h2>Colour of the game</h2><p>Calm neutral UI; all colour comes from the match itself. The bet is a pass you keep. Clean like Apple Sports, but not Likely.</p></div>
+<div class="frame"><div class="A">
+  <div class="nav"><span class="logo">Ternside<i>.</i></span>
+    <div class="seg"><span class="on">Sports</span><span>Live · 4</span><span>My Bets</span></div>
+    <div class="bal tn"><small>Demo funds</small>£100.00</div></div>
+  <div class="grid">
+    <div class="hero">
+      <div class="meta"><span>Continental Cup</span>Group C · Matchday 3</div>
+      <h1>Northbridge<br><em>v</em> Southport</h1>
+      <div class="ko tn">Tonight 20:00 · Kick-off in 59:58</div>
+      <div class="odds tn">
+        <div class="odd on"><small>Northbridge</small><b>2.10</b></div>
+        <div class="odd"><small>Draw</small><b>3.40</b></div>
+        <div class="odd"><small>Southport</small><b>3.60</b></div>
+      </div>
+    </div>
+    <div class="pass">
+      <div class="top"><div><b>Bet Builder</b><small>Northbridge v Southport · 20:00</small></div><div class="price tn">3.40<small>joint odds</small></div></div>
+      <ol>
+        <li><div><b>Northbridge to win</b><span>Match result · 90 min + stoppage</span></div></li>
+        <li><div><b>Over 2.5 goals</b><span>Total goals · 90 min + stoppage</span></div></li>
+        <li><div><b>Daniel Costa 2+ shots on target</b><span>Must take part — otherwise void</span></div></li>
+      </ol>
+      <div class="perf"><i></i><i></i></div>
+      <div class="stub tn"><div><small>Stake</small><b>£10.00</b></div><div><small>Potential return</small><b>£34.00</b></div><div class="cta">Review bet</div></div>
+    </div>
+    <div class="live tn">
+      <div class="lc"><div class="bar" style="background:linear-gradient(90deg,#0F5E4A,#E05A1A)"></div><div class="min">● 61’ · Continental Cup</div><div class="row">Valmont SC<b>1</b></div><div class="row">FK Rotterholm<b>0</b></div><div class="os"><span>1.55</span><span>3.90</span><span>6.50</span></div></div>
+      <div class="lc"><div class="bar" style="background:linear-gradient(90deg,#F59E0B,#B91C1C)"></div><div class="min">● 52’ · Primera Ibérica</div><div class="row">Ciudad Albera<b>2</b></div><div class="row">Atlético Sierra<b>2</b></div><div class="os"><span>2.90</span><span>3.10</span><span>2.55</span></div></div>
+      <div class="lc"><div class="bar" style="background:linear-gradient(90deg,#1E40AF,#F97316)"></div><div class="min">● Q3 4:12 · Continental League</div><div class="row">Delta Mariners<b>64</b></div><div class="row">Ironvale Steel<b>59</b></div><div class="os" style="grid-template-columns:1fr 1fr"><span>1.42</span><span>2.85</span></div></div>
+    </div>
+  </div>
+</div></div>
+
+<div class="label"><b>B</b><h2>Floodlight</h2><p>Night match. The scoreboard is the brand: LED numerals, volt accent, one glowing thing at a time. Most dramatic; closest to "gaming".</p></div>
+<div class="frame"><div class="B">
+  <div class="nav"><span class="logo">Ternside</span><a class="on">Sports</a><a>Live 4</a><a>My Bets</a><a>Account</a><span style="margin-left:auto;font-weight:700" class="tn">£100.00</span></div>
+  <div class="board">
+    <div class="team"><small>HOME · WWDWL</small>Northbridge<br>FC</div>
+    <div class="clock tn">59:58<small>KICK-OFF · 20:00</small></div>
+    <div class="team r"><small>AWAY · LWWDW</small>Southport<br>Athletic</div>
+  </div>
+  <div class="lower">
+    <div class="mk"><h3>Match result · 90 min + stoppage</h3>
+      <div class="os"><div class="o on"><small>Northbridge</small><b>2.10</b></div><div class="o"><small>Draw</small><b>3.40</b></div><div class="o"><small>Southport</small><b>3.60</b></div></div>
+      <div class="rows">
+        <div class="r2"><span class="t">20:00</span>Porto Alcázar v Dynamo Kervin<span class="p">1.95</span><span class="p">3.50</span><span class="p">3.90</span></div>
+        <div class="r2"><span class="t">20:00</span>Olympique Sauveterre v AC Brenna<span class="p">2.45</span><span class="p">3.30</span><span class="p">2.90</span></div>
+      </div>
+    </div>
+    <div class="tk"><h4>Bet Builder <b>3.40</b></h4><ul style="margin-top:8px;padding:0">
+      <li>Northbridge to win<span>Match result · 90 min</span></li><li>Over 2.5 goals<span>Total goals · 90 min</span></li><li>Daniel Costa 2+ shots on target<span>Must take part</span></li></ul>
+      <div class="cta">Add to betslip</div></div>
+  </div>
+</div></div>
+
+<div class="label"><b>C</b><h2>Kit &amp; stamp</h2><p>Kit stripes as graphic language, printed matchday tickets, rubber-stamp results. Most personality — but leans to the poster/editorial look.</p></div>
+<div class="frame"><div class="C">
+  <div class="nav"><span class="logo">Ternside</span><a>Sports</a><a>Live</a><a>My Bets</a><span style="margin-left:auto;font-weight:800" class="tn">£100.00</span></div>
+  <div class="grid">
+    <div class="hero">
+      <div class="side h"><div class="name"><small>HOME</small>Northbridge FC</div></div>
+      <div class="side a"><div class="name"><small>AWAY · 20:00 TONIGHT</small>Southport Athletic</div></div>
+      <div class="strip tn"><div class="on">Northbridge <b>2.10</b></div><div>Draw <b>3.40</b></div><div>Southport <b>3.60</b></div></div>
+    </div>
+    <div class="tkt">
+      <div class="hd"><b>Bet Builder</b><span class="p tn">3.40</span></div>
+      <ul style="padding:0"><li>Northbridge to win<span>Match result · 90 min + stoppage</span></li><li>Over 2.5 goals<span>Total goals · 90 min + stoppage</span></li><li>Daniel Costa 2+ shots on target<span>Must take part</span></li></ul>
+      <div class="stamp">Won</div>
+      <div class="ft tn"><span>£10 stake</span><b>£34.00</b></div>
+    </div>
+  </div>
+</div></div>
+<div style="height:80px"></div>
+</body>
+</html>

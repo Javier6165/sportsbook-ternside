@@ -1,40 +1,28 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { motion } from 'motion/react'
-import { useRef } from 'react'
+import { ChevronDown } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
 import { Link } from 'react-router'
-import { competitionById, type SportEvent } from '../../data/catalog'
-import { liveEvents, useLiveClock, useLiveEvent } from '../../state/store'
+import { competitionById, teamColor, type SportEvent } from '../../data/catalog'
+import { useLiveClock, useLiveEvent } from '../../state/store'
 import { Crest } from '../../ui/Crest'
 import { OddsButton } from '../../ui/OddsButton'
-import { SportIcon } from '../../ui/SportIcon'
 
-function Momentum({ seed }: { seed: number }) {
+function Momentum({ seed, home, away }: { seed: number; home: string; away: string }) {
   const { tick } = useLiveClock()
-  const bars = Array.from({ length: 26 }, (_, i) => {
+  const bars = Array.from({ length: 30 }, (_, i) => {
     const k = i + Math.floor(tick / 3)
-    const v = Math.sin(k * 1.7 + seed) * 0.5 + Math.sin(k * 0.6 + seed * 2) * 0.5
-    return v
+    return Math.sin(k * 1.7 + seed) * 0.5 + Math.sin(k * 0.6 + seed * 2) * 0.5
   })
   return (
-    <div className="relative flex h-9 gap-[2px]" aria-hidden="true">
+    <div className="relative flex h-8 gap-[2px]" aria-hidden="true">
       <span className="absolute inset-x-0 top-1/2 h-px bg-white/10" />
       {bars.map((v, i) => (
-        <span key={i} className="flex h-full flex-1 flex-col">
+        <span key={i} className="flex h-full flex-1 flex-col" style={{ opacity: 0.25 + (i / bars.length) * 0.75 }}>
           <span className="flex h-1/2 items-end">
-            <motion.span
-              animate={{ height: v > 0 ? `${Math.max(10, v * 100)}%` : '0%' }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full rounded-t-[2px] bg-brand-dark"
-              style={{ opacity: 0.3 + (i / bars.length) * 0.7 }}
-            />
+            <motion.span animate={{ height: v > 0 ? `${Math.max(12, v * 100)}%` : '0%' }} transition={{ duration: 0.8 }} className="w-full rounded-t-[2px]" style={{ background: home }} />
           </span>
           <span className="flex h-1/2 items-start">
-            <motion.span
-              animate={{ height: v < 0 ? `${Math.max(10, -v * 100)}%` : '0%' }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full rounded-b-[2px] bg-white/45"
-              style={{ opacity: 0.3 + (i / bars.length) * 0.7 }}
-            />
+            <motion.span animate={{ height: v < 0 ? `${Math.max(12, -v * 100)}%` : '0%' }} transition={{ duration: 0.8 }} className="w-full rounded-b-[2px]" style={{ background: away }} />
           </span>
         </span>
       ))}
@@ -42,71 +30,65 @@ function Momentum({ seed }: { seed: number }) {
   )
 }
 
-function LiveCard({ ev, i }: { ev: SportEvent; i: number }) {
+const lighten = (c: string) => `color-mix(in oklab, ${c} 70%, white)`
+
+export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?: string }) {
   const { prices, minute } = useLiveEvent(ev)
   const comp = competitionById(ev.competitionId)
   const L = ev.live!
   const m = ev.markets[0]
+  const hc = teamColor(ev.home)
+  const ac = teamColor(ev.away)
+  const clock = ev.sport === 'football' ? `${minute}’` : ev.sport === 'basketball' ? `${L.period} ${L.clock}` : L.period
   return (
     <motion.article
+      layout
       initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ delay: i * 0.07, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="relative flex w-[292px] shrink-0 snap-start flex-col overflow-hidden rounded-[18px] bg-nav p-4 text-white shadow-[0_18px_40px_-24px_rgba(16,24,43,.8)] grain"
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.97 }}
+      transition={{ delay: i * 0.06, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+      className="on-dark relative flex min-w-0 flex-col overflow-hidden rounded-[26px] bg-[#0a0e18] p-5 text-white"
     >
-      <div className="pointer-events-none absolute -top-16 -right-16 size-40 rounded-full bg-action/30 blur-3xl" aria-hidden="true" />
-      <div className="relative flex items-center justify-between text-[11.5px]">
-        <Link to={`/event/${ev.id}`} className="on-dark flex min-w-0 items-center gap-1.5 text-white/60 hover:text-white">
-          <SportIcon sport={ev.sport} size={13} />
-          <span className="truncate">{comp.name}</span>
-        </Link>
-        <span className="flex items-center gap-1.5 rounded-full bg-live/15 px-2 py-0.5 font-semibold text-[#ff8098]">
-          <span className="live-dot" aria-hidden="true" />
-          {ev.sport === 'football' ? `${minute}’` : ev.sport === 'basketball' ? `${L.period} ${L.clock}` : L.period}
+      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[5px]" style={{ background: `linear-gradient(90deg, ${hc}, ${ac})` }} />
+      <span aria-hidden="true" className="pointer-events-none absolute -top-24 -left-16 size-56 rounded-full opacity-35 blur-3xl" style={{ background: hc }} />
+      <span aria-hidden="true" className="pointer-events-none absolute -top-24 -right-16 size-56 rounded-full opacity-30 blur-3xl" style={{ background: ac }} />
+
+      <div className="relative flex items-center justify-between gap-2">
+        <span className="truncate text-[12.5px] font-semibold text-white/55">{comp.name}</span>
+        <span className="led flex shrink-0 items-center gap-2 text-[17px] leading-none text-volt [text-shadow:0_0_14px_rgba(198,255,61,.55)]">
+          <span className="live-dot !bg-volt" aria-hidden="true" />
+          {clock}
         </span>
       </div>
 
-      <Link to={`/event/${ev.id}`} className="on-dark relative mt-3 block space-y-2">
+      <Link to={`/event/${ev.id}`} className="relative mt-4 block space-y-2.5">
         {[ev.home, ev.away].map((p, idx) => (
-          <div key={p.id} className="flex items-center gap-2.5">
-            <Crest team={p} size={22} />
-            <span className="min-w-0 flex-1 truncate text-[14.5px] font-semibold">{p.name}</span>
-            {ev.sport === 'tennis' && L.serving === idx && <span className="size-1.5 rounded-full bg-[#d8ff5a]" aria-label="Serving" />}
+          <div key={p.id} className="flex items-center gap-3">
+            <Crest team={p} size={26} />
+            <span className="min-w-0 flex-1 truncate text-[16px] font-semibold">{p.name}</span>
             {ev.sport === 'tennis' ? (
-              <span className="flex gap-1 text-[13px] tnum">
-                <span className="w-4 text-center text-white/50">{L.sets![idx]}</span>
-                <span className="w-4 text-center text-white/80">{L.games![idx]}</span>
-                <span className="w-6 rounded bg-white/10 text-center font-semibold">{L.points![idx]}</span>
+              <span className="flex items-center gap-2 font-display text-[15px] font-semibold tnum">
+                {L.serving === idx && <span className="size-1.5 rounded-full bg-volt" aria-label="Serving" />}
+                <span className="text-white/40">{L.sets![idx]}</span>
+                <span className="text-white/75">{L.games![idx]}</span>
+                <span className="w-7 rounded-md bg-white/10 py-0.5 text-center">{L.points![idx]}</span>
               </span>
             ) : (
-              <span className="display w-7 text-right text-[24px] leading-none tnum">{L.score[idx]}</span>
+              <span className="font-display text-[30px] leading-none font-[780] tracking-[-0.04em] tnum">{L.score[idx]}</span>
             )}
           </div>
         ))}
       </Link>
 
-      <div className="relative mt-3">
+      <div className="relative mt-4">
         {ev.sport === 'football' ? (
-          <>
-            <div className="mb-1 flex justify-between text-[10px] font-semibold tracking-[.08em] text-white/40 uppercase">
-              <span>Attack momentum</span>
-              <span>Last 10 min</span>
-            </div>
-            <Momentum seed={i * 3 + 1} />
-          </>
+          <Momentum seed={i * 3 + 1} home={lighten(hc)} away="rgba(255,255,255,.4)" />
         ) : (
-          <div className="line-clamp-2 h-[49px] rounded-lg bg-white/[.04] px-3 py-2 text-[12px] leading-snug text-white/60 ring-1 ring-white/[.06] ring-inset">
-            {ev.sport === 'tennis' ? 'Lindqvist broke in game 4 · 71% first serves' : 'Mariners on a 9–2 run · Steel in the bonus'}
-          </div>
+          <p className="line-clamp-1 text-[12.5px] text-white/55">{ev.sport === 'tennis' ? 'Lindqvist broke in game 4 · 71% first serves' : 'Mariners on a 9–2 run'}</p>
         )}
       </div>
 
-      <div className="relative mt-3 flex items-baseline justify-between text-[11px] text-white/45">
-        <span className="font-semibold text-white/70">{m.name}</span>
-        <span>{m.period}</span>
-      </div>
-      <div className={`relative mt-1.5 grid gap-1.5 ${m.selections.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+      <div className={`relative mt-4 grid gap-2 ${m.selections.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
         {m.selections.map((sel, k) => (
           <OddsButton
             key={sel.id}
@@ -114,48 +96,47 @@ function LiveCard({ ev, i }: { ev: SportEvent; i: number }) {
             market={m}
             sel={sel}
             odds={prices[k]}
-            variant="dark"
-            label={m.selections.length === 3 ? (k === 0 ? '1' : k === 1 ? 'X' : '2') : k === 0 ? ev.home.short.split(' ').pop() : ev.away.short.split(' ').pop()}
+            variant="night"
+            label={m.selections.length === 3 ? (k === 0 ? '1' : k === 1 ? 'X' : '2') : (k === 0 ? ev.home : ev.away).name.split(' ').pop()}
           />
         ))}
       </div>
+      {reason && <div className="relative mt-3 text-[11.5px] font-medium text-white/40">{reason}</div>}
     </motion.article>
   )
 }
 
-export function LiveNow() {
-  const evs = liveEvents()
-  const ref = useRef<HTMLDivElement>(null)
-  const scroll = (dx: number) => ref.current?.scrollBy({ left: dx, behavior: 'smooth' })
+export function LiveNow({ mine, other }: { mine: SportEvent[]; other: SportEvent[] }) {
+  const [all, setAll] = useState(false)
+  const list = all ? [...mine, ...other] : mine.length ? mine : other.slice(0, 2)
+  const hidden = mine.length ? other.length : Math.max(0, other.length - 2)
   return (
-    <section aria-labelledby="live-title" className="mt-9">
-      <div className="mb-3.5 flex items-end justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2 text-[11.5px] font-semibold tracking-[.1em] text-live uppercase">
-            <span className="live-dot" aria-hidden="true" /> In play
-          </div>
-          <h2 id="live-title" className="display mt-1 text-[30px] leading-none uppercase">
-            Live now <span className="text-muted">{evs.length}</span>
-          </h2>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link to="/live" className="mr-1 text-[13px] font-semibold text-sel-ink hover:underline">
-            See all live
-          </Link>
-          <button aria-label="Scroll live events left" onClick={() => scroll(-310)} className="hidden size-9 place-items-center rounded-full border border-line bg-surface text-ink hover:bg-canvas @tab:grid">
-            <ChevronLeft size={17} />
-          </button>
-          <button aria-label="Scroll live events right" onClick={() => scroll(310)} className="hidden size-9 place-items-center rounded-full border border-line bg-surface text-ink hover:bg-canvas @tab:grid">
-            <ChevronRight size={17} />
-          </button>
-        </div>
+    <section aria-labelledby="live-title" className="mt-14">
+      <div className="mb-5 flex items-end justify-between gap-3">
+        <h2 id="live-title" className="font-display text-[34px] leading-none font-[780] tracking-[-0.045em] @tab:text-[40px]">
+          Live now
+          <span className="ml-3 align-middle font-sans text-[13px] font-semibold tracking-normal text-secondary">{mine.length ? `${mine.length} you follow` : 'Popular'}</span>
+        </h2>
+        <Link to="/live" className="pb-1 text-[14px] font-semibold text-sel-ink hover:underline">
+          All live
+        </Link>
       </div>
-      <div ref={ref} className="no-scrollbar -mx-4 flex @desk:[mask-image:linear-gradient(90deg,#000_88%,transparent)] snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 @desk:-mx-0 @desk:scroll-px-0 @desk:px-0">
-        {evs.map((ev, i) => (
-          <LiveCard key={ev.id} ev={ev} i={i} />
-        ))}
+      <div className="grid gap-3 @tab:grid-cols-2 @wide:grid-cols-3">
+        <AnimatePresence initial={false} mode="popLayout">
+          {list.map((ev, i) => (
+            <LiveCard key={ev.id} ev={ev} i={i} />
+          ))}
+        </AnimatePresence>
       </div>
-      <p className="mt-2 text-[11.5px] text-muted">Live information can be delayed. Others may have more up-to-date information.</p>
+      {hidden > 0 && (
+        <button onClick={() => setAll((a) => !a)} aria-expanded={all} className="mt-3 flex items-center gap-1.5 rounded-full px-1 text-[13.5px] font-semibold text-secondary hover:text-ink">
+          <motion.span animate={{ rotate: all ? 180 : 0 }}>
+            <ChevronDown size={17} />
+          </motion.span>
+          {all ? 'Show less' : `${hidden} more live`}
+        </button>
+      )}
+      <p className="mt-3 text-[12px] text-muted">Live information can be delayed. Others may have more up-to-date information.</p>
     </section>
   )
 }

@@ -1,6 +1,6 @@
 # Notes for Astra — from Claude (project lead)
 
-Last update: 21-10-2026 · first build cut (home page). Javier asked Claude to lead the build and to log here any change to the HANDOFF-01 decisions. Everything not listed stays as you specified.
+Last update: 21-10-2026 · second cut (identity v2 + curated home). Javier asked Claude to lead the build and to log here any change to the HANDOFF-01 decisions. Everything not listed stays as you specified.
 
 ## Changes to the handoff
 
@@ -16,13 +16,33 @@ Last update: 21-10-2026 · first build cut (home page). Javier asked Claude to l
 
 Same-market singles: picking Home and Draw of the same match as separate singles is allowed, as on most UK books. Builder exclusivity (R04) still applies inside a builder.
 
+## Identity v2 and product principles (agreed with Javier, 21-10-2026)
+
+The first cut read as correct but generic. BRAND-01 is evolved, not replaced:
+
+| Area | BRAND-01 | Now |
+| --- | --- | --- |
+| Concept of the look | Matchday editorial, navy/cobalt | **Colour of the game**: calm neutral UI; colour comes only from the teams' kits (gradient fields per match). The bet is a **pass** (Wallet-like ticket with perforation and stub) that persists from slip to settlement |
+| Live | — | Live surfaces go "night": near-black, volt LED clock (Doto font), team-colour glow |
+| Display type | Barlow Condensed | Inter Tight (tight, heavy). Barlow read as generic sportsbook. Inter stays for UI and numbers |
+| Wordmark | "Ternside" in Barlow | "Ternside." in Inter Tight with a cobalt full stop |
+| Colour roles | navy as brand surface | cobalt #2948FF = selection/action, ink #111318 = primary commit buttons, navy only for presentation chrome |
+| Desktop layout | rail + markets + betslip column | no rail; centred content, pill navigation, betslip as a floating pass that unfolds on demand |
+
+Product principles from Javier:
+1. **Show the relevant ~20%, tuck away the rest.** Home is "For you": followed teams/competitions first, a few popular matches, then "Everything else" collapsed by sport → competition. Personalisation comes from stated interests (Tune your feed), never from betting behaviour. Rules, money, periods and safer-gambling access are never hidden.
+2. **No predatory patterns.** No boosted odds, no wild cross-match accas, no social-proof counters, no "build a bet" upsells. Only correlated same-match builders that tell one story (e.g. team wins + its striker shoots), max three conditions.
+3. **Explain the odds in plain language.** "Why these odds?" gives a short, neutral summary of why prices sit where they do (labelled AI summary of fictional data, not a tip); full stats stay collapsed underneath. This is static authored text — F15's live LLM/chat stays out.
+
+The long tail behind "Everything else" is generated in `app/src/data/catalog-extra.ts` (11 extra fictional competitions, main markets only).
+
 ## Image requests (when you have time)
 
 The UI works without images. These slots are already marked in code with `data-asset-slot`.
 
 | Slot | Use | Spec |
 | --- | --- | --- |
-| `hero-matchday` | Background of the featured match card (football-01, Northbridge FC v Southport Athletic) | 2400×1000 px, dark, navy #10182B → cobalt #2948FF grade, night stadium with floodlights, no real logos, kits or sponsors. Keep the left 55% calm (team names sit there) |
+| `hero-matchday` | Optional texture under the featured match colour field (football-01). The field is a navy (#13204A) → red (#C8102E) gradient, so the image must work blended at ~25% opacity: 2400×1100 px, night stadium / crowd silhouette, low detail, no real logos, kits or sponsors. Keep the left 60% calm (huge team names) |
 | `player-costa` (later) | Daniel Costa on the match page / Bet Builder | Fictional player, waist-up cutout, transparent PNG ~1200×1500, Northbridge kit (navy and white stripes, no badge) |
 | `og-share` | Link preview for Netlify / the case study | 1200×630, Ternside wordmark in Barlow Condensed on navy, plus one ticket visual |
 

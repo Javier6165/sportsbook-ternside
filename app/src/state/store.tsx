@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
-import { EVENTS, eventById, type SportEvent } from '../data/catalog'
+import { EVENTS, eventById, type SportEvent, type SportId } from '../data/catalog'
 
 export interface DraftLeg {
   marketId: string
@@ -23,6 +23,18 @@ export interface DraftGroup {
 
 export type ViewMode = 'full' | 'mobile'
 
+export interface Prefs {
+  sports: SportId[]
+  competitions: string[]
+  teams: string[]
+}
+
+export const SAM_PREFS: Prefs = {
+  sports: ['football', 'tennis'],
+  competitions: ['continental-cup', 'premier-division'],
+  teams: ['northbridge'],
+}
+
 interface State {
   available: string
   groups: DraftGroup[]
@@ -31,6 +43,7 @@ interface State {
   favourites: string[]
   view: ViewMode
   slipOpen: boolean
+  prefs: Prefs
 }
 
 const initial: State = {
@@ -41,6 +54,7 @@ const initial: State = {
   favourites: [],
   view: 'full',
   slipOpen: false,
+  prefs: SAM_PREFS,
 }
 
 type Action =
@@ -55,6 +69,7 @@ type Action =
   | { type: 'favourite'; eventId: string }
   | { type: 'view'; view: ViewMode }
   | { type: 'slip'; open: boolean }
+  | { type: 'prefs'; prefs: Prefs }
 
 let seq = 0
 const newId = () => `draft-${Date.now().toString(36)}-${(seq++).toString(36)}`
@@ -99,17 +114,19 @@ function reducer(s: State, a: Action): State {
       return { ...s, view: a.view }
     case 'slip':
       return { ...s, slipOpen: a.open }
+    case 'prefs':
+      return { ...s, prefs: a.prefs }
   }
 }
 
-const KEY = 'ternside.demo.v1'
+const KEY = 'ternside.demo.v2'
 
 function load(): State {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return initial
     const parsed = JSON.parse(raw)
-    if (parsed?.v !== 1) return initial
+    if (parsed?.v !== 2) return initial
     return { ...initial, ...parsed.state, slipOpen: false }
   } catch {
     return initial
@@ -122,7 +139,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [s, d] = useReducer(reducer, undefined, load)
   useEffect(() => {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ v: 1, state: s }))
+      localStorage.setItem(KEY, JSON.stringify({ v: 2, state: s }))
     } catch {
       /* storage unavailable: session-only */
     }

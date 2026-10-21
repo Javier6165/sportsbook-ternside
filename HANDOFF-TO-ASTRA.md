@@ -13,8 +13,8 @@ La demo se ejecuta con `npm --prefix app run dev`. La fuente está en `app/` y e
 | Página de partido | Hecho: mercados populares con su regla (i), «More markets» plegado, Bet Builder, Stats en dos capas | `#/event/football-01` |
 | Bet Builder | Hecho: tres grupos, sustitución con Undo (C22), precio de la tabla qv1 (nunca multiplicado), una condición pasa a simple | pestaña Bet Builder |
 | Explore outcomes | Hecho: seis supuestos (no juega, empate, 2–1 con 1 tiro, 3–1 con 2 tiros, prórroga, abandono), solo lectura | Bet Builder y detalle de apuesta |
-| Directo | Hecho: modo noche, match centre con campo o pista animados, momentos, «Win probability» calculada desde las cuotas, «The story so far» | `#/event/football-cc-live`, `#/live` |
-| Betslip | Hecho: lista compartida Singles/Accumulator, motivos por los que no hay combinada, cambio de cuota en directo con Accept, revisar → colocando → recibo «Accepted» | dock flotante o barra móvil |
+| Directo | Hecho: misma identidad con sello «LIVE», match centre con campo o pista animados, momentos, «Win probability» calculada desde las cuotas, «The story so far» | `#/event/football-cc-live`, `#/live` |
+| Betslip | Hecho: lista compartida Singles/Accumulator, motivos por los que no hay combinada, cambio de cuota en directo con Accept, revisar → colocando → recibo «Accepted» | botón en la cabecera (escritorio) o barra inferior (móvil) |
 | My Bets y detalle | Hecho: abiertas/liquidadas, lecturas en directo provisionales, corrección de estadística, liquidación con void, recibo, Cash Out con confirmación | `#/my-bets`, `#/bets/:id` |
 | Caja | Hecho: depósito con margen de límite, retirada con reserva, actividad (ledger) | `#/wallet` |
 | Juego seguro | Hecho: límites 24 h / 7 días / mes de Londres con anillos, bajada inmediata y subida con espera de 24 h, pausa, autoexclusión → V13 | `#/safer-gambling`, `#/account-closed` |
@@ -27,7 +27,7 @@ La demo se ejecuta con `npm --prefix app run dev`. La fuente está en `app/` y e
 
 | Área | HANDOFF-01 | Ahora | Motivo |
 | --- | --- | --- | --- |
-| Identidad | Matchday editorial, Barlow Condensed, navy como superficie de marca | **Colour of the game**: interfaz neutra y el color sale de las equipaciones. La apuesta es un **pase** (ticket con troquel) que se conserva de principio a fin. El directo va en **modo noche** con reloj LED (Doto). Display en Inter Tight; logotipo «Ternside.» con punto cobalto | La primera versión era correcta pero genérica. Javier pidió más personalidad sin parecerse a Likely, su concepto de prediction market |
+| Identidad | Matchday editorial, Barlow Condensed, navy como superficie de marca | **Colour of the game**: interfaz neutra y el color sale de las equipaciones. La apuesta es un **pase** (ticket con troquel) que se conserva de principio a fin. El directo **no tiene tema propio**: usa los mismos campos de color y tipografía, y se identifica con un único sello rojo «LIVE» con pulso (se descartó un modo noche con LED por parecer otra marca). Display en Inter Tight; logotipo «Ternside.» con punto cobalto | La primera versión era correcta pero genérica. Javier pidió más personalidad sin parecerse a Likely, su concepto de prediction market |
 | Layout escritorio | Rail + mercados + columna de talón | Rail colapsable (cerrado por defecto), contenido centrado, betslip como pase flotante | Más aire y menos densidad |
 | Catálogo | 5 eventos; no ampliar | Unos 20 eventos visibles más una cola larga generada (11 competiciones ficticias, solo mercados principales) detrás de «Everything else» | El principio del 20 % necesita que exista un 80 % oculto |
 | football-01 | 1X2, O/U 2.5, jugador | Añade Double chance, BTTS, Anytime scorer y Correct score, cada uno con su regla. El Builder sigue limitado a tu tabla de 23 cotizaciones | Realismo; las reglas nuevas están en `app/src/data/quotes.ts` |

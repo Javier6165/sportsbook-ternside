@@ -67,10 +67,11 @@ function SideDock({ mobile, onChange, onScenes, scenes }: { mobile: boolean; onC
       <button
         onClick={() => setOpen(true)}
         onMouseEnter={() => setOpen(true)}
-        className="flex h-11 items-center gap-2 rounded-full bg-[#0b1120]/92 px-4 text-[11px] font-bold tracking-[.12em] text-[#f5c04a] uppercase shadow-[0_12px_30px_-10px_rgba(0,0,0,.6)] ring-1 ring-white/10 backdrop-blur-md"
+        className="grid size-11 place-items-center rounded-full bg-[#0b1120]/92 text-[#f5c04a] shadow-[0_12px_30px_-10px_rgba(0,0,0,.6)] ring-1 ring-white/10 backdrop-blur-md"
         aria-label="Open demo tools"
+        title="Demo tools"
       >
-        <Clapperboard size={14} /> Demo
+        <Clapperboard size={17} />
       </button>
     )
   return (
@@ -156,7 +157,7 @@ export function DemoFrame({ children }: { children: ReactNode }) {
 
       {/* Presentation controls — outside the sportsbook UI */}
       {!realMobile && (
-        <div className={clsx('on-dark absolute z-[100]', mobile ? 'top-1/2 left-[max(24px,calc(50%-560px))] w-[280px] -translate-y-1/2' : 'bottom-5 transition-[left] duration-300')} style={mobile ? undefined : { left: win.w < 1056 ? 16 : s.navOpen ? 284 : 92 }}>
+        <div className={clsx('on-dark absolute z-[100]', mobile ? 'top-1/2 left-[max(24px,calc(50%-560px))] w-[280px] -translate-y-1/2' : 'bottom-5 transition-[left] duration-300')} style={mobile ? undefined : { left: 16, bottom: win.w < 1056 ? 20 : 76 }}>
           {mobile ? (
             <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} className="hidden text-white min-[1120px]:block">
               <Wordmark size={44} />

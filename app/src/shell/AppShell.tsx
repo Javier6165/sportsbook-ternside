@@ -71,12 +71,39 @@ function Header({ onSearch, closed }: { onSearch: () => void; closed: boolean })
           <Link to="/wallet" className="hidden h-11 items-center gap-1.5 rounded-full bg-action px-4 text-[14px] font-semibold text-white hover:bg-action-hover @tab:flex">
             <Plus size={16} strokeWidth={2.6} /> Deposit
           </Link>
+          {!closed && <HeaderSlipButton />}
           <Link to="/account" aria-label="Account" className="grid size-11 place-items-center rounded-full bg-ink text-white">
             <span className="font-display text-[14px] font-[760]">SE</span>
           </Link>
         </div>
       </div>
     </header>
+  )
+}
+
+function HeaderSlipButton() {
+  const { s, d } = useStore()
+  const n = s.groups.length
+  const pulse = useLanded()
+  return (
+    <button
+      onClick={() => d({ type: 'slip', open: !s.slipOpen })}
+      aria-expanded={s.slipOpen}
+      aria-label={`Betslip, ${n} selections`}
+      className={clsx('hidden h-11 items-center gap-2 rounded-full pr-1.5 pl-4 text-[14px] font-semibold transition-colors @desk:flex', s.slipOpen ? 'bg-ink text-white' : 'bg-chip text-ink hover:bg-chip-hover')}
+    >
+      <Ticket size={16} /> Betslip
+      <motion.span
+        key={pulse}
+        data-slip-target
+        initial={{ scale: pulse ? 1.5 : 1 }}
+        animate={{ scale: 1 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 12 }}
+        className={clsx('grid h-8 min-w-8 place-items-center rounded-full px-2 font-display text-[14px] font-[780] tnum', n ? 'bg-action text-white' : s.slipOpen ? 'bg-white/15' : 'bg-surface text-secondary')}
+      >
+        {n}
+      </motion.span>
+    </button>
   )
 }
 
@@ -94,7 +121,6 @@ function useLanded() {
 function SlipDock() {
   const { s, d } = useStore()
   const n = s.groups.length
-  const pulse = useLanded()
   const last = s.groups[s.groups.length - 1]
   const [peek, setPeek] = useState(false)
   const prevN = useRef(n)
@@ -107,7 +133,6 @@ function SlipDock() {
     }
     prevN.current = n
   }, [n])
-  const ret = s.groups.reduce((a, g) => (isValidStake(g.stake) ? a.plus(grossReturn(g.stake, g.odds)) : a), D(0))
 
   return (
     <div className="pointer-events-none absolute inset-0 z-40 hidden @desk:block">
@@ -115,11 +140,11 @@ function SlipDock() {
         {s.slipOpen && (
           <motion.div
             key="panel"
-            initial={{ opacity: 0, y: 30, scale: 0.96 }}
+            initial={{ opacity: 0, y: -16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.96 }}
+            exit={{ opacity: 0, y: -16, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 360, damping: 34 }}
-            style={{ transformOrigin: '100% 100%' }}
+            style={{ transformOrigin: '100% 0%' }}
             className="pointer-events-auto absolute top-[88px] right-5 bottom-5 w-[408px] overflow-hidden rounded-[32px] shadow-[0_40px_90px_-30px_rgba(16,24,43,.55),0_0_0_1px_rgba(16,24,43,.05)]"
             role="dialog"
             aria-label="Betslip"
@@ -130,45 +155,22 @@ function SlipDock() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {!s.slipOpen && (
+        {peek && last && !s.slipOpen && (
           <motion.button
-            key="pill"
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+            key="peek"
+            initial={{ opacity: 0, y: -10, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10 }}
             onClick={() => d({ type: 'slip', open: true })}
-            className="on-dark pointer-events-auto absolute right-6 bottom-6 flex h-16 items-center gap-3 rounded-full bg-ink pr-6 pl-2 text-white shadow-[0_24px_50px_-18px_rgba(16,24,43,.7)]"
-            aria-label={`Open betslip, ${n} selections`}
+            className="on-dark pointer-events-auto absolute top-[84px] right-6 flex items-center gap-3 rounded-[18px] bg-ink py-3 pr-5 pl-3 text-left text-white shadow-[0_24px_50px_-18px_rgba(16,24,43,.7)]"
           >
-            <motion.span
-              key={pulse}
-              data-slip-target
-              initial={{ scale: pulse ? 1.35 : 1 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 12 }}
-              className={clsx('grid size-12 place-items-center rounded-full font-display text-[18px] font-[780] tnum', n ? 'bg-action' : 'bg-white/10')}
-            >
-              {n}
-            </motion.span>
-            <motion.span layout className="flex flex-col items-start leading-tight">
-              <AnimatePresence mode="popLayout" initial={false}>
-                {peek && last ? (
-                  <motion.span key="peek" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="flex flex-col items-start">
-                    <span className="text-[12px] font-semibold text-white/60">Added</span>
-                    <span className="max-w-[240px] truncate text-[15px] font-semibold">
-                      {last.type === 'builder' ? 'Bet Builder' : last.legs[0].label} · <span className="tnum">{fmtOdds(last.odds)}</span>
-                    </span>
-                  </motion.span>
-                ) : (
-                  <motion.span key="std" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="flex flex-col items-start">
-                    <span className="text-[15px] font-semibold">Betslip</span>
-                    <span className="text-[12px] text-white/60">{ret.gt(0) ? `Return ${fmtMoney(ret)}` : n ? 'Add a stake' : 'Empty'}</span>
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.span>
+            <span className="grid size-9 place-items-center rounded-full bg-action font-display text-[15px] font-[780] tnum">{n}</span>
+            <span className="leading-tight">
+              <span className="block text-[12px] font-semibold text-white/60">Added to betslip</span>
+              <span className="block max-w-[260px] truncate text-[14.5px] font-semibold">
+                {last.type === 'builder' ? 'Bet Builder' : last.legs[0].label} · <span className="tnum">{fmtOdds(last.odds)}</span>
+              </span>
+            </span>
           </motion.button>
         )}
       </AnimatePresence>

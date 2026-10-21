@@ -1,0 +1,30 @@
+{
+  "release": "HANDOFF-01",
+  "date": "2026-10-20",
+  "status": "pass",
+  "archive": "Ternside-Claude-Handoff-v1.zip",
+  "archive_root": "ternside-handoff-v1/",
+  "checks": {
+    "zip_crc": "pass",
+    "fresh_extraction": "pass",
+    "manifest_payload_hashes": "pass",
+    "file_list_matches_manifest": "pass",
+    "local_markdown_links_in_extracted_copy": "pass",
+    "font_assets_and_licenses_present": "pass",
+    "generated_screen_pngs_excluded": "pass",
+    "application_source_not_included": "pass"
+  },
+  "not_tested": [
+    "Future application build, routes, persistence and interactions",
+    "Usability with participants",
+    "Commercial trademark clearance/domain purchase availability"
+  ],
+  "entry_points": [
+    "CLAUDE.md",
+    "handoff/START-HERE.md"
+  ],
+  "screen_reference_requirement_removed_by_user": true,
+  "font_manifest": "branding/assets/fonts/manifest.json",
+  "research_checks": "project/research-checks.json",
+  "note": "Checks apply to this input dossier; not a certificate for the app Claude will build."
+}

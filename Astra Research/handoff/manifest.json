@@ -1,0 +1,568 @@
+{
+  "release": "HANDOFF-01",
+  "date": "2026-10-20",
+  "hash_algorithm": "SHA-256",
+  "self_hash": "omitted to avoid self-reference",
+  "excluded": [
+    "design/drafts/*.png",
+    "deliverables/",
+    "hidden/cache/system files"
+  ],
+  "files": [
+    {
+      "path": "CLAUDE.md",
+      "bytes": 739,
+      "sha256": "bb43f9466de3ae8fd1a2112b65a2c80d654bc1425efe4d83f9cb97240f43561f"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2466,
+      "sha256": "ec8b4926d5b23873b46f139f4eb429b5d8c89d10998fd973e8e9c352be556cc9"
+    },
+    {
+      "path": "branding/01-positioning-and-naming.md",
+      "bytes": 8897,
+      "sha256": "e890486d6d8c7bd57bcb6a844b15ad87cf812a72828dd8a9344a9132e867af4a"
+    },
+    {
+      "path": "branding/02-visual-directions.md",
+      "bytes": 6889,
+      "sha256": "634a6e7b90ec62b7fc30915de1381fa69b9f8e053da9e6758077299a78addfd2"
+    },
+    {
+      "path": "branding/assets/fonts/BarlowCondensed-OFL.txt",
+      "bytes": 4377,
+      "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f"
+    },
+    {
+      "path": "branding/assets/fonts/BarlowCondensed-SemiBold.ttf",
+      "bytes": 109428,
+      "sha256": "7b619d14bc2327509a9ef32b0890f709626f7ecc9ff61191c2a4314c5499d2d9"
+    },
+    {
+      "path": "branding/assets/fonts/Inter-OFL.txt",
+      "bytes": 4377,
+      "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    },
+    {
+      "path": "branding/assets/fonts/Inter-Variable.ttf",
+      "bytes": 876576,
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031"
+    },
+    {
+      "path": "branding/assets/fonts/manifest.json",
+      "bytes": 1574,
+      "sha256": "90d54c1ae7ebd4271113a921c7229d23738c01c84cee94cd0d9f2edaeb8dbbf3"
+    },
+    {
+      "path": "branding/brand-guide.md",
+      "bytes": 5868,
+      "sha256": "329baee5803a5fdadf426a8d9a4ee2c69c8ead494004187eb078a341107cb9d8"
+    },
+    {
+      "path": "branding/brand-tokens.json",
+      "bytes": 1127,
+      "sha256": "6c00fe28096fafe1b86c4d475d48015ca35243c4bd4aeecd1a3871b4357fc7ba"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-domain-rdap.json",
+      "bytes": 1516,
+      "sha256": "c9564b16c68cea88d7002809920979abbe052ec2e357e67bd7c8ad95ddfb9ff8"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-sidepace-fuzzy.jpg",
+      "bytes": 87670,
+      "sha256": "ef97cf19ea0ee0b3d5b97a7dc86a77c5b31c07a4b216106084c91d594f66777d"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-sidepace-fuzzy.txt",
+      "bytes": 23915,
+      "sha256": "6573dbf03f24be770935360607fd1b42721ee25fedb62464f5210e8e88cc0ebc"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-ternside-fuzzy.jpg",
+      "bytes": 87274,
+      "sha256": "53e6970b024fc5e2b777201c99265225ea04428528517b68df249ed5a2fa267f"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-ternside-fuzzy.txt",
+      "bytes": 25506,
+      "sha256": "97a1fa8509a1a1568111943cf9364386c57289f49c8e438948a54188caca326c"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-ternside.jpg",
+      "bytes": 75640,
+      "sha256": "0f9d5b9feabfcc2d19651635c71bce361c08d87c74be3a2cbe2a162432f25a29"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-ternside.txt",
+      "bytes": 6788,
+      "sha256": "431019cdfec27a9ea0314b797d2a215f484890c6fe457cdecd30b94c7e8777a1"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-terntide-detail.txt",
+      "bytes": 5820,
+      "sha256": "f99cd3495c4c96d2e2ddb715adfa4c37fabb2b1ea82ea1de0982cfdf454e9d44"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-vennside-fuzzy.jpg",
+      "bytes": 91076,
+      "sha256": "db67b032e1642b99029b1d61c2e9e752fdb4fd8ddec8b5aa607f0cde452de6e0"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-vennside-fuzzy.txt",
+      "bytes": 29564,
+      "sha256": "ee5250cfefa86dd6272186a3c5277ff41486c0371713626bf3a8457b67a2434e"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-vennside.jpg",
+      "bytes": 56183,
+      "sha256": "5b390f8a8d03f6af870e79e94c4a335896548e2c433218dea3ba3808a229df83"
+    },
+    {
+      "path": "branding/evidence/2026-10-20-tmview-vennside.txt",
+      "bytes": 5968,
+      "sha256": "37f27894af77de7cc2ce85fac3677041b5b39275c4306472800e65b408b348e3"
+    },
+    {
+      "path": "branding/evidence/README.md",
+      "bytes": 2243,
+      "sha256": "243de40fdaf684a4f1363781627d6ee5839eaaad893217490fe3b1d63c9b328e"
+    },
+    {
+      "path": "branding/evidence/contrast-candidates.json",
+      "bytes": 1874,
+      "sha256": "92377ae308b51961527a3f07aac1388c03ed4418570be032a1f190f5770d42fa"
+    },
+    {
+      "path": "branding/evidence/naming-checks.json",
+      "bytes": 3197,
+      "sha256": "e24f5770e532fa6ce77b728f5eb256ba49b7c840b38e4caedeb6a1960df321a2"
+    },
+    {
+      "path": "branding/research-brief.md",
+      "bytes": 1144,
+      "sha256": "8dac88b2fd425cdd741ca9f4eb71c05c128a8ebb992eabd2e56f9a93725fb2d5"
+    },
+    {
+      "path": "case-study/README.md",
+      "bytes": 3290,
+      "sha256": "009f625c623f113ec4eba7ad97cd1543aad320240aa6a4671e294b3ac2afc0dc"
+    },
+    {
+      "path": "case-study/findings-summary.md",
+      "bytes": 8505,
+      "sha256": "9d8ba138950b250bf2487311019dd812c59e854b19afd88d4c94960432bce5f7"
+    },
+    {
+      "path": "case-study/metrics-register.md",
+      "bytes": 5948,
+      "sha256": "e663fab2e6cfb608aa3b33a4d12554e8b2a06e8a0a226d4b0b3f2445d9cfb445"
+    },
+    {
+      "path": "case-study/story-draft.md",
+      "bytes": 3437,
+      "sha256": "aae87438a2218021df0c42fc4f0cfe1251944d0f8f854574dc0e9004723c5313"
+    },
+    {
+      "path": "demo/README.md",
+      "bytes": 4371,
+      "sha256": "16978347089c44d66451e23118c6661612db9f44f6d1cf3dc2f954428258859a"
+    },
+    {
+      "path": "demo/acceptance-matrix.md",
+      "bytes": 8746,
+      "sha256": "8175b4ace346f086265f0e160bff0910caa4cbfb7b3df4a3e31db7b160e7d3ad"
+    },
+    {
+      "path": "demo/fixtures.json",
+      "bytes": 14999,
+      "sha256": "135ee86e8ec3be8dbe5dbf3a9c4e96cb36dceb36ec2264d17426e93c8a9ab137"
+    },
+    {
+      "path": "demo/scenario-cases.json",
+      "bytes": 42529,
+      "sha256": "c3aa82c5d7f900bcdb4177609b75c30f23d78435ffff73f799876b020a9bd2d8"
+    },
+    {
+      "path": "design/README.md",
+      "bytes": 1581,
+      "sha256": "120b1e43b9c4e0b6f00fc3697ef586ec07debb6d7e62cd09523e5456a5498d29"
+    },
+    {
+      "path": "design/SC01-event-builder.md",
+      "bytes": 3990,
+      "sha256": "4b50c3ad665df0d41005f62f68a63cf30987ea2329b43809594faa796db6bbc6"
+    },
+    {
+      "path": "design/image-prompts.md",
+      "bytes": 7133,
+      "sha256": "1964db13785737c3e20af2d140c348c6c7d892c491cba88a3fee13903165798d"
+    },
+    {
+      "path": "design/visual-review.md",
+      "bytes": 4001,
+      "sha256": "34d0bdf6f0deb8db9e2e19e3583dce1f64d782e53b48c7436f016b29e8f552b1"
+    },
+    {
+      "path": "flows/F01-discovery.md",
+      "bytes": 2824,
+      "sha256": "7401d6142294fdbb125d580d8b5baaa007063de3c7d0c13327f243f4afe736f4"
+    },
+    {
+      "path": "flows/F02-search.md",
+      "bytes": 2379,
+      "sha256": "f311ed843fb5a206d2bfb584951027bd679ffc0c5ffb16ae52cea598933832b2"
+    },
+    {
+      "path": "flows/F03-event-markets.md",
+      "bytes": 2886,
+      "sha256": "adfc0e2a635e333bfec471803b69b3be88f763cc4339c46c1d0083e2866558ed"
+    },
+    {
+      "path": "flows/F04-singles-betslip.md",
+      "bytes": 2817,
+      "sha256": "1a0d361aefd27bf8fffcc656b017ea891aff1dee4457794405e8f893a0667d81"
+    },
+    {
+      "path": "flows/F05-accumulator.md",
+      "bytes": 3114,
+      "sha256": "b0bc650bb15e01c2b68ee017d0a3f423b9684c9472f05db30408728e9a2710bf"
+    },
+    {
+      "path": "flows/F06-bet-builder.md",
+      "bytes": 4513,
+      "sha256": "72a5ad03780da999665b83ab7c7e20f725bb0d0388ca7874cf695d9b1e8dafcf"
+    },
+    {
+      "path": "flows/F07-placement.md",
+      "bytes": 3231,
+      "sha256": "2c7d88e1e16f31d175672b4dd12a66e245734a3f08fdcca9c2f1ebb7e169d364"
+    },
+    {
+      "path": "flows/F08-my-bets.md",
+      "bytes": 2339,
+      "sha256": "41bd96c5a7a7732cf944ff97b8e178b115a2cef183fa727529204de5a21a4db2"
+    },
+    {
+      "path": "flows/F09-live-tracking.md",
+      "bytes": 2623,
+      "sha256": "c64513d58d880b588fbffc6eb7aa20b20f66823cb6cc5814e59f6b50587bd774"
+    },
+    {
+      "path": "flows/F10-cash-out.md",
+      "bytes": 2377,
+      "sha256": "6d4299dccd0be25b0c415d9a8e47a6859aae6559c199e5dccd97620cd787927c"
+    },
+    {
+      "path": "flows/F11-settlement.md",
+      "bytes": 3233,
+      "sha256": "7e2ae126df20d7ca93d62fa91d7e9202c9ab2b2c64bc49605e2cdcbd479d3871"
+    },
+    {
+      "path": "flows/F12-account.md",
+      "bytes": 2805,
+      "sha256": "28cc6a62858fccfeb3009b774c898d05f73605d76e85d8af650ddbe896ce0c39"
+    },
+    {
+      "path": "flows/F13-wallet.md",
+      "bytes": 3113,
+      "sha256": "db6bee16ad39a9091175889379e40bc32589581d02a7d27d1522d1a57210c242"
+    },
+    {
+      "path": "flows/F14-safer-gambling.md",
+      "bytes": 4266,
+      "sha256": "4301396b5b08e622c57db8b7ba294bf8e785cddf9aa8004735c5f37704c9729b"
+    },
+    {
+      "path": "flows/F15-assistant.md",
+      "bytes": 2938,
+      "sha256": "d81c31d5bae5642b3bc84fe80a081f421c000986018cfb40860ada175fac5c64"
+    },
+    {
+      "path": "flows/F16-demo-presentation.md",
+      "bytes": 3559,
+      "sha256": "730cf3dfa4997a1d5f029e9e731d360a5f65c0565518b7433607bcf54e492028"
+    },
+    {
+      "path": "flows/README.md",
+      "bytes": 1652,
+      "sha256": "a59dafb727586f8c4e11754b262d5a99a6cd33a90d0321ea6da707842de51cd7"
+    },
+    {
+      "path": "handoff/README.md",
+      "bytes": 1570,
+      "sha256": "ad272fd326ab73f767fd98778ce0a2b858943c4fe1255372cb04aee69f788dbb"
+    },
+    {
+      "path": "handoff/START-HERE.md",
+      "bytes": 5349,
+      "sha256": "55c8e3e65aeb3d9527ec678f976c258b761ede89a34452d98894d635b34a0400"
+    },
+    {
+      "path": "handoff/contract.md",
+      "bytes": 1974,
+      "sha256": "0ec2ba7b6e4da36f075d3fe07cc9171742c42b12d38c599e354ab9f550597862"
+    },
+    {
+      "path": "handoff/demo-script.md",
+      "bytes": 2094,
+      "sha256": "406525af2525499ea9a34bb7186fcedfbfdbb654c4fced4ff71845b17e527425"
+    },
+    {
+      "path": "handoff/package-check.json",
+      "bytes": 1041,
+      "sha256": "014b6d59af3fbbf700d33f8abe4260f12fe38ec8cb4a98eb802cf5c63f67797f"
+    },
+    {
+      "path": "handoff/readiness.md",
+      "bytes": 1672,
+      "sha256": "d62da3873434ef920999eb0ed5656e73ffff876428a939c74ea15383faee035c"
+    },
+    {
+      "path": "handoff/release-notes.md",
+      "bytes": 2037,
+      "sha256": "a859108c5c98a7cbf8db46c6d798430ad11589a20aafb964b5b390b4ede68f28"
+    },
+    {
+      "path": "implementation/acceptance.md",
+      "bytes": 3692,
+      "sha256": "87874e220f3b24d5d6c4d77edf1012705f5e3333597449e07dcb21ddd2e5bfca"
+    },
+    {
+      "path": "implementation/architecture.md",
+      "bytes": 6837,
+      "sha256": "a4654a663dd3e47d64486b2760cb46667f51736bdd967dfd6bf20d8197de635f"
+    },
+    {
+      "path": "implementation/creative-direction.md",
+      "bytes": 2902,
+      "sha256": "eb7bf6ea5a224a0a41c7c0bd94930439068316fae22660f1eb5345cee55643d8"
+    },
+    {
+      "path": "implementation/scenario-engine.md",
+      "bytes": 5390,
+      "sha256": "384e94bf7cc95c195e5cd8022aa45cd4793b33c18985cd1e259fe714e78b0830"
+    },
+    {
+      "path": "product/betslip-state-contract.md",
+      "bytes": 5613,
+      "sha256": "ec679a588d04d85f1710a6bd4fc4a2b5b365478c78135bdf11cf2e7688944573"
+    },
+    {
+      "path": "product/demo-rules.md",
+      "bytes": 15664,
+      "sha256": "da6bddc2be8b524cc0d89230ab7b526defd4029d245a01dfbf3e9e97f39c0d4c"
+    },
+    {
+      "path": "product/domain-model.md",
+      "bytes": 7382,
+      "sha256": "00c0aba7c3c2d684692e3ac0ea1e8af1aea479ec0d2e83f03b33d34cd303b0b8"
+    },
+    {
+      "path": "product/live-offer-contract.md",
+      "bytes": 3797,
+      "sha256": "e225923938b925b03bdd61afce38ab54a3f0b1ed216838f10dfd001083c9a7e0"
+    },
+    {
+      "path": "product/navigation-and-mobile.md",
+      "bytes": 4448,
+      "sha256": "2d003f33637da5befeb27f25dff66bb0fe940e452caf92e5a205575dc1d51ba2"
+    },
+    {
+      "path": "product/scope.md",
+      "bytes": 4852,
+      "sha256": "7c7c6838d764c0128a629a551d806d4eff25afbf7ed975c53ae2b36153630069"
+    },
+    {
+      "path": "product/screen-map.md",
+      "bytes": 5142,
+      "sha256": "8bf336faf4cb2c7f5a32d8ce1ef5e6a9c22843627b692c1c697359286ef33f21"
+    },
+    {
+      "path": "project/brief.md",
+      "bytes": 2341,
+      "sha256": "e8a426e1bfe744d8b82dd29ebcf855d663a0acbd511d57bae2aab85e7d686bc5"
+    },
+    {
+      "path": "project/decisions.md",
+      "bytes": 8088,
+      "sha256": "fac881aff478ad38717e25d0cce2c556e06d3da9f2c522c7363996350a5078e2"
+    },
+    {
+      "path": "project/quality-review-protocol.md",
+      "bytes": 3030,
+      "sha256": "340d53482885be73625dd30374c0f9d22f1ef22b3d36a1ca92a82a7765c7f098"
+    },
+    {
+      "path": "project/research-checks.json",
+      "bytes": 2339,
+      "sha256": "c9abe2d07aa08aece9828b4118ee9c13552082a571ecb359e8db100032d5cd3f"
+    },
+    {
+      "path": "project/research-plan.md",
+      "bytes": 2562,
+      "sha256": "ba5b746aa9d6fc864a7307f89a2b21f548336e10969a42a99413b32434506366"
+    },
+    {
+      "path": "project/research-status.md",
+      "bytes": 1920,
+      "sha256": "459219f066ae49b4a5902845620b28d7ee7189473f73209a7c9d937c81170671"
+    },
+    {
+      "path": "research/00-metodo.md",
+      "bytes": 5932,
+      "sha256": "0e0ac3a7fa8b4f947208e1ad96b2b4d8a5b4a5831ae3bea9137df1e2da75809e"
+    },
+    {
+      "path": "research/01-mercado-y-hallazgos.md",
+      "bytes": 6612,
+      "sha256": "f773d532c9461986cac72059a3c9b4ed5d9cd492c2cfee13a41d05eef42a6516"
+    },
+    {
+      "path": "research/02-benchmark.md",
+      "bytes": 7805,
+      "sha256": "2c74db4a6d77d5bc1fb106bf4a4fd8408cc38bd94b3da38c40981f4567f221eb"
+    },
+    {
+      "path": "research/03-oportunidades-y-alternativas.md",
+      "bytes": 5353,
+      "sha256": "29987154e33788e6cc7a16e8b734a352e1d8a5f0406bebd83d1e4ecf3190b381"
+    },
+    {
+      "path": "research/04-propuesta-recomendada.md",
+      "bytes": 10907,
+      "sha256": "f6bb13e3917048781701368c6b09ea7d6180c19849684c45b68b18b7a59d80d5"
+    },
+    {
+      "path": "research/05-marco-regulatorio.md",
+      "bytes": 6985,
+      "sha256": "de55f9f5519c8b1b8644598a10b689cc1e6839face3d166c2da1236923967ccb"
+    },
+    {
+      "path": "research/06-siguiente-fase-flows.md",
+      "bytes": 5706,
+      "sha256": "8309c7d4983e49e1b32f28670403a57e55bc29852a5fa70eee1a78ace76a2d18"
+    },
+    {
+      "path": "research/07-flow-findings.md",
+      "bytes": 5614,
+      "sha256": "1556a35a5d207dee9a623e60a6a1592be61ba8bc38f630968c537fc124fdcc11"
+    },
+    {
+      "path": "research/08-validation-plan.md",
+      "bytes": 4994,
+      "sha256": "36f6d71607a0e60409fea1328fe48e6427d0d4e8d324400808afd400602d736c"
+    },
+    {
+      "path": "research/09-lifecycle-edge-cases.md",
+      "bytes": 6811,
+      "sha256": "006ac6933ef8d42c8d01143014a0e96fce2613b12df7b0b3312033c8866f03d2"
+    },
+    {
+      "path": "research/10-research-synthesis.md",
+      "bytes": 7851,
+      "sha256": "07d64f08f1d02c82bce4c8b33038ec929403f1e0e2a495ae536b63195ff166b0"
+    },
+    {
+      "path": "research/11-critical-review.md",
+      "bytes": 9229,
+      "sha256": "06ab1048bcb7040e40673fb89e639661117c2bcfbdcf2d6fe0ad2b40229ffd5c"
+    },
+    {
+      "path": "research/12-mobile-and-europe-contrast.md",
+      "bytes": 7780,
+      "sha256": "8daad1b9dec99fad9fc336e2389840d192978efe5e8e3cef224334c869e498dd"
+    },
+    {
+      "path": "research/evidence/README.md",
+      "bytes": 3380,
+      "sha256": "d32542d1c7c7d80441b77b64063fcf63c2ceccbd54a40b36e81400b6d355a683"
+    },
+    {
+      "path": "research/evidence/published-ui/2026-10-20-sky-app-store-marketing.jpg",
+      "bytes": 138217,
+      "sha256": "a233db27f0462d55b2a730de9ed2f2ee3ff96e6572fc946ba9e32ca8f021a093"
+    },
+    {
+      "path": "research/evidence/published-ui/2026-10-20-sky-help-betslip.jpg",
+      "bytes": 23022,
+      "sha256": "3cd36fce2d06b233ba2705fd74115a1152e9e39009bdaa50f0222786ad5e3688"
+    },
+    {
+      "path": "research/evidence/published-ui/2026-10-20-sky-help-event.jpg",
+      "bytes": 45773,
+      "sha256": "6881169f2c4a9a60fca5d5c6c749f772c512b64911627963858dd0f7b1473c12"
+    },
+    {
+      "path": "research/evidence/published-ui/2026-10-20-winamax-app-store-marketing.jpg",
+      "bytes": 101470,
+      "sha256": "3eb530fa6e7961f648b26a6f2cce8ed6c2e628996f840b9095b6540f8fa55ca3"
+    },
+    {
+      "path": "research/evidence/published-ui/README.md",
+      "bytes": 2163,
+      "sha256": "c4f0239082542198d141eb976ca85e471a8b81b382d5a840f50b273561b50402"
+    },
+    {
+      "path": "research/evidence/screenshots/2026-10-20-bet365-es-desktop-home.jpg",
+      "bytes": 134257,
+      "sha256": "3fec4f0f7818327102fb78c39d6739f6b8840d9c4d47f9ebae4416ebf026cf1b"
+    },
+    {
+      "path": "research/evidence/screenshots/2026-10-20-bwin-es-desktop-event.jpg",
+      "bytes": 124283,
+      "sha256": "e6d42a559dc04694935cf1f3ac83a7d5c2af10b2de9013f7af66230d1eb7e38b"
+    },
+    {
+      "path": "research/evidence/screenshots/2026-10-20-bwin-es-desktop-home.jpg",
+      "bytes": 148957,
+      "sha256": "630e3a746b10c144b1644b0f39517ab59bf0187a6fc0c5f63896d4274e9884a1"
+    },
+    {
+      "path": "research/sources-wave-02.md",
+      "bytes": 6965,
+      "sha256": "0e2bca3014439fa4348aa2ddde6e0b7614af880ca80371c2ef110ec339e44f43"
+    },
+    {
+      "path": "research/sources-wave-03.md",
+      "bytes": 2874,
+      "sha256": "f1dc97bd1aa933dd10a91ca81fcadf008dee5baf3e8966842a3b121a56d194c5"
+    },
+    {
+      "path": "research/sources-wave-04.md",
+      "bytes": 1733,
+      "sha256": "600487433d903207689aee8dc7fbdd1683ef5b72843e33bafdcfab6a02688bec"
+    },
+    {
+      "path": "research/sources-wave-05.md",
+      "bytes": 4174,
+      "sha256": "e52dc0e661999411500cb9a01dc2695bcd7402df6e31c5ac415dd29efde9816f"
+    },
+    {
+      "path": "research/sources-wave-06.md",
+      "bytes": 1762,
+      "sha256": "7b909cf2a63f49f7da0759b20bc177ca0d167f364525e6d11c0214b4c6af8e24"
+    },
+    {
+      "path": "research/sources-wave-07.md",
+      "bytes": 2100,
+      "sha256": "fccb97f86c038f1de9d69db01a8fbb0fb3629f46bd27760d1da2c67d38accedf"
+    },
+    {
+      "path": "research/sources-wave-08.md",
+      "bytes": 1683,
+      "sha256": "35e91404b43759d9ed78337877780fdfb1d744f2f612cbe18229acab14605ce3"
+    },
+    {
+      "path": "research/sources.md",
+      "bytes": 13650,
+      "sha256": "1ba30910e1b997e1551c3ef9420849ac35173bf9acd80e819371dbbd4aaca061"
+    },
+    {
+      "path": "templates/flow-research-template.md",
+      "bytes": 2214,
+      "sha256": "861168f1a28583b6432a5d1c38a52f075a051710063139cc786167fc301d2774"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+# OS / editor
+.DS_Store
+*.log
+
+# Node / build
+node_modules/
+dist/
+.vite/
+coverage/
+playwright-report/
+test-results/
+
+# Packaged duplicates of the research handoff (source lives in Astra Research/)
+*.zip
+*.zip.sha256
+
+# Third-party screenshots kept locally only (competitor UI, trademark searches).
+# Public repo: do not redistribute other companies' imagery.
+Astra Research/research/evidence/screenshots/
+Astra Research/research/evidence/published-ui/*.jpg
+Astra Research/branding/evidence/*.jpg
+
+# Netlify local
+.netlify/

@@ -1,0 +1,196 @@
+Browser tab: 5, Title: "TMView", URL: "https://www.tmdn.org/tmview/advancedSearch.html#/tmview/results?page=1&pageSize=30&criteria=C&basicSearch=Ternside".
+0 AXWebArea TMView, URL: tmdn.org/tmview/advancedSearch.html#/tmview/results?page=1&pageSize=30&criteria=C&basicSearch=Ternside
+	1 container
+		2 container
+			3 link image
+				4 image image
+			5 button 
+			6 button 
+			7 button 
+			8 link Description: Help, Value: tmdn.org/tmview/advancedSearch.html#/tmview/help
+			9 button English (en) 
+				10 text English (en)
+				11 text 
+			12 container
+				13 button Sign in
+				14 button Register
+			15 container
+				16 button 
+					17 text 
+					18 text 
+				19 container
+					20 text Trade mark name :
+					21 container
+						22 button Contains 
+							23 text Contains
+							24 text 
+						25 container
+							26 combo box (collapsed, settable) Value: Ternside, Secondary Actions: Expand
+							27 button 
+						28 button SEARCH
+				29 button (disabled)  Save this search
+					30 text 
+					31 text Save this search
+				32 button  Share by email
+					33 text 
+					34 text 
+					35 text Share by email
+				36 button image
+					37 image image
+				38 container
+					39 button  Export
+						40 text 
+						41 text 
+						42 text Export
+					43 button (disabled)  Compare
+						44 text      Compare
+					45 button (disabled)  Alerts
+						46 text     Alerts
+					47 button (disabled)  Tags
+						48 text   Tags
+					49 link 
+						50 text 
+					51 link 
+						52 text 
+					53 text 1-1 of 1
+					54 link 
+						55 text 
+					56 button  Statistics view
+						57 text 
+						58 text 
+						59 text Statistics view
+					60 button  List view
+						61 text 
+						62 text 
+						63 text 
+						64 text 
+						65 text 
+						66 text 
+						67 text List view
+					68 button  Gallery view
+						69 text 
+						70 text 
+						71 text 
+						72 text 
+						73 text 
+						74 text 
+						75 text 
+						76 text 
+						77 text 
+						78 text Gallery view
+					79 button  Edit columns
+						80 text 
+						81 text 
+						82 text 
+						83 text Edit columns
+					84 button 
+			85 button 
+			86 container
+				87 table
+					88 row Graphic representation Trade mark name Application date Goods and Services Trade mark status Trade mark office Application number Applicant name
+						89 cell
+						90 cell
+							91 checkbox (settable, integer) 0
+						92 cell
+							93 text Graphic representation
+						94 cell
+							95 container
+								96 text Trade mark name 
+						97 cell
+							98 container
+								99 text Application date 
+						100 cell
+							101 container
+								102 text Goods and Services 
+						103 cell
+							104 container
+								105 text Trade mark status 
+						106 cell
+							107 container
+								108 text Trade mark office 
+						109 cell
+							110 container
+								111 text Application number 
+						112 cell
+							113 container
+								114 text Applicant name 
+					115 container
+						116 row  - WESTERNSIDE 05/05/2009 25 Registered India - CGDPTM 1814711 PARMOD AGGARWAL
+							117 cell
+								118 text 
+							119 cell
+								120 checkbox (settable, integer) 0
+							121 cell
+								122 text -
+							123 cell
+								124 link Description: WESTERNSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/IN500000001814711
+							125 cell
+								126 text 05/05/2009
+							127 cell
+								128 text 25
+							129 cell
+								130 text Registered
+							131 cell
+								132 link Description: India - CGDPTM, Value: ipindia.gov.in/
+							133 cell
+								134 link Description: 1814711, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/IN500000001814711
+							135 cell
+								136 text PARMOD AGGARWAL
+						137 container
+							138 container
+								139 text Goods and Services
+								140 button English (Original) 
+									141 text English (Original)
+									142 text 
+							143 container
+								144 content list
+									145 container
+										146 text 25  - ALL TYPE OF READYMADE GARMENTS LADIES-KIDS-MENS ETC.
+								147 link Description: Show more, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/IN500000001814711?q=goodServices
+							148 text 
+							149 container
+								150 text Status
+								151 container
+									152 text Registered
+									153 image Registered
+								154 text Applicant name
+								155 content list
+									156 text PARMOD AGGARWAL
+								157 text Representative S. C. GUPTA Expiry date 05/05/2019
+							158 container
+								159 text Office of origin
+								160 image image
+								161 text India - CGDPTM
+								162 text Trade Marks: 2415053 (updated 04/05/2026)
+								163 link Description: View this trade mark in the office of origin, Value: ipindiaservices.gov.in/tmrpublicsearch/frmmain.aspx
+			164 container
+				165 link 
+					166 text 
+				167 link 
+					168 text 
+				169 text 1-1 of 1
+				170 link 
+					171 text 
+			172 container
+				173 container
+					174 link Description: Search, Value: tmdn.org/tmview/advancedSearch.html#/tmview
+					175 link Description: Participating offices, Value: tmdn.org/tmview/advancedSearch.html#/tmview/participating
+					176 link Description: Help, Value: tmdn.org/tmview/advancedSearch.html#/tmview/help
+					177 link Your feedback
+						178 text Your feedback
+				179 link Description: EUIPN European Union Intellectual Property Network, Value: euipn.org/
+				180 text Avenida de Europa, 4, 03008 Alicante (SPAIN)
+				181 text Information Centre: +34 96 513 9100
+				182 container
+					183 text Copyright 2007-2026 EUIPO This website is coordinated and maintained by:
+					184 text European Union Intellectual Property Office
+				185 text The TMview and DesignView search tools do not constitute official registers and the information contained in the tools does not have any legal effect.
+				186 link Description: See Terms and Conditions, Value: tmdn.org/tmview/advancedSearch.html#/tmview/disclaimer
+				187 text TMDSVIEW-4.5.1-RC1.1
+				188 container
+					189 link Description: Compatibility, Value: tmdn.org/network/compatibility
+					190 link Description: Data protection, Value: tmdn.org/tmview/advancedSearch.html#/tmview/data-protection
+					191 link Description: Legal notice, Value: euipn.org/en/info/legal-notices
+					192 link Description: About, Value: tmdn.org/tmview/advancedSearch.html#/tmview/about
+
+The focused UI element is 0 AXWebArea TMView, URL: tmdn.org/tmview/advancedSearch.html#/tmview/results?page=1&pageSize=30&criteria=C&basicSearch=Ternside

@@ -1,0 +1,1513 @@
+{
+  "schema_version": "0.5",
+  "synthetic": true,
+  "rules_version": "RULES-GB-01",
+  "independent_cases": true,
+  "execution_note": "Acceptance scenarios specified for later implementation; not executed against an app.",
+  "cases": [
+    {
+      "id": "C01",
+      "title": "Single wins",
+      "flows": [
+        "F04",
+        "F07",
+        "F08",
+        "F11",
+        "F13"
+      ],
+      "setup": "Football-01 HOME; qv1; stake 10.00",
+      "actions": [
+        "Place once",
+        "Confirm HOME wins"
+      ],
+      "expected": [
+        "One receipt; return 21.00; net +11.00"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "21.00"
+        ],
+        "expected_available": "111.00",
+        "stake": "10.00",
+        "gross_return": "21.00",
+        "net_result": "11.00"
+      }
+    },
+    {
+      "id": "C02",
+      "title": "Single loses",
+      "flows": [
+        "F04",
+        "F11",
+        "F13"
+      ],
+      "setup": "Football-01 HOME; stake 10.00",
+      "actions": [
+        "Place once",
+        "Confirm HOME loses"
+      ],
+      "expected": [
+        "No credit; no recovery-bet prompt"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00"
+        ],
+        "expected_available": "90.00",
+        "stake": "10.00",
+        "gross_return": "0.00",
+        "net_result": "-10.00"
+      }
+    },
+    {
+      "id": "C03",
+      "title": "Player never participates",
+      "flows": [
+        "F04",
+        "F11"
+      ],
+      "setup": "PLAYER_2_SOT; stake 10.00",
+      "actions": [
+        "Player remains unused",
+        "Confirm void"
+      ],
+      "expected": [
+        "Return stake once; show non-participation rule"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "10.00"
+        ],
+        "expected_available": "100.00",
+        "stake": "10.00",
+        "gross_return": "10.00",
+        "net_result": "0.00"
+      }
+    },
+    {
+      "id": "C04",
+      "title": "Accumulator reduced after void",
+      "flows": [
+        "F05",
+        "F11"
+      ],
+      "setup": "HOME 2.10 plus football-02 HOME 1.80; stake 10.00",
+      "actions": [
+        "Second leg void",
+        "First leg wins"
+      ],
+      "expected": [
+        "Accepted odds 3.78 retained; settlement odds 2.10 explained"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "21.00"
+        ],
+        "expected_available": "111.00",
+        "stake": "10.00",
+        "gross_return": "21.00",
+        "net_result": "11.00"
+      }
+    },
+    {
+      "id": "C05",
+      "title": "Builder repriced after player void",
+      "flows": [
+        "F06",
+        "F11"
+      ],
+      "setup": "HOME+OVER_2_5+PLAYER_2_SOT 3.40; stake 10.00",
+      "actions": [
+        "Player does not participate",
+        "HOME and OVER win officially"
+      ],
+      "expected": [
+        "Archived HOME+OVER price 2.70; original quote retained"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "27.00"
+        ],
+        "expected_available": "117.00",
+        "stake": "10.00",
+        "gross_return": "27.00",
+        "net_result": "17.00"
+      }
+    },
+    {
+      "id": "C06",
+      "title": "All builder conditions void",
+      "flows": [
+        "F06",
+        "F11"
+      ],
+      "setup": "Builder 3.40; stake 10.00",
+      "actions": [
+        "Confirm all conditions void"
+      ],
+      "expected": [
+        "Return stake once; no win celebration"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "10.00"
+        ],
+        "expected_available": "100.00",
+        "stake": "10.00",
+        "gross_return": "10.00",
+        "net_result": "0.00"
+      }
+    },
+    {
+      "id": "C07",
+      "title": "Price changes at review",
+      "flows": [
+        "F06",
+        "F07"
+      ],
+      "setup": "Builder qv1 3.40; stake 10.00",
+      "actions": [
+        "Publish qv2 3.20",
+        "Review change",
+        "Accept qv2"
+      ],
+      "expected": [
+        "Potential return changes 34.00 to 32.00; no debit before acceptance; accepted snapshot qv2"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00"
+        ],
+        "expected_available": "90.00",
+        "potential_return": "32.00"
+      }
+    },
+    {
+      "id": "C08",
+      "title": "Market suspends before acceptance",
+      "flows": [
+        "F03",
+        "F07"
+      ],
+      "setup": "Reviewed selection; stake 10.00",
+      "actions": [
+        "Suspend before acceptance",
+        "Try to send"
+      ],
+      "expected": [
+        "Keep draft; no receipt or debit"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C09",
+      "title": "Unknown response recovered as accepted",
+      "flows": [
+        "F07",
+        "F13"
+      ],
+      "setup": "Operation op-09; stake 10.00",
+      "actions": [
+        "Lose response",
+        "Navigate back",
+        "Recover same operation as accepted"
+      ],
+      "expected": [
+        "While unknown show confirmed balance and pending operation; block new monetary actions",
+        "One receipt and one debit after recovery"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00"
+        ],
+        "expected_available": "90.00"
+      }
+    },
+    {
+      "id": "C10",
+      "title": "Unknown response recovered as rejected",
+      "flows": [
+        "F07",
+        "F13"
+      ],
+      "setup": "Operation op-10; stake 10.00",
+      "actions": [
+        "Lose response",
+        "Recover same operation as rejected"
+      ],
+      "expected": [
+        "No automatic resubmission; preserve draft"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C11",
+      "title": "Stat correction is not settlement",
+      "flows": [
+        "F09",
+        "F11"
+      ],
+      "setup": "Accepted builder stake 10.00; live-72-before-correction",
+      "actions": [
+        "Apply live-72-corrected"
+      ],
+      "expected": [
+        "Player counter reverts 2 to 1; label correction; no additional ledger entry"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00"
+        ],
+        "expected_available": "90.00"
+      }
+    },
+    {
+      "id": "C12",
+      "title": "Cash Out returns less than stake",
+      "flows": [
+        "F10",
+        "F13"
+      ],
+      "setup": "Accepted stake 10.00; offer 8.00",
+      "actions": [
+        "Review and confirm 8.00"
+      ],
+      "expected": [
+        "Cashed out; net -2.00; no extra stake refund"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "8.00"
+        ],
+        "expected_available": "98.00",
+        "stake": "10.00",
+        "gross_return": "8.00",
+        "net_result": "-2.00"
+      }
+    },
+    {
+      "id": "C13",
+      "title": "Cash Out offer changes",
+      "flows": [
+        "F10"
+      ],
+      "setup": "Accepted stake 10.00; offer 8.00",
+      "actions": [
+        "Change offer to 7.50 before confirmation",
+        "Review new offer",
+        "Confirm"
+      ],
+      "expected": [
+        "No credit before new confirmation; close at 7.50"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "7.50"
+        ],
+        "expected_available": "97.50",
+        "stake": "10.00",
+        "gross_return": "7.50",
+        "net_result": "-2.50"
+      }
+    },
+    {
+      "id": "C14",
+      "title": "Cash Out races with settlement",
+      "flows": [
+        "F10",
+        "F11",
+        "F13"
+      ],
+      "setup": "Accepted builder stake 10.00; full win return 34.00; offer 8.00",
+      "actions": [
+        "Send Cash Out",
+        "Resolve operations in one chosen order"
+      ],
+      "expected": [
+        "Only one terminal monetary resolution",
+        "If settlement wins: available 124.00; reject closure as already settled",
+        "If Cash Out wins: available 98.00; no later sports payout"
+      ],
+      "status": "specified_not_app_tested",
+      "branches": [
+        {
+          "name": "settlement_first",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-10.00",
+              "34.00"
+            ],
+            "expected_available": "124.00"
+          }
+        },
+        {
+          "name": "cash_out_first",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-10.00",
+              "8.00"
+            ],
+            "expected_available": "98.00"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C15",
+      "title": "Gross deposit limit",
+      "flows": [
+        "F13",
+        "F14"
+      ],
+      "setup": "Daily limit 20.00; gross deposited 15.00; remaining 5.00",
+      "actions": [
+        "Try deposit 10.00",
+        "Then explicitly request 5.00"
+      ],
+      "expected": [
+        "Reject 10.00 without consumption",
+        "Accept 5.00; gross deposited 20.00; withdrawal does not replenish margin"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "5.00"
+        ],
+        "expected_available": "105.00"
+      },
+      "account_clock": "2026-10-20T12:00:00Z",
+      "confirmed_deposit_records": [
+        {
+          "id": "dep-15-a",
+          "amount": "10.00",
+          "confirmed_at": "2026-10-19T18:00:00Z"
+        },
+        {
+          "id": "dep-15-b",
+          "amount": "5.00",
+          "confirmed_at": "2026-10-20T09:00:00Z"
+        }
+      ],
+      "seed_ledger_available_before_recorded_deposits": "85.00",
+      "expected_last_24h_consumed_before_action": "15.00"
+    },
+    {
+      "id": "C16",
+      "title": "Withdrawal reservation",
+      "flows": [
+        "F13"
+      ],
+      "setup": "Available 100.00",
+      "actions": [
+        "Request withdrawal 20.00",
+        "Complete or reject in separate branches"
+      ],
+      "expected": [
+        "Pending available 80.00 and reserved 20.00",
+        "Complete keeps available 80.00; reject restores 100.00; no cancel action"
+      ],
+      "status": "specified_not_app_tested",
+      "branches": [
+        {
+          "name": "pending_then_complete",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-20.00"
+            ],
+            "expected_available": "80.00"
+          }
+        },
+        {
+          "name": "pending_then_reject",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-20.00",
+              "20.00"
+            ],
+            "expected_available": "100.00"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C17",
+      "title": "Limit increase requires later confirmation",
+      "flows": [
+        "F14",
+        "F16"
+      ],
+      "setup": "Daily limit 20.00; requested 40.00",
+      "actions": [
+        "Request increase",
+        "Advance account clock 24 hours",
+        "Review",
+        "Confirm"
+      ],
+      "expected": [
+        "Before confirmation remains 20.00; after confirmation 40.00",
+        "Advancing the match clock alone has no effect"
+      ],
+      "status": "specified_not_app_tested"
+    },
+    {
+      "id": "C18",
+      "title": "Pause blocks all entry points",
+      "flows": [
+        "F12",
+        "F14"
+      ],
+      "setup": "Verified account with balance 100.00",
+      "actions": [
+        "Activate time-out",
+        "Try new bet/deposit through search, saved draft and direct route"
+      ],
+      "expected": [
+        "No new stakes or deposits; read-only history and withdrawal remain accessible",
+        "No assistant entry point exists in base v1"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C19",
+      "title": "Self-exclusion closes gambling access",
+      "flows": [
+        "F12",
+        "F13",
+        "F14"
+      ],
+      "setup": "Balance 100.00; no open bets",
+      "actions": [
+        "Confirm self-exclusion",
+        "Initiate synthetic funds return"
+      ],
+      "expected": [
+        "No active authenticated sportsbook; return status/help surface",
+        "Return 100.00 reserved once then completed; no automatic reactivation"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-100.00"
+        ],
+        "expected_available": "0.00"
+      }
+    },
+    {
+      "id": "C20",
+      "title": "Session expires before send",
+      "flows": [
+        "F07",
+        "F12"
+      ],
+      "setup": "Draft with stake 10.00; no submitted operation",
+      "actions": [
+        "Expire session",
+        "Re-enter demo account"
+      ],
+      "expected": [
+        "Preserve draft; revalidate; no debit until explicit submission"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C21",
+      "title": "Ambiguous search",
+      "flows": [
+        "F02"
+      ],
+      "setup": "Search North with more than one eligible entity",
+      "actions": [
+        "Search",
+        "Choose result"
+      ],
+      "expected": [
+        "Show context to disambiguate; no bet automatically added"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C22",
+      "title": "Exclusive builder selection replaces reversibly",
+      "flows": [
+        "F06"
+      ],
+      "setup": "Builder draft HOME selected; no money committed",
+      "actions": [
+        "Choose AWAY in the same result group",
+        "Observe replacement and current joint quote",
+        "Choose Undo before unrelated draft edits"
+      ],
+      "expected": [
+        "No confirmation modal; never store or quote HOME+AWAY",
+        "One result condition remains; feedback names replacement",
+        "Undo restores HOME selection and fetches current quote; prior monetary review stays invalid"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C23",
+      "title": "Tennis retirement",
+      "flows": [
+        "F03",
+        "F11"
+      ],
+      "setup": "Tennis winner stake 10.00 under demo completion rule",
+      "actions": [
+        "Player retires",
+        "Confirm void"
+      ],
+      "expected": [
+        "Rule identified as policy of this demo; return stake"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "10.00"
+        ],
+        "expected_available": "100.00",
+        "stake": "10.00",
+        "gross_return": "10.00",
+        "net_result": "0.00"
+      }
+    },
+    {
+      "id": "C24",
+      "title": "Basketball includes overtime",
+      "flows": [
+        "F03",
+        "F11"
+      ],
+      "setup": "Basketball HOME 1.90 stake 10.00",
+      "actions": [
+        "Tie after regulation",
+        "HOME wins overtime",
+        "Settle"
+      ],
+      "expected": [
+        "Do not settle at regulation tie; gross return 19.00"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "19.00"
+        ],
+        "expected_available": "109.00",
+        "stake": "10.00",
+        "gross_return": "19.00",
+        "net_result": "9.00"
+      }
+    },
+    {
+      "id": "C25",
+      "title": "Viewport change preserves state",
+      "flows": [
+        "F01",
+        "F04",
+        "F16"
+      ],
+      "setup": "Draft selection and 10.00 stake; chosen event/filter",
+      "actions": [
+        "Switch desktop/mobile",
+        "Return to catalogue"
+      ],
+      "expected": [
+        "Same account, route, draft, scroll context where applicable and balance"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C26",
+      "title": "Reset restores a complete fixture",
+      "flows": [
+        "F16"
+      ],
+      "setup": "Modified wallet, bets, limits, queries and event clock",
+      "actions": [
+        "Request reset",
+        "Cancel",
+        "Request reset again",
+        "Confirm"
+      ],
+      "expected": [
+        "Cancel preserves changes",
+        "Confirm restores fixtures.json including initial ledger and historical void bet"
+      ],
+      "status": "specified_not_app_tested"
+    },
+    {
+      "id": "C27",
+      "title": "Inspector handles incomplete hypothetical",
+      "flows": [
+        "F06"
+      ],
+      "setup": "Draft HOME+OVER_2_5+PLAYER_2_SOT; stake 10.00",
+      "actions": [
+        "Explore player not participating without defining match result"
+      ],
+      "expected": [
+        "Player void; remaining conditions undetermined",
+        "Conditional return 27.00 only if HOME and OVER win",
+        "Do not mark the bet won or change actual quote/state"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C28",
+      "title": "Statistics feed unavailable",
+      "flows": [
+        "F03",
+        "F09"
+      ],
+      "setup": "Existing open bet; last player SOT 1",
+      "actions": [
+        "Mark stats feed delayed/unavailable"
+      ],
+      "expected": [
+        "Keep last known count and timestamp; do not infer zero or settlement",
+        "Market pricing availability is a separate state"
+      ],
+      "status": "specified_not_app_tested"
+    },
+    {
+      "id": "C29",
+      "title": "Self-exclusion with an open bet",
+      "flows": [
+        "F11",
+        "F12",
+        "F13",
+        "F14"
+      ],
+      "setup": "HOME 2.10; stake 10.00; funds-return method ready",
+      "actions": [
+        "Place once",
+        "Confirm self-exclusion before match ends",
+        "Reserve and complete initial return 90.00",
+        "Resolve bet in independent branches",
+        "Reserve and complete any later return"
+      ],
+      "expected": [
+        "Close gambling access immediately; preserve receipt and accepted rules",
+        "V13 shows administrative status, no live sports or Cash Out",
+        "No double refund of stake and no reactivation"
+      ],
+      "status": "specified_not_app_tested",
+      "branches": [
+        {
+          "name": "later_win",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-10.00",
+              "-90.00",
+              "21.00",
+              "-21.00"
+            ],
+            "expected_available": "0.00",
+            "expected_returned_total": "111.00",
+            "expected_pending_return": "0.00"
+          }
+        },
+        {
+          "name": "later_loss",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-10.00",
+              "-90.00"
+            ],
+            "expected_available": "0.00",
+            "expected_returned_total": "90.00",
+            "expected_pending_return": "0.00"
+          }
+        },
+        {
+          "name": "later_void",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-10.00",
+              "-90.00",
+              "10.00",
+              "-10.00"
+            ],
+            "expected_available": "0.00",
+            "expected_returned_total": "100.00",
+            "expected_pending_return": "0.00"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C30",
+      "title": "Abandonment keeps determined Over and player results",
+      "flows": [
+        "F06",
+        "F09",
+        "F11"
+      ],
+      "setup": "HOME+OVER_2_5+PLAYER_2_SOT qv1 3.40; stake 10.00",
+      "actions": [
+        "Place once",
+        "Confirm abandonment without resumption at 2-1",
+        "Use officially confirmed SOT count, not the provisional feed"
+      ],
+      "expected": [
+        "HOME void; OVER wins; resolve player by confirmed data",
+        "Keep original 3.40 and explain archived subset quote"
+      ],
+      "status": "specified_not_app_tested",
+      "branches": [
+        {
+          "name": "one_confirmed_sot",
+          "expected": [
+            "PLAYER void; OVER single 1.80; return 18.00"
+          ],
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-10.00",
+              "18.00"
+            ],
+            "expected_available": "108.00",
+            "stake": "10.00",
+            "gross_return": "18.00",
+            "net_result": "8.00"
+          }
+        },
+        {
+          "name": "two_confirmed_sot",
+          "expected": [
+            "PLAYER wins; OVER+PLAYER archived 2.50; return 25.00"
+          ],
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-10.00",
+              "25.00"
+            ],
+            "expected_available": "115.00",
+            "stake": "10.00",
+            "gross_return": "25.00",
+            "net_result": "15.00"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C31",
+      "title": "Abandonment leaves every builder condition undetermined",
+      "flows": [
+        "F06",
+        "F11"
+      ],
+      "setup": "HOME+OVER_2_5+PLAYER_2_SOT qv1; stake 10.00",
+      "actions": [
+        "Place once",
+        "Confirm non-resumable abandonment at 1-0 with one confirmed SOT"
+      ],
+      "expected": [
+        "All conditions void; leading HOME is not a full-time win",
+        "Refund stake once; no win celebration"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "10.00"
+        ],
+        "expected_available": "100.00",
+        "stake": "10.00",
+        "gross_return": "10.00",
+        "net_result": "0.00"
+      }
+    },
+    {
+      "id": "C32",
+      "title": "Determined Under loss overrides remaining voids",
+      "flows": [
+        "F06",
+        "F11"
+      ],
+      "setup": "HOME+UNDER_2_5 qv1 6.60; stake 10.00",
+      "actions": [
+        "Place once",
+        "Confirm non-resumable abandonment at 2-1"
+      ],
+      "expected": [
+        "HOME void; UNDER lost; return 0.00",
+        "Do not refund whole builder because event was abandoned"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00"
+        ],
+        "expected_available": "90.00",
+        "stake": "10.00",
+        "gross_return": "0.00",
+        "net_result": "-10.00"
+      }
+    },
+    {
+      "id": "C33",
+      "title": "Official resettlement changes won to lost",
+      "flows": [
+        "F08",
+        "F11",
+        "F13"
+      ],
+      "setup": "HOME 2.10; stake 10.00; no later spend or withdrawal; funds sufficient",
+      "actions": [
+        "Place once",
+        "Settle as won sv1, credit 21.00",
+        "Correct official result to lost sv2, adjustment -21.00",
+        "Deliver sv2 again, then stale sv1"
+      ],
+      "expected": [
+        "Current list, receipt and detail all LOST with Settlement updated notice",
+        "Preserve old credit and add one adjustment linked to sv1",
+        "Repeat and stale versions change neither money nor current result",
+        "This case does not cover negative balance or returned funds"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "21.00",
+          "-21.00"
+        ],
+        "expected_available": "90.00",
+        "stake": "10.00",
+        "gross_return": "0.00",
+        "net_result": "-10.00"
+      }
+    },
+    {
+      "id": "C34",
+      "title": "Official resettlement changes lost to won",
+      "flows": [
+        "F08",
+        "F11",
+        "F13"
+      ],
+      "setup": "HOME 2.10; stake 10.00",
+      "actions": [
+        "Place once",
+        "Settle as lost sv1 with no credit",
+        "Correct official result to won sv2, credit difference 21.00",
+        "Deliver sv2 again"
+      ],
+      "expected": [
+        "One credit; current status WON with update explanation",
+        "Original lost version retained in labelled history"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "21.00"
+        ],
+        "expected_available": "111.00",
+        "stake": "10.00",
+        "gross_return": "21.00",
+        "net_result": "11.00"
+      }
+    },
+    {
+      "id": "C35",
+      "title": "Exclusion does not wait for an unknown bet response",
+      "flows": [
+        "F07",
+        "F12",
+        "F13",
+        "F14"
+      ],
+      "setup": "Operation op-35 stake 10.00, response unknown",
+      "actions": [
+        "Confirm self-exclusion immediately",
+        "Reconcile original operation ID",
+        "Calculate funds return after reconciliation",
+        "In accepted branch later confirm void and return refund"
+      ],
+      "expected": [
+        "Gambling blocked immediately in both branches",
+        "Do not resubmit or defer exclusion",
+        "No funds enabled for play; separate administrative pending status"
+      ],
+      "status": "specified_not_app_tested",
+      "branches": [
+        {
+          "name": "accepted_then_void",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-10.00",
+              "-90.00",
+              "10.00",
+              "-10.00"
+            ],
+            "expected_available": "0.00",
+            "expected_returned_total": "100.00",
+            "expected_pending_return": "0.00"
+          }
+        },
+        {
+          "name": "rejected",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-100.00"
+            ],
+            "expected_available": "0.00",
+            "expected_returned_total": "100.00",
+            "expected_pending_return": "0.00"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C36",
+      "title": "Failed exclusion funds return remains restricted",
+      "flows": [
+        "F12",
+        "F13",
+        "F14"
+      ],
+      "setup": "Available 100.00; no open bets",
+      "actions": [
+        "Confirm self-exclusion",
+        "Reserve return 100.00",
+        "Mark synthetic return rejected",
+        "Open help/status surface"
+      ],
+      "expected": [
+        "Gaming account remains closed; held funds 100.00 require return follow-up",
+        "No release to playable available balance, deposit, or new bet",
+        "Do not imply funds have disappeared or actually reached a bank"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-100.00"
+        ],
+        "expected_available": "0.00",
+        "expected_returned_total": "0.00",
+        "expected_pending_return": "100.00"
+      }
+    },
+    {
+      "id": "C37",
+      "title": "Incomplete hypothetical can still determine loss",
+      "flows": [
+        "F06"
+      ],
+      "setup": "Draft HOME+OVER_2_5+PLAYER_2_SOT; stake 10.00",
+      "actions": [
+        "Explore a draw after completed 90 minutes, without exact score or SOT"
+      ],
+      "expected": [
+        "HOME would lose, so hypothetical gross return is 0.00",
+        "Do not invent remaining results or label whole ticket undetermined",
+        "Hypothetical never changes actual bet, price or balance"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C38",
+      "title": "Half-penny return uses final HALF_UP",
+      "flows": [
+        "F04",
+        "F11",
+        "F13"
+      ],
+      "setup": "HOME 2.10; stake 1.25",
+      "actions": [
+        "Place once",
+        "Confirm HOME wins"
+      ],
+      "expected": [
+        "Exact gross 2.625 rounds to 2.63, not 2.62",
+        "Net 1.38; same figures in receipt and wallet"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-1.25",
+          "2.63"
+        ],
+        "expected_available": "101.38",
+        "stake": "1.25",
+        "gross_return": "2.63",
+        "net_result": "1.38"
+      }
+    },
+    {
+      "id": "C39",
+      "title": "Midnight does not reset last-24-hour allowance",
+      "flows": [
+        "F13",
+        "F14",
+        "F16"
+      ],
+      "setup": "Limit 20.00 last 24h; 15.00 already confirmed; opening 100.00 includes that earlier deposit",
+      "actions": [
+        "Advance account clock across local midnight to 2026-10-20T23:30:00Z",
+        "Try deposit 10.00; reject",
+        "Explicitly request and confirm 5.00",
+        "Advance account clock to 2026-10-21T22:00:00Z"
+      ],
+      "expected": [
+        "Crossing midnight leaves only 5.00 allowance, not 20.00",
+        "At final clock initial 15.00 has aged out exactly; recent 5.00 remains, allowance 15.00",
+        "Do not reset the seven-day limit or monthly record at midnight"
+      ],
+      "status": "specified_not_app_tested",
+      "account_clock": "2026-10-20T22:30:00Z",
+      "confirmed_deposit_records": [
+        {
+          "id": "dep-39-before",
+          "amount": "15.00",
+          "confirmed_at": "2026-10-20T22:00:00Z"
+        }
+      ],
+      "seed_ledger_available_before_recorded_deposits": "85.00",
+      "expected_last_24h_consumed_before_action": "15.00",
+      "new_deposit_record": {
+        "id": "dep-39-new",
+        "amount": "5.00",
+        "confirmed_at": "2026-10-20T23:30:00Z"
+      },
+      "temporal_expectations": [
+        {
+          "at": "2026-10-20T23:30:00Z",
+          "before_new_deposit": true,
+          "consumed": "15.00",
+          "remaining": "5.00"
+        },
+        {
+          "at": "2026-10-21T22:00:00Z",
+          "consumed": "5.00",
+          "remaining": "15.00"
+        }
+      ],
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "5.00"
+        ],
+        "expected_available": "105.00"
+      }
+    },
+    {
+      "id": "C40",
+      "title": "DST does not shorten the last-24-hour window",
+      "flows": [
+        "F14",
+        "F16"
+      ],
+      "setup": "Limit 20.00; deposit 20.00 on 2026-10-24T12:00:00+01:00",
+      "actions": [
+        "Advance account clock to 2026-10-25T10:30:00Z",
+        "Advance to 2026-10-25T11:00:00Z"
+      ],
+      "expected": [
+        "At first checkpoint 23.5 elapsed hours: consumed 20.00, remaining 0.00",
+        "At second checkpoint exactly 24 elapsed hours: consumed 0.00, remaining 20.00",
+        "No new deposit or available-balance movement"
+      ],
+      "status": "specified_not_app_tested",
+      "confirmed_deposit_records": [
+        {
+          "id": "dep-40",
+          "amount": "20.00",
+          "confirmed_at": "2026-10-24T12:00:00+01:00"
+        }
+      ],
+      "temporal_expectations": [
+        {
+          "at": "2026-10-25T10:30:00Z",
+          "consumed": "20.00",
+          "remaining": "0.00"
+        },
+        {
+          "at": "2026-10-25T11:00:00Z",
+          "consumed": "0.00",
+          "remaining": "20.00"
+        }
+      ]
+    },
+    {
+      "id": "C41",
+      "title": "Limits have direct visible entry points",
+      "flows": [
+        "F01",
+        "F13",
+        "F14"
+      ],
+      "setup": "Home and deposit screen, checked separately on laptop and narrow mobile",
+      "actions": [
+        "Open Deposit limits from Home",
+        "Return",
+        "Open Deposit limits from deposit screen"
+      ],
+      "expected": [
+        "Each link opens V12 directly without intermediate account menu",
+        "Link is visible and discoverable rather than hover-only",
+        "Returning preserves draft and revalidates current quote"
+      ],
+      "status": "specified_not_app_tested"
+    },
+    {
+      "id": "C42",
+      "title": "Live single uses its own quote snapshot",
+      "flows": [
+        "F03",
+        "F04",
+        "F07",
+        "F09",
+        "F11"
+      ],
+      "setup": "live-68 mapped to live-offer-68; HOME 1.30; stake 10.00",
+      "actions": [
+        "Choose result 90-minute HOME, including current 2-1 score",
+        "Review and place",
+        "Complete two-second demo processing with unchanged market/price",
+        "Later confirm HOME wins at completed 90 minutes"
+      ],
+      "expected": [
+        "Accepted odds 1.30, version live-qv1, live snapshot archived",
+        "One debit and gross return 13.00; no pre-match 2.10 price",
+        "This is full-time result, not winner from minute 68 onward"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-10.00",
+          "13.00"
+        ],
+        "expected_available": "103.00",
+        "stake": "10.00",
+        "gross_return": "13.00",
+        "net_result": "3.00"
+      }
+    },
+    {
+      "id": "C43",
+      "title": "Kick-off invalidates a prematch builder review",
+      "flows": [
+        "F03",
+        "F06",
+        "F07",
+        "F16"
+      ],
+      "setup": "Reviewed pre-match HOME+OVER_2_5+PLAYER_2_SOT 3.40; stake 10.00",
+      "actions": [
+        "Advance same event to in-play snapshot",
+        "Try original placement"
+      ],
+      "expected": [
+        "Preserve draft but block old builder placement with phase explanation",
+        "No automatic conversion to single, new quote or another bet type",
+        "Existing accepted builders elsewhere remain valid and track normally"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C44",
+      "title": "Accumulator avoids intermediate price rounding",
+      "flows": [
+        "F05",
+        "F11"
+      ],
+      "setup": "football-01 HOME 2.10 + football-02 HOME 1.80 + football-03 HOME 1.65; all pre-match; stake 1.25",
+      "actions": [
+        "Review exact combined odds 6.237",
+        "Place once",
+        "Confirm all three win"
+      ],
+      "expected": [
+        "Compute 1.25 * 2.10 * 1.80 * 1.65 = 7.79625; final HALF_UP 7.80",
+        "Do not use rounded combined 6.24 for calculation",
+        "Gross/net and component prices reconcile"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [
+          "-1.25",
+          "7.80"
+        ],
+        "expected_available": "106.55",
+        "stake": "1.25",
+        "gross_return": "7.80",
+        "net_result": "6.55"
+      }
+    },
+    {
+      "id": "C45",
+      "title": "Switch betslip mode without copying groups or stakes",
+      "flows": [
+        "F04",
+        "F05",
+        "F16"
+      ],
+      "setup": "Independent betslip seed shared-two-events; pre-match; available 100.00",
+      "betslip_seed_id": "shared-two-events",
+      "actions": [
+        "Switch Singles to Accumulator",
+        "Change accumulator stake from 8.00 to 7.00",
+        "Switch back to Singles, close betslip, change viewport and reopen",
+        "Switch to Accumulator again"
+      ],
+      "expected": [
+        "Exactly draft-01 and draft-02 throughout; group stakes remain 10.00 and 5.00",
+        "Accumulator input remains 7.00; never auto-sum 15.00",
+        "No receipt, debit or preserved monetary review from before the mode change",
+        "Outer counter 2 groups; accumulator summary 1 bet with 2 selections"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C46",
+      "title": "Acceptance consumes only the submitted shared groups",
+      "flows": [
+        "F04",
+        "F05",
+        "F07"
+      ],
+      "setup": "Independent betslip seed shared-two-events; pre-match; available 100.00",
+      "betslip_seed_id": "shared-two-events",
+      "actions": [
+        "Run each branch from the same independent seed",
+        "Review and accept only the stated mode; do not settle the bet"
+      ],
+      "expected": [
+        "Exactly one accepted receipt and one debit per branch",
+        "No hidden copy of an accepted group in the other mode"
+      ],
+      "status": "specified_not_app_tested",
+      "branches": [
+        {
+          "name": "single_first",
+          "actions": [
+            "Place draft-01 separately at stake 10.00",
+            "Open Accumulator"
+          ],
+          "expected": [
+            "Only draft-02 remains with stake 5.00; accumulator stake input 8.00 retained",
+            "Accumulator blocked with only one group; prior two-event review invalid",
+            "Accepted receipt contains only football-01 HOME at 2.10"
+          ],
+          "remaining_group_ids": [
+            "draft-02"
+          ],
+          "expected_accumulator_stake": "8.00",
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-10.00"
+            ],
+            "expected_available": "90.00"
+          }
+        },
+        {
+          "name": "accumulator_first",
+          "actions": [
+            "Place accumulator at stake 8.00 and odds 3.78",
+            "Open Singles"
+          ],
+          "expected": [
+            "No groups remain; both individual stake inputs and accumulator input cleared",
+            "Receipt has two legs, one stake 8.00; no separate bets sent"
+          ],
+          "remaining_group_ids": [],
+          "expected_accumulator_stake": null,
+          "money": {
+            "opening_available": "100.00",
+            "confirmed_deltas": [
+              "-8.00"
+            ],
+            "expected_available": "92.00"
+          }
+        }
+      ]
+    },
+    {
+      "id": "C47",
+      "title": "Editing a builder preserves group identity and separate bets",
+      "flows": [
+        "F04",
+        "F06"
+      ],
+      "setup": "Independent betslip seed builder-plus-single; pre-match; available 100.00",
+      "betslip_seed_id": "builder-plus-single",
+      "actions": [
+        "Edit draft-builder and add PLAYER_2_SOT",
+        "Close editor, reopen and inspect both groups",
+        "Try Accumulator"
+      ],
+      "expected": [
+        "Still two groups; draft-builder has three conditions and stake 10.00 at joint quote 3.40",
+        "draft-ordinary HOME with stake 5.00 is unchanged; overlap is explicitly identified",
+        "No third group or copied builder; outer counter 2",
+        "Accumulator explains builder incompatibility without silently excluding it"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    },
+    {
+      "id": "C48",
+      "title": "Explicit conversion replaces groups without inheriting stakes",
+      "flows": [
+        "F04",
+        "F05",
+        "F06"
+      ],
+      "setup": "Independent betslip seed same-event-singles; pre-match; available 100.00",
+      "betslip_seed_id": "same-event-singles",
+      "actions": [
+        "Open Review as builder preview and cancel",
+        "Open again and choose Use as Bet Builder"
+      ],
+      "expected": [
+        "Cancel preserves draft-home 10.00 and draft-over 5.00",
+        "Confirm replaces the two groups with one builder, joint quote 2.70, stake empty",
+        "No old single groups or inherited 15.00 stake; prior reviews invalid",
+        "No receipt or debit before a newly staked and reviewed placement"
+      ],
+      "status": "specified_not_app_tested",
+      "money": {
+        "opening_available": "100.00",
+        "confirmed_deltas": [],
+        "expected_available": "100.00"
+      }
+    }
+  ],
+  "case_combination_policy": "Independent fixtures only. Do not chain unsupported combinations: post-settlement corrections require sufficient funds and do not apply to completed exclusion returns or erroneous Cash Out.",
+  "rules_document_revision": "0.4",
+  "active_flow_ids": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "F08",
+    "F09",
+    "F10",
+    "F11",
+    "F12",
+    "F13",
+    "F14",
+    "F16"
+  ],
+  "deferred_flow_ids": [
+    "F15"
+  ]
+}

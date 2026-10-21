@@ -1,0 +1,21 @@
+{
+  "version": "BRAND-01",
+  "name": "Ternside",
+  "use": "fictional portfolio concept; commercial clearance not claimed",
+  "wordmark": {"text": "Ternside", "font": "Barlow Condensed", "weight": 600, "letter_spacing_em": -0.015, "separate_symbol": false},
+  "fonts": {
+    "ui": {"family": "Inter", "file": "assets/fonts/Inter-Variable.ttf", "weights": [400, 500, 600, 700], "optical_size": 14, "tabular_numbers": true},
+    "display": {"family": "Barlow Condensed", "file": "assets/fonts/BarlowCondensed-SemiBold.ttf", "weight": 600},
+    "fallback": "system-ui, sans-serif"
+  },
+  "colors": {
+    "canvas": "#F4F5F7", "surface": "#FFFFFF", "ink": "#182134", "secondary": "#596579",
+    "navigation": "#10182B", "action": "#2948FF", "brand_on_dark": "#86A8FF",
+    "selected_fill": "#E9EEFF", "selected_ink": "#2440D8",
+    "won_fill": "#E7F5EC", "won_ink": "#14653A",
+    "warning_fill": "#FFF2D6", "warning_ink": "#805000",
+    "lost_fill": "#FDECEF", "lost_ink": "#AD2536",
+    "void_fill": "#EEF0F3", "void_ink": "#505968"
+  },
+  "layout": "Claude chooses composition and breakpoints; no screen reference is mandatory"
+}

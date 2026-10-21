@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-20",
+  "status": "research_candidate_not_approved_identity",
+  "method": "sRGB relative luminance; ratio=(lighter+0.05)/(darker+0.05); threshold assessed before rounding",
+  "source": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+  "ui_audit": false,
+  "pairs": [
+    {
+      "role": "Text / canvas",
+      "foreground": "#182134",
+      "background": "#F4F5F7",
+      "ratio": 14.74053957653043,
+      "normal_text_4_5": true
+    },
+    {
+      "role": "Secondary / white",
+      "foreground": "#596579",
+      "background": "#FFFFFF",
+      "ratio": 5.895006920356563,
+      "normal_text_4_5": true
+    },
+    {
+      "role": "White / action",
+      "foreground": "#FFFFFF",
+      "background": "#2948FF",
+      "ratio": 6.0602050465772175,
+      "normal_text_4_5": true
+    },
+    {
+      "role": "Selected text / fill",
+      "foreground": "#2440D8",
+      "background": "#E9EEFF",
+      "ratio": 6.478176735771982,
+      "normal_text_4_5": true
+    },
+    {
+      "role": "Won text / fill",
+      "foreground": "#14653A",
+      "background": "#E7F5EC",
+      "ratio": 6.323843494847742,
+      "normal_text_4_5": true
+    },
+    {
+      "role": "Warning text / fill",
+      "foreground": "#805000",
+      "background": "#FFF2D6",
+      "ratio": 6.173568887686966,
+      "normal_text_4_5": true
+    },
+    {
+      "role": "Lost text / fill",
+      "foreground": "#AD2536",
+      "background": "#FDECEF",
+      "ratio": 5.95238777318203,
+      "normal_text_4_5": true
+    },
+    {
+      "role": "Void text / fill",
+      "foreground": "#505968",
+      "background": "#EEF0F3",
+      "ratio": 6.193279496909299,
+      "normal_text_4_5": true
+    },
+    {
+      "role": "Brand light / navy",
+      "foreground": "#86A8FF",
+      "background": "#10182B",
+      "ratio": 7.627951858116294,
+      "normal_text_4_5": true
+    }
+  ]
+}

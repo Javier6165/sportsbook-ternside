@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-20",
+  "revision": "HANDOFF-01",
+  "scope": "Document/data/assets audit only; screen composition delegated to Claude. No application code or application tests.",
+  "markdown_documents_checked": 80,
+  "registered_sources": 99,
+  "flow_specs": 16,
+  "active_flow_specs": 15,
+  "deferred_flow_specs": 1,
+  "acceptance_criteria": 101,
+  "active_acceptance_criteria": 97,
+  "acceptance_scenarios": 48,
+  "money_paths_checked": 50,
+  "quotes_checked": 23,
+  "live_quote_values_checked": 6,
+  "temporal_checkpoints": 10,
+  "exclusion_return_branches": 6,
+  "contrast_text_pairs_checked": 9,
+  "font_license_files_checked": 4,
+  "source_scope_note": "Includes eight technical documentation sources; not 99 independent UX observations.",
+  "app_tests_executed": false,
+  "visual_validation_executed": false,
+  "screen_references_required": false,
+  "draft_visual_review_executed_previously": true,
+  "research_self_review_completed": true,
+  "research_independent_review_completed": false,
+  "font_structure_check": [
+    {
+      "file": "Inter-Variable.ttf",
+      "weight_class": 400,
+      "axes": [
+        {
+          "axis": "opsz",
+          "min_default_max": [
+            14.0,
+            14.0,
+            32.0
+          ]
+        },
+        {
+          "axis": "wght",
+          "min_default_max": [
+            100.0,
+            400.0,
+            900.0
+          ]
+        }
+      ]
+    },
+    {
+      "file": "BarlowCondensed-SemiBold.ttf",
+      "weight_class": 600,
+      "axes": []
+    }
+  ],
+  "checks": [
+    "Local Markdown targets exist",
+    "Source IDs unique/defined",
+    "Active/deferred flow IDs and criteria consistent",
+    "48 cases use active flow IDs",
+    "Initial ledger, 50 balances and stated net results reconcile",
+    "Six exclusion branches reconcile",
+    "23 quote subsets covered and synthetic monotonicity holds",
+    "Six live prices match observation phase context",
+    "HALF_UP and exact accumulator examples reconcile",
+    "Ten temporal checkpoints reconcile",
+    "Betslip seeds and stated ownership expectations valid; no state-machine execution claimed",
+    "Nine text contrast pairs recomputed against final tokens",
+    "Font hashes/headers/weight/axes/licenses checked",
+    "No original-machine paths in portable text/data"
+  ],
+  "result": "pass",
+  "errors": []
+}

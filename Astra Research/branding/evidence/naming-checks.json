@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-20",
+  "status": "preliminary_not_cleared",
+  "recommended_working_name": "Ternside",
+  "user_approved_name": false,
+  "search_queries": [
+    "\"Matchfold\" sports OR betting OR app OR company",
+    "\"Formside\" sports OR betting OR app OR company",
+    "\"Sideframe\" sports OR betting OR app OR company",
+    "\"Matchwise\" sports betting",
+    "\"Matchfold\"",
+    "\"Sideframe\"",
+    "\"Matchwise\" betting",
+    "\"Formside\"",
+    "\"Fieldfold\"",
+    "\"Playphase\" sports betting app",
+    "\"Matchfold\" brand company sportsbook",
+    "\"Match Fold\" betting app",
+    "\"Matchlane\"",
+    "\"Oddframe\"",
+    "\"Ternside\"",
+    "\"Pitchlane\"",
+    "\"Ternside\" betting OR app OR software OR brand",
+    "\"Vennside\"",
+    "\"Roveline\"",
+    "\"Playphase\" brand company",
+    "\"Vennside\" app OR betting OR sports OR brand",
+    "\"Ternside\" OR \"Tern Side\" sportsbook app brand",
+    "\"Vennside\" OR \"Venn Side\" sportsbook app brand",
+    "\"Venside\" OR \"Venn Side\" brand",
+    "\"Turnside\" betting app",
+    "\"Kickspan\"",
+    "\"Matchward\"",
+    "\"Sidepace\"",
+    "\"Terntide\" trademark software",
+    "\"Sidepace\" sports OR betting OR app OR brand",
+    "\"Side Pace\" betting",
+    "\"Sidepace\" site:apps.apple.com OR site:play.google.com",
+    "\"Sidepace\" company"
+  ],
+  "candidate_checks": [
+    {
+      "name": "Ternside",
+      "tmview_contains_rows": 1,
+      "tmview_fuzzy_rows": 18,
+      "flags": [
+        "WESTERNSIDE substring, India class 25",
+        "Terntide UK00003463669, UK class 9, Registered; detailed goods downloadable digital photos"
+      ],
+      "domain": "ternside.com",
+      "domain_rdap_http": 404,
+      "registrar_purchase_availability": "not_checked",
+      "clearance": "not_claimed"
+    },
+    {
+      "name": "Vennside",
+      "tmview_contains_rows": 0,
+      "tmview_fuzzy_rows": 7,
+      "flags": [
+        "VENSIDE CH 19547/2025 Registered; classes 9,35,38,41,42,45; software and entertainment/sport services visible"
+      ],
+      "domain": "vennside.com",
+      "domain_rdap_http": 404,
+      "registrar_purchase_availability": "not_checked",
+      "clearance": "not_claimed"
+    },
+    {
+      "name": "Sidepace",
+      "tmview_contains_rows": null,
+      "tmview_fuzzy_rows": 15,
+      "flags": [
+        "SIDEPEACE, SIDESPACE, SIDEPLACE and other variants returned"
+      ],
+      "domain": "sidepace.com",
+      "domain_rdap_http": 200,
+      "registrar_purchase_availability": "not_checked",
+      "clearance": "not_claimed"
+    }
+  ],
+  "tmview_scope": "No territory, class, office or status filters; participating offices default. Contains and Fuzzy are different search modes; neither is exhaustive legal similarity clearance.",
+  "ukipo_direct": "Security check; candidate results not obtained; no bypass attempted",
+  "app_store_handle_check": "Web-index searches only; direct platform and exhaustive handle checks not performed",
+  "other_tlds": "not_checked",
+  "purchases_or_registrations": false,
+  "selected_concept_name": "Ternside",
+  "selection_status": "chosen_by_assistant_under_delegated_scope_for_fictional_portfolio_concept",
+  "commercial_clearance": "not_claimed"
+}

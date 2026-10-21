@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-20",
+  "method": "Direct read-only Verisign .com RDAP; registered domain used as endpoint control",
+  "interpretation": "404 is no record returned by this endpoint; not registrar purchase availability or trademark clearance",
+  "results": [
+    {
+      "domain": "bet365.com",
+      "endpoint": "https://rdap.verisign.com/com/v1/domain/BET365.COM",
+      "date": "2026-10-20",
+      "control": true,
+      "http_status": 200,
+      "content_type": "application/rdap+json",
+      "ldhName": "BET365.COM",
+      "registration_record_found": true
+    },
+    {
+      "domain": "ternside.com",
+      "endpoint": "https://rdap.verisign.com/com/v1/domain/TERNSIDE.COM",
+      "date": "2026-10-20",
+      "control": false,
+      "http_status": 404,
+      "content_type": "application/rdap+json",
+      "response_bytes": 0,
+      "registration_record_found": null
+    },
+    {
+      "domain": "vennside.com",
+      "endpoint": "https://rdap.verisign.com/com/v1/domain/VENNSIDE.COM",
+      "date": "2026-10-20",
+      "control": false,
+      "http_status": 404,
+      "content_type": "application/rdap+json",
+      "response_bytes": 0,
+      "registration_record_found": null
+    },
+    {
+      "domain": "sidepace.com",
+      "endpoint": "https://rdap.verisign.com/com/v1/domain/SIDEPACE.COM",
+      "date": "2026-10-20",
+      "control": false,
+      "http_status": 200,
+      "content_type": "application/rdap+json",
+      "ldhName": "SIDEPACE.COM",
+      "registration_record_found": true
+    }
+  ]
+}

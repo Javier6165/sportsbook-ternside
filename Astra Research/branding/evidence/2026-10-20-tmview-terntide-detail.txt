@@ -1,0 +1,175 @@
+Browser tab: 5, Title: "TMView", URL: "https://www.tmdn.org/tmview/advancedSearch.html#/tmview/detail/GB500000003463669".
+0 AXWebArea TMView, URL: tmdn.org/tmview/advancedSearch.html#/tmview/detail/GB500000003463669
+	1 container
+		2 link image
+			3 image image
+		4 button 
+		5 button 
+		6 button 
+		7 link Description: Help, Value: tmdn.org/tmview/advancedSearch.html#/tmview/help
+		8 button English (en) 
+			9 text English (en)
+			57 text 
+		11 container
+			12 button Sign in
+			13 button Register
+		58 container action-bar-expandable
+			59 button  Back
+				60 text 
+				61 text Back
+			62 button  Export
+				63 text 
+				64 text 
+				65 text Export
+			66 button (disabled)  Alerts
+				67 text     Alerts
+			68 button (disabled)  Tags
+				69 text   Tags
+			70 button  Share by email
+				71 text 
+				72 text 
+				73 text Share by email
+			74 container
+				75 link Description: , Value: tmdn.org/tmview/advancedSearch.html#
+				76 text 4  /  18
+				77 link Description: , Value: tmdn.org/tmview/advancedSearch.html#
+			78 button View in the original language
+			79 container
+				80 text Go to :
+				81 button TM info 
+					82 text TM info
+					83 text 
+			84 button 
+		85 container
+			86 container
+				87 text Terntide
+				88 heading Terntide, Value: 2
+					89 text Terntide
+				90 container
+					91 text Trade mark status
+					92 text Registered
+					93 text Status date
+					94 text 03/02/2020
+					95 text Application number
+					96 text UK00003463669
+					97 text Registration number
+					98 text UK00003463669
+					99 text 550 Trade mark type
+					100 text Word
+					101 text Kind of mark
+					102 text Individual
+					103 text Application language code
+					104 text en
+					105 text Nice classification
+					106 text 9
+					107 text Series of
+			108 container
+				109 text Goods and Services
+				110 container
+					111 container
+						112 text Language :
+						113 button English (Original) 
+							114 text English (Original)
+							115 text 
+					116 container
+						117 text 9
+						118 text Downloadable digital photos.
+			119 container
+				120 text Vienna code
+				121 text No information available
+			122 container
+				123 text Dates
+				124 container
+					125 text 220 Application date
+					126 text 03/02/2020
+					127 text 151 Registration date
+					128 text 08/08/2020
+					129 text 141 Expiry date
+					130 text 03/02/2030
+					131 link Show more
+						132 text Show more
+			133 container
+				134 text Office
+				135 container
+					136 image Terntide
+					137 link Description: View this trade mark in the office of origin, Value: ipo.gov.uk/tmcase/Results/1/UK00003463669
+					138 container
+						139 text Trade mark office United Kingdom - UKIPO
+					140 container
+						141 text 190 Registration office GB
+			142 container
+				143 text Owner
+				144 container
+					145 text Applicant name
+					146 text Terntide Ltd
+					147 text Applicant incorporation country/territory code
+					148 text GB
+					149 text Applicant identifier
+					150 text 1351884
+					151 text Address
+					152 container
+						153 text 83 PRINCESS DRIVE
+						154 text SEAFORD
+						155 text EAST SUSSEX, EAST SUSSEX
+						156 text BN25 2QT
+					157 text Address country/territory code
+					158 text GB
+			159 container
+				160 text Representative
+				161 text No information available
+			162 container
+				163 text Correspondence address
+				164 text No information available
+			165 container
+				166 text Publication
+				167 text No information available
+			168 container
+				169 text Exhibition priority
+				170 text No information available
+			171 container
+				172 text Priority
+				173 text No information available
+			174 container
+				175 text International registration transformation
+				176 text No information available
+			177 container
+				178 text Seniority
+				179 text No information available
+			180 container
+				181 text Opposition
+				182 text No information available
+			183 container
+				184 text Recordals
+				185 text No information available
+			186 container
+				187 text Appeals
+				188 text No information available
+			189 container
+				190 text Cancellations
+				191 text No information available
+			192 container
+				193 text Renewals
+				194 text No information available
+		36 container
+			37 container
+				38 link Description: Search, Value: tmdn.org/tmview/advancedSearch.html#/tmview
+				39 link Description: Participating offices, Value: tmdn.org/tmview/advancedSearch.html#/tmview/participating
+				40 link Description: Help, Value: tmdn.org/tmview/advancedSearch.html#/tmview/help
+				41 link Your feedback
+					42 text Your feedback
+			43 link Description: EUIPN European Union Intellectual Property Network, Value: euipn.org/
+			44 text Avenida de Europa, 4, 03008 Alicante (SPAIN)
+			45 text Information Centre: +34 96 513 9100
+			46 container
+				47 text Copyright 2007-2026 EUIPO This website is coordinated and maintained by:
+				48 text European Union Intellectual Property Office
+			49 text The TMview and DesignView search tools do not constitute official registers and the information contained in the tools does not have any legal effect.
+			50 link Description: See Terms and Conditions, Value: tmdn.org/tmview/advancedSearch.html#/tmview/disclaimer
+			51 text TMDSVIEW-4.5.1-RC1.1
+			52 container
+				53 link Description: Compatibility, Value: tmdn.org/network/compatibility
+				54 link Description: Data protection, Value: tmdn.org/tmview/advancedSearch.html#/tmview/data-protection
+				55 link Description: Legal notice, Value: euipn.org/en/info/legal-notices
+				56 link Description: About, Value: tmdn.org/tmview/advancedSearch.html#/tmview/about
+
+The focused UI element is 0 AXWebArea TMView, URL: tmdn.org/tmview/advancedSearch.html#/tmview/detail/GB500000003463669

@@ -1,0 +1,35 @@
+# Prompts de las referencias visuales
+
+> Estado posterior: D38 elimina las referencias visuales obligatorias. [START-HERE](../handoff/START-HERE.md) y [BRAND-01](../branding/brand-guide.md) fijan el encargo vigente. Este documento conserva investigación/exploración anterior y no obliga a replicar pantallas ni reabrir opciones ya cerradas.
+
+20-10-2026 · Skill imagegen; herramienta integrada, sin CLI/API propia. Tipo ui-mockup. Texto canónico en SC01; las exportaciones son borradores hasta revisión.
+
+## SC01 desktop A v1
+
+Use case: ui-mockup. Asset type: flat desktop web sportsbook product-design screenshot, not a presentation slide. Create one high-fidelity, front-on 1440x900 reference image for a fictional European fixed-odds sportsbook called Ternside. No browser chrome, device frame, photographic backdrop or tilted perspective.
+
+Visual direction: Matchday editorial. Navy #10182B navigation/header, canvas #F4F5F7, white market and betslip surfaces, primary text #182134, secondary #596579, cobalt #2948FF action, selected fill #E9EEFF with text #2440D8. Inter-like highly legible UI and tabular numerals; Barlow Condensed-like bold sports headline. Athletic, compact, precise, mature. Restrained corners and borders; clear typography, no glass, gradients, giant hero, decorative charts or casino promotions.
+
+Layout: compact 64px top header; approximately 176px left navigation, spacious event markets center, approximately 344px right betslip; coherent gutters. Header text Ternside, Search, Demo money, £100.00. Navigation Sports, Live, My Bets, Account; Football, Tennis, Basketball below. All fixtures and money fictional. No real athlete photos or trademark crests.
+
+Event header: Demo European Cup, Northbridge FC vs Southport Athletic, Tue 20 Oct · 20:00 BST. Category tabs All, Goals, Players, Builder; Builder selected. Small contextual line 90 minutes + stoppage time. Familiar compact market rows: Match result with Northbridge FC 2.10, Draw 3.40, Southport Athletic 3.60; Total goals with Over 2.5 1.80 and Under 2.5 2.00; Player shots on target with Daniel Costa, 2+ shots on target, 1.90. Northbridge FC, Over 2.5 and player selection selected in cobalt, never success green. Enough information density to remain a recognizable sportsbook.
+
+Right betslip heading Betslip (1); Singles active, Accumulator inactive. One clearly labelled Bet Builder card, 3 selections, event Northbridge FC vs Southport Athletic; three readable conditions Northbridge FC to win, Over 2.5 goals, Daniel Costa — 2+ shots on target. Subordinate market/period labels. Joint odds 3.40. Never multiply the individual prices. Display 90 min + stoppage time, and compact participation rule Player must take part. No appearance: selection void; remaining conditions continue at revised odds. Optional text link How this bet works. Stake field £10.00. Potential return £34.00 with Includes stake; Potential profit £24.00 quieter. Primary button Review bet · £10.00. This is an editable pre-review draft: no accepted receipt, no debited balance, no green won checks. The inspector is closed; no fourth column. Match result Draw 3.40 is a different price context from joint builder 3.40 and must stay under its own market.
+
+Prioritize readable realistic UI text, precise money, alignment and functional hierarchy. Use no extra panels, fictitious statistics, unsupported services, AI chat hero, live score, promotional bonuses or fake trust claims. Footer if needed only 18+ · Demo — no real money. This is a provisional visual reference, with name/assets subject to later brand review.
+
+## SC01 desktop A v2 — edición del mercado inventado
+
+Use case: ui-mockup, edit. Input image is the edit target SC01 desktop A v1. Preserve the complete front-on desktop composition, Ternside wordmark, navigation, event header, categories, match-result and total-goals markets, exact prices, selected states and entire right betslip. Keep £100.00 available, builder 3.40, stake £10.00, return £34.00 and profit £24.00 unchanged. Inspector stays closed. No device frame or backdrop.
+
+Correct only the unsupported Player shots on target market in the lower central area. Remove the multiple-player/multiple-threshold table entirely. Replace it with exactly one player row: Daniel Costa; Northbridge FC; one and only one selectable tile labelled 2+ shots on target, priced 1.90, visibly selected blue. No 1+ or 3+ threshold, no Liam Foster, Marcus Reed or Ethan Brooks, no other player, statistic, price or market. The player market may be compact and leave neutral unused canvas below; do not fill space with invented content. Keep normal legible product typography. This is a correction of authored fixture coverage, not an expansion. Everything else remains unchanged.
+
+## SC01 mobile A v1 — boleto abierto
+
+Use case: ui-mockup. Asset type: one flat mobile sportsbook betslip screen, front-on, no device mockup, no browser chrome, no perspective, no backdrop. Portrait aspect 390:844, intended layout 390 CSS px wide by 844 high; sharp readable text. Matchday editorial identity: navy #10182B compact header, off-white #F4F5F7 canvas, white surfaces, main #182134, secondary #596579, cobalt #2948FF action and selected underline. Inter-like regular-width UI typography and tabular money. Ternside is a provisional fictional sportsbook name. Athletic, restrained, compact, not a poster.
+
+Show an opened full-height betslip task, NOT the event page. One task surface only. Header: Close icon with accessible visible Back or Close text; Ternside; Demo £100.00. Main title Betslip (1), with Singles selected and Accumulator inactive. These tabs do not place bets. A single Bet Builder card states 3 selections, Northbridge FC vs Southport Athletic, Tue 20 Oct · 20:00 BST. Three clearly separated condition rows, each with remove control: Northbridge FC to win (Match result), Over 2.5 goals (Total goals), Daniel Costa — 2+ shots on target (Player shots on target). These are one bet, not three bets. Show shared period 90 min + stoppage time once. Joint odds 3.40.
+
+Below, a compact readable rule: Player must take part. No appearance: selection void; remaining conditions continue at revised odds. Text link How this bet works with chevron. Inspector remains closed and is not a second sheet. Stake input £10.00. Potential return £34.00 and Includes stake. Potential profit £24.00 in secondary hierarchy. Strong full-width primary action Review bet · £10.00. Footer 18+ · Demo — no real money. Maintain bottom safe area so no field or CTA is cut off.
+
+No global Sports/Live/My Bets/Account bottom nav inside this focused task. No extra event markets or player list, no unsupported controls or stake quick-add presets, no country/currency selector, no new stake charge, no accepted receipt or winning green checks, no keyboard in this static scene. Keep all three conditions readable without shortening player identity or losing the threshold. Balance £100.00 remains unchanged. Aim to fit the content naturally with comfortable line heights; the financial action must not be squeezed below the image boundary.

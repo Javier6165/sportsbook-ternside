@@ -1,0 +1,640 @@
+{
+  "schema_version": "0.3",
+  "rules_version": "RULES-GB-01",
+  "synthetic": true,
+  "notes": [
+    "Research data only; no application implementation.",
+    "All prices and sports events are fictional.",
+    "Quote values are authored scenario inputs, not a statistical pricing model.",
+    "Prematch quotes expire for new placement when phase changes; accepted bets retain their snapshot.",
+    "Live offering exists only for the exact observation snapshots mapped in live_offer_snapshots; no price interpolation.",
+    "Calendar month is local Europe/London; 24h and 7d windows use elapsed time with confirmed dated deposits.",
+    "betslip_case_seeds are independent research setups, not extra groups in the default empty betslip."
+  ],
+  "locale": {
+    "language": "en-GB",
+    "currency": "GBP",
+    "account_timezone": "Europe/London",
+    "odds": "decimal"
+  },
+  "initial_account": {
+    "id": "demo-account-01",
+    "display_name": "Alex Morgan — Demo",
+    "verified": true,
+    "available": "100.00",
+    "open_stakes": "0.00",
+    "withdrawal_reserved": "0.00",
+    "restriction": "none",
+    "deposit_limits": {
+      "daily": "20.00",
+      "weekly": "50.00",
+      "monthly": "100.00"
+    },
+    "gross_deposits_this_period": {
+      "daily": "0.00",
+      "weekly": "0.00",
+      "monthly": "0.00"
+    },
+    "payment_method": "demo-debit-no-real-details",
+    "deposit_limit_windows": {
+      "last_24_hours": {
+        "duration_hours": 24,
+        "interval": "(now-duration, now]"
+      },
+      "last_7_days": {
+        "duration_hours": 168,
+        "interval": "(now-duration, now]"
+      },
+      "calendar_month": {
+        "timezone": "Europe/London",
+        "start": "first day at 00:00 local"
+      }
+    },
+    "deposit_limits_origin": "Previously set by the fictional demo account holder; not a suggested gambling budget",
+    "limit_window_for_key": {
+      "daily": "last_24_hours",
+      "weekly": "last_7_days",
+      "monthly": "calendar_month"
+    }
+  },
+  "initial_ledger": [
+    {
+      "id": "seed-01",
+      "type": "opening_balance",
+      "delta": "100.00"
+    },
+    {
+      "id": "historic-bet-01",
+      "type": "stake",
+      "delta": "-5.00",
+      "bet_id": "historic-void-01"
+    },
+    {
+      "id": "historic-refund-01",
+      "type": "void_return",
+      "delta": "5.00",
+      "bet_id": "historic-void-01"
+    }
+  ],
+  "initial_bets": [
+    {
+      "id": "historic-void-01",
+      "type": "single",
+      "stake": "5.00",
+      "accepted_odds": "1.80",
+      "status": "void",
+      "gross_return": "5.00",
+      "net_result": "0.00",
+      "reason": "Fictional event cancelled; historical demo receipt.",
+      "event_label": "Archive Demo Match",
+      "selection_label": "Home team",
+      "market_label": "Match result",
+      "period_rule": "90_MIN_PLUS_STOPPAGE",
+      "placed_at": "2026-10-18T12:00:00Z",
+      "rules_version": "RULES-GB-01",
+      "rules_document_revision": "0.4"
+    }
+  ],
+  "events": [
+    {
+      "id": "football-01",
+      "sport": "football",
+      "competition": "Demo European Cup",
+      "home": "Northbridge FC",
+      "away": "Southport Athletic",
+      "starts_at": "2026-10-20T19:00:00Z",
+      "status": "scheduled",
+      "period_rule": "90_MIN_PLUS_STOPPAGE",
+      "player": {
+        "id": "player-01",
+        "name": "Daniel Costa",
+        "team": "Northbridge FC"
+      },
+      "builder": true
+    },
+    {
+      "id": "football-02",
+      "sport": "football",
+      "competition": "Demo Premier Division",
+      "home": "Eastford Rovers",
+      "away": "Westhaven United",
+      "starts_at": "2026-10-21T18:00:00Z",
+      "status": "scheduled",
+      "period_rule": "90_MIN_PLUS_STOPPAGE",
+      "builder": false,
+      "match_winner_odds": {
+        "home": "1.80",
+        "draw": "3.60",
+        "away": "4.40"
+      }
+    },
+    {
+      "id": "football-03",
+      "sport": "football",
+      "competition": "Demo Premier Division",
+      "home": "Kingsmere City",
+      "away": "Northbridge United",
+      "starts_at": "2026-10-21T20:00:00Z",
+      "status": "scheduled",
+      "period_rule": "90_MIN_PLUS_STOPPAGE",
+      "builder": false,
+      "match_winner_odds": {
+        "home": "1.65",
+        "draw": "3.80",
+        "away": "4.50"
+      }
+    },
+    {
+      "id": "tennis-01",
+      "sport": "tennis",
+      "competition": "Demo Tour",
+      "participants": [
+        "M. Vega",
+        "N. Soler"
+      ],
+      "starts_at": "2026-10-21T12:00:00Z",
+      "status": "scheduled",
+      "period_rule": "MATCH_MUST_COMPLETE",
+      "winner_odds": [
+        "1.70",
+        "2.20"
+      ],
+      "builder": false
+    },
+    {
+      "id": "basketball-01",
+      "sport": "basketball",
+      "competition": "Demo Basketball League",
+      "home": "Harbour Lions",
+      "away": "Hilltown Falcons",
+      "starts_at": "2026-10-21T19:30:00Z",
+      "status": "scheduled",
+      "period_rule": "MATCH_INCLUDES_OVERTIME",
+      "winner_odds": {
+        "home": "1.90",
+        "away": "1.95"
+      },
+      "builder": false
+    }
+  ],
+  "football_01_quotes": [
+    {
+      "id": "q1-home",
+      "event_id": "football-01",
+      "selections": [
+        "HOME"
+      ],
+      "decimal_odds": "2.10",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-draw",
+      "event_id": "football-01",
+      "selections": [
+        "DRAW"
+      ],
+      "decimal_odds": "3.40",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-away",
+      "event_id": "football-01",
+      "selections": [
+        "AWAY"
+      ],
+      "decimal_odds": "3.60",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-over_2_5",
+      "event_id": "football-01",
+      "selections": [
+        "OVER_2_5"
+      ],
+      "decimal_odds": "1.80",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-under_2_5",
+      "event_id": "football-01",
+      "selections": [
+        "UNDER_2_5"
+      ],
+      "decimal_odds": "2.00",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "1.90",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-home+over_2_5",
+      "event_id": "football-01",
+      "selections": [
+        "HOME",
+        "OVER_2_5"
+      ],
+      "decimal_odds": "2.70",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-home+under_2_5",
+      "event_id": "football-01",
+      "selections": [
+        "HOME",
+        "UNDER_2_5"
+      ],
+      "decimal_odds": "6.60",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-draw+over_2_5",
+      "event_id": "football-01",
+      "selections": [
+        "DRAW",
+        "OVER_2_5"
+      ],
+      "decimal_odds": "7.80",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-draw+under_2_5",
+      "event_id": "football-01",
+      "selections": [
+        "DRAW",
+        "UNDER_2_5"
+      ],
+      "decimal_odds": "5.80",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-away+over_2_5",
+      "event_id": "football-01",
+      "selections": [
+        "AWAY",
+        "OVER_2_5"
+      ],
+      "decimal_odds": "9.20",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-away+under_2_5",
+      "event_id": "football-01",
+      "selections": [
+        "AWAY",
+        "UNDER_2_5"
+      ],
+      "decimal_odds": "5.80",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-home+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "HOME",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "2.80",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-draw+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "DRAW",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "9.40",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-away+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "AWAY",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "12.00",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-over_2_5+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "OVER_2_5",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "2.50",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-under_2_5+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "UNDER_2_5",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "6.40",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-home+over_2_5+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "HOME",
+        "OVER_2_5",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "3.40",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-home+under_2_5+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "HOME",
+        "UNDER_2_5",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "14.00",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-draw+over_2_5+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "DRAW",
+        "OVER_2_5",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "16.80",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-draw+under_2_5+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "DRAW",
+        "UNDER_2_5",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "20.50",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-away+over_2_5+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "AWAY",
+        "OVER_2_5",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "23.00",
+      "version": "qv1"
+    },
+    {
+      "id": "q1-away+under_2_5+player_2_sot",
+      "event_id": "football-01",
+      "selections": [
+        "AWAY",
+        "UNDER_2_5",
+        "PLAYER_2_SOT"
+      ],
+      "decimal_odds": "26.00",
+      "version": "qv1"
+    }
+  ],
+  "price_change_override": {
+    "key": "HOME+OVER_2_5+PLAYER_2_SOT",
+    "from": "3.40",
+    "to": "3.20",
+    "version": "qv2",
+    "other_subset_prices": "unchanged"
+  },
+  "live_snapshots": [
+    {
+      "id": "live-68",
+      "event_id": "football-01",
+      "minute": 68,
+      "home_goals": 2,
+      "away_goals": 1,
+      "player_participated": true,
+      "player_sot": 1,
+      "data_status": "current",
+      "official_settlement": null,
+      "observed_at": "2026-10-20T20:23:00Z"
+    },
+    {
+      "id": "live-72-before-correction",
+      "event_id": "football-01",
+      "minute": 72,
+      "home_goals": 2,
+      "away_goals": 1,
+      "player_participated": true,
+      "player_sot": 2,
+      "data_status": "current",
+      "official_settlement": null,
+      "observed_at": "2026-10-20T20:27:00Z"
+    },
+    {
+      "id": "live-72-corrected",
+      "event_id": "football-01",
+      "minute": 72,
+      "home_goals": 2,
+      "away_goals": 1,
+      "player_participated": true,
+      "player_sot": 1,
+      "data_status": "corrected",
+      "reason": "A shot was reclassified in the synthetic feed.",
+      "official_settlement": null,
+      "observed_at": "2026-10-20T20:27:10Z"
+    }
+  ],
+  "football_01_selections": [
+    {
+      "id": "HOME",
+      "market": "RESULT_90",
+      "label": "Northbridge FC",
+      "rule": "R03"
+    },
+    {
+      "id": "DRAW",
+      "market": "RESULT_90",
+      "label": "Draw",
+      "rule": "R03"
+    },
+    {
+      "id": "AWAY",
+      "market": "RESULT_90",
+      "label": "Southport Athletic",
+      "rule": "R03"
+    },
+    {
+      "id": "OVER_2_5",
+      "market": "TOTAL_2_5_90",
+      "label": "Over 2.5 goals",
+      "rule": "R03"
+    },
+    {
+      "id": "UNDER_2_5",
+      "market": "TOTAL_2_5_90",
+      "label": "Under 2.5 goals",
+      "rule": "R03"
+    },
+    {
+      "id": "PLAYER_2_SOT",
+      "market": "PLAYER_SOT_90",
+      "label": "Daniel Costa — 2+ shots on target",
+      "rule": "R03"
+    }
+  ],
+  "rules_document_revision": "0.4",
+  "simulation_clocks": {
+    "account_now": "2026-10-20T12:00:00Z",
+    "event_state": "scheduled",
+    "session_elapsed_seconds": 0,
+    "independent": true,
+    "event_now": "2026-10-20T18:00:00Z"
+  },
+  "deposit_records": [],
+  "live_offer_snapshots": [
+    {
+      "id": "live-offer-68",
+      "event_id": "football-01",
+      "observation_snapshot_ids": [
+        "live-68"
+      ],
+      "phase": "in_play",
+      "minute": 68,
+      "score": [
+        2,
+        1
+      ],
+      "quote_version": "live-qv1",
+      "market": "RESULT_90",
+      "single_odds": {
+        "HOME": "1.30",
+        "DRAW": "5.00",
+        "AWAY": "13.00"
+      },
+      "pre_match_markets_closed": [
+        "TOTAL_2_5_90",
+        "PLAYER_SOT_90"
+      ],
+      "builder_new_bets": false,
+      "accumulator_new_leg": false,
+      "processing_seconds_demo_only": 2
+    },
+    {
+      "id": "live-offer-72",
+      "event_id": "football-01",
+      "observation_snapshot_ids": [
+        "live-72-before-correction",
+        "live-72-corrected"
+      ],
+      "phase": "in_play",
+      "minute": 72,
+      "score": [
+        2,
+        1
+      ],
+      "quote_version": "live-qv2",
+      "market": "RESULT_90",
+      "single_odds": {
+        "HOME": "1.24",
+        "DRAW": "5.80",
+        "AWAY": "15.00"
+      },
+      "pre_match_markets_closed": [
+        "TOTAL_2_5_90",
+        "PLAYER_SOT_90"
+      ],
+      "builder_new_bets": false,
+      "accumulator_new_leg": false,
+      "processing_seconds_demo_only": 2
+    }
+  ],
+  "betslip_case_seeds": [
+    {
+      "id": "shared-two-events",
+      "mode": "Singles",
+      "accumulator_stake": "8.00",
+      "groups": [
+        {
+          "id": "draft-01",
+          "event_id": "football-01",
+          "type": "single",
+          "selections": [
+            "HOME"
+          ],
+          "separate_stake": "10.00"
+        },
+        {
+          "id": "draft-02",
+          "event_id": "football-02",
+          "type": "single",
+          "selections": [
+            "HOME"
+          ],
+          "separate_stake": "5.00"
+        }
+      ]
+    },
+    {
+      "id": "builder-plus-single",
+      "mode": "Singles",
+      "accumulator_stake": null,
+      "groups": [
+        {
+          "id": "draft-builder",
+          "event_id": "football-01",
+          "type": "builder",
+          "selections": [
+            "HOME",
+            "OVER_2_5"
+          ],
+          "separate_stake": "10.00"
+        },
+        {
+          "id": "draft-ordinary",
+          "event_id": "football-01",
+          "type": "single",
+          "selections": [
+            "HOME"
+          ],
+          "separate_stake": "5.00"
+        }
+      ]
+    },
+    {
+      "id": "same-event-singles",
+      "mode": "Singles",
+      "accumulator_stake": null,
+      "groups": [
+        {
+          "id": "draft-home",
+          "event_id": "football-01",
+          "type": "single",
+          "selections": [
+            "HOME"
+          ],
+          "separate_stake": "10.00"
+        },
+        {
+          "id": "draft-over",
+          "event_id": "football-01",
+          "type": "single",
+          "selections": [
+            "OVER_2_5"
+          ],
+          "separate_stake": "5.00"
+        }
+      ]
+    }
+  ]
+}

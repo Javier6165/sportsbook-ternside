@@ -1,0 +1,579 @@
+Browser tab: 5, Title: "TMView", URL: "https://www.tmdn.org/tmview/advancedSearch.html#/tmview/results?page=1&pageSize=30&criteria=F&basicSearch=Vennside".
+0 AXWebArea TMView, URL: tmdn.org/tmview/advancedSearch.html#/tmview/results?page=1&pageSize=30&criteria=F&basicSearch=Vennside
+	1 container
+		2 container
+			3 link image
+				4 image image
+			5 button 
+			6 button 
+			7 button 
+			8 link Description: Help, Value: tmdn.org/tmview/advancedSearch.html#/tmview/help
+			9 button English (en) 
+				10 text English (en)
+				11 text 
+			12 container
+				13 button Sign in
+				14 button Register
+			15 container
+				16 button 
+					17 text 
+					18 text 
+				19 container
+					20 text Trade mark name :
+					21 container
+						22 button Fuzzy search 
+							23 text Fuzzy search
+							24 text 
+						25 container
+							26 combo box (collapsed, settable) Value: Vennside, Secondary Actions: Expand
+							27 button 
+						28 button SEARCH
+				29 button (disabled)  Save this search
+					30 text 
+					31 text Save this search
+				32 button  Share by email
+					33 text 
+					34 text 
+					35 text Share by email
+				36 button image
+					37 image image
+				38 container
+					39 button  Export
+						40 text 
+						41 text 
+						42 text Export
+					43 button (disabled)  Compare
+						44 text      Compare
+					45 button (disabled)  Alerts
+						46 text     Alerts
+					47 button (disabled)  Tags
+						48 text   Tags
+					49 link 
+						50 text 
+					51 link 
+						52 text 
+					53 text 1-7 of 7
+					54 link 
+						55 text 
+					56 button  Statistics view
+						57 text 
+						58 text 
+						59 text Statistics view
+					60 button  List view
+						61 text 
+						62 text 
+						63 text 
+						64 text 
+						65 text 
+						66 text 
+						67 text List view
+					68 button  Gallery view
+						69 text 
+						70 text 
+						71 text 
+						72 text 
+						73 text 
+						74 text 
+						75 text 
+						76 text 
+						77 text 
+						78 text Gallery view
+					79 button  Edit columns
+						80 text 
+						81 text 
+						82 text 
+						83 text Edit columns
+					84 button 
+			85 button  Edit
+				86 text 
+				87 text 
+				88 text 
+				89 text Edit
+			90 button 
+			91 button CLEAR FILTERS
+			92 button (disabled) APPLY
+			93 text Offices
+			94 container
+				95 checkbox (settable, integer) Description: Australia - IPA (2), Value: 0
+				96 text Australia - IPA (2)
+			97 container
+				98 checkbox (settable, integer) Description: France - INPI (2), Value: 0
+				99 text France - INPI (2)
+			100 container
+				101 checkbox (settable, integer) Description: Italy - UIBM (1), Value: 0
+				102 text Italy - UIBM (1)
+			103 button Show all 5 results
+			104 text Goods and Services
+			105 container
+				106 checkbox (settable, integer) Value: 0, Description: 1 Chemicals for use in industry, science and photography, as well as in agriculture, horticulture and forestry; Unprocessed artificial resins, unprocessed plastics; Fire extinguishing and fire prevention compositions; Tempering and soldering preparations; Substances for tanning animal skins and hides; Adhesives for use in industry; Putties and other paste fillers; Compost, manures, fertilizers; Biological preparations for use in industry and science (1)
+				107 text 1 Chemicals for use in industry, science and photography, as well as in agriculture, horticulture and forestry; Unprocessed artificial resins, unprocessed plastics; Fire extinguishing and fire prevention compositions; Tempering and soldering preparations; Substances for tanning animal skins and hides; Adhesives for use in industry; Putties and other paste fillers; Compost, manures, fertilizers; Biological preparations for use in industry and science (1)
+			108 container
+				109 checkbox (settable, integer) Value: 0, Description: 5 Pharmaceuticals, medical and veterinary preparations; Sanitary preparations for medical purposes; Dietetic food and substances adapted for medical or veterinary use, food for babies; Dietary supplements for human beings and animals; Plasters, materials for dressings; Material for stopping teeth, dental wax; Disinfectants; Preparations for destroying vermin; Fungicides, herbicides (6)
+				110 text 5 Pharmaceuticals, medical and veterinary preparations; Sanitary preparations for medical purposes; Dietetic food and substances adapted for medical or veterinary use, food for babies; Dietary supplements for human beings and animals; Plasters, materials for dressings; Material for stopping teeth, dental wax; Disinfectants; Preparations for destroying vermin; Fungicides, herbicides (6)
+			111 container
+				112 checkbox (settable, integer) Value: 0, Description: 9 Scientific, research, navigation, surveying, photographic, cinematographic, audiovisual, optical, weighing, measuring, signalling, detecting, testing, inspecting, life-saving and teaching apparatus and instruments; Apparatus and instruments for conducting, switching, transforming, accumulating, regulating or controlling the distribution or use of electricity; Apparatus and instruments for recording, transmitting, reproducing or processing sound, images or data; Recorded and downloadable media, computer software, blank digital or analogue recording and storage media; Mechanisms for coin-operated apparatus; Cash registers, calculating devices; Computers and computer peripheral devices; Diving suits, divers' masks, ear plugs for divers, nose clips for divers and swimmers, gloves for divers, breathing apparatus for underwater swimming; Fire-extinguishing apparatus (1)
+				113 text 9 Scientific, research, navigation, surveying, photographic, cinematographic, audiovisual, optical, weighing, measuring, signalling, detecting, testing, inspecting, life-saving and teaching apparatus and instruments; Apparatus and instruments for conducting, switching, transforming, accumulating, regulating or controlling the distribution or use of electricity; Apparatus and instruments for recording, transmitting, reproducing or processing sound, images or data; Recorded and downloadable media, computer software, blank digital or analogue recording and storage media; Mechanisms for coin-operated apparatus; Cash registers, calculating devices; Computers and computer peripheral devices; Diving suits, divers' masks, ear plugs for divers, nose clips for divers and swimmers, gloves for divers, breathing apparatus for underwater swimming; Fire-extinguishing apparatus (1)
+			114 button Show all 8 results
+			115 text Trade mark status
+			116 container
+				117 checkbox (settable, integer) Description: Expired (5), Value: 0
+				118 text Expired (5)
+			119 container
+				120 checkbox (settable, integer) Description: Registered (2), Value: 0
+				121 text Registered (2)
+			122 text Trade mark type
+			123 container
+				124 checkbox (settable, integer) Description: Other (1), Value: 0
+				125 text Other (1)
+			126 container
+				127 checkbox (settable, integer) Description: Word (6), Value: 0
+				128 text Word (6)
+			129 text Applicant name
+			130 container
+				131 container react-select-7--value
+					132 text Select a filter
+					133 combo box (collapsed, settable) ID: select-fAName-selector, Secondary Actions: Expand
+				134 text 
+			135 text Application date
+			136 container
+				137 checkbox (settable, integer) Description: Today, Value: 0
+				138 text Today
+			139 container
+				140 checkbox (settable, integer) Description: 1 day to 1 week, Value: 0
+				141 text 1 day to 1 week
+			142 container
+				143 checkbox (settable, integer) Description: 1 week to 1 month, Value: 0
+				144 text 1 week to 1 month
+			145 button Show all 7 results
+			146 text Registration date
+			147 container
+				148 checkbox (settable, integer) Description: Today, Value: 0
+				149 text Today
+			150 container
+				151 checkbox (settable, integer) Description: 1 day to 1 week, Value: 0
+				152 text 1 day to 1 week
+			153 container
+				154 checkbox (settable, integer) Description: 1 week to 1 month, Value: 0
+				155 text 1 week to 1 month
+			156 button Show all 7 results
+			157 text Currently opposable
+			158 container
+				159 checkbox (settable, integer) Description: Currently opposable, Value: 0
+				160 text Currently opposable
+			161 text Seniority claimed
+			162 container
+				163 checkbox (settable, integer) Description: Seniority claimed, Value: 0
+				164 text Seniority claimed
+			165 button CLEAR FILTERS
+			166 button (disabled) APPLY
+			167 container
+				168 table
+					169 row Graphic representation Trade mark name Application date Goods and Services Trade mark status Trade mark office Application number Applicant name
+						170 cell
+						171 cell
+							172 checkbox (settable, integer) 0
+						173 cell
+							174 text Graphic representation
+						175 cell
+							176 container
+								177 text Trade mark name 
+						178 cell
+							179 container
+								180 text Application date 
+						181 cell
+							182 container
+								183 text Goods and Services 
+						184 cell
+							185 container
+								186 text Trade mark status 
+						187 cell
+							188 container
+								189 text Trade mark office 
+						190 cell
+							191 container
+								192 text Application number 
+						193 cell
+							194 container
+								195 text Applicant name 
+					196 container
+						197 row  - PENNSIDE 24/03/1981 5 Expired Portugal - INPIPT 050000212935 ATOFINA CHEMICALS, INC
+							198 cell
+								199 text 
+							200 cell
+								201 checkbox (settable, integer) 0
+							202 cell
+								203 text -
+							204 cell
+								205 link Description: PENNSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/PT500000000212935
+							206 cell
+								207 text 24/03/1981
+							208 cell
+								209 text 5
+							210 cell
+								211 text Expired
+							212 cell
+								213 link Description: Portugal - INPIPT, Value: inpi.justica.gov.pt/
+							214 cell
+								215 link Description: 050000212935, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/PT500000000212935
+							216 cell
+								217 text ATOFINA CHEMICALS, INC
+						218 container
+							219 container
+								220 text Goods and Services
+								221 button Português (Original) 
+									222 text Português (Original)
+									223 text 
+							224 container
+								225 content list
+									226 container
+										227 text 5  - INSECTICIDAS PARA A AGRICULTURA
+								228 link Description: Show more, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/PT500000000212935?q=goodServices
+							229 text 
+							230 container
+								231 text Status
+								232 container
+									233 text Expired
+									234 image Expired
+								235 text Applicant name
+								236 content list
+									237 text ATOFINA CHEMICALS, INC
+								238 text Representative ANTÓNIO JOSÉ PISSARRA DIAS MACHADO Expiry date 13/07/2009
+							239 container
+								240 text Office of origin
+								241 image image
+								242 text Portugal - INPIPT
+								243 text Trade Marks: 645129 (updated 18/10/2026)
+								244 link Description: View this trade mark in the office of origin, Value: servicosonline.inpi.justica.gov.pt/pesquisas/main/marcasdirecto.jsp?appnumber=050000212935&markNumberType=APX
+					245 container
+						246 row  - PENNSIDE 17/11/1989 5 Registered Italy - UIBM 1989900090274 PENNWALT CORP. ORA ATHOCHEM NORTHAMERICA INC.
+							247 cell
+								248 text 
+							249 cell
+								250 checkbox (settable, integer) 0
+							251 cell
+								252 text -
+							253 cell
+								254 link Description: PENNSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/IT501989900090274
+							255 cell
+								256 text 17/11/1989
+							257 cell
+								258 text 5
+							259 cell
+								260 text Registered
+							261 cell
+								262 link Description: Italy - UIBM, Value: uibm.mise.gov.it/index.php/it/
+							263 cell
+								264 link Description: 1989900090274, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/IT501989900090274
+							265 cell
+								266 text PENNWALT CORP. ORA ATHOCHEM NORTHAMERICA INC.
+						267 container
+							268 container
+								269 text Goods and Services
+								270 button Italiano (Original) 
+									271 text Italiano (Original)
+									272 text 
+							273 container
+								274 content list
+									275 container
+										276 text 5  - Dati pre-porting - Classe:05 - Prod/Serv: - Descrizione:null
+								277 link Description: Show more, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/IT501989900090274?q=goodServices
+							278 text 
+							279 container
+								280 text Status
+								281 container
+									282 text Registered
+									283 image Registered
+								284 text Applicant name
+								285 content list
+									286 text PENNWALT CORP. ORA ATHOCHEM NORTHAMERICA INC.
+							287 container
+								288 text Office of origin
+								289 image image
+								290 text Italy - UIBM
+								291 text Trade Marks: 1285351 (updated 20/10/2026)
+								292 link Description: View this trade mark in the office of origin, Value: uibm.gov.it/bancadati/Number_search/type_url?type=wpn
+					293 container
+						294 row  - PENNSIDE 14/08/2003 1, 5 Expired Australia - IPA 966230 Cerexagri
+							295 cell
+								296 text 
+							297 cell
+								298 checkbox (settable, integer) 0
+							299 cell
+								300 text -
+							301 cell
+								302 link Description: PENNSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AU500000000966230
+							303 cell
+								304 text 14/08/2003
+							305 cell
+								306 text 1, 5
+							307 cell
+								308 text Expired
+							309 cell
+								310 link Description: Australia - IPA, Value: ipaustralia.gov.au/
+							311 cell
+								312 link Description: 966230, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AU500000000966230
+							313 cell
+								314 text Cerexagri
+						315 container
+							316 container
+								317 text Goods and Services
+								318 button English (Original) 
+									319 text English (Original)
+									320 text 
+							321 container
+								322 content list
+									323 container
+										324 text 01  - Chemicals for use in agriculture
+									325 container
+										326 text 05  - Preparations for destroying vermin; fungicides; herbicides
+								327 link Description: Show more, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AU500000000966230?q=goodServices
+							328 text 
+							329 container
+								330 text Status
+								331 container
+									332 text Expired
+									333 image Expired
+								334 text Applicant name
+								335 content list
+									336 text Cerexagri
+								337 text Representative PHILLIPS ORMONDE FITZPATRICK Expiry date 14/08/2023
+							338 container
+								339 text Office of origin
+								340 image image
+								341 text Australia - IPA
+								342 text Trade Marks: 2466091 (updated 20/10/2026)
+								343 link Description: View this trade mark in the office of origin, Value: search.ipaustralia.gov.au/trademarks/search/view/966230
+					344 container
+						345 row  - PENNSIDE 01/09/1981 5 Expired Australia - IPA 365067 ATOFINA Chemicals, Inc.
+							346 cell
+								347 text 
+							348 cell
+								349 checkbox (settable, integer) 0
+							350 cell
+								351 text -
+							352 cell
+								353 link Description: PENNSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AU500000000365067
+							354 cell
+								355 text 01/09/1981
+							356 cell
+								357 text 5
+							358 cell
+								359 text Expired
+							360 cell
+								361 link Description: Australia - IPA, Value: ipaustralia.gov.au/
+							362 cell
+								363 link Description: 365067, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AU500000000365067
+							364 cell
+								365 text ATOFINA Chemicals, Inc.
+						366 container
+							367 container
+								368 text Goods and Services
+								369 button English (Original) 
+									370 text English (Original)
+									371 text 
+							372 container
+								373 content list
+									374 container
+										375 text 05  - Insecticides, including agricultural insecticides
+								376 link Description: Show more, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AU500000000365067?q=goodServices
+							377 text 
+							378 container
+								379 text Status
+								380 container
+									381 text Expired
+									382 image Expired
+								383 text Applicant name
+								384 content list
+									385 text ATOFINA Chemicals, Inc.
+								386 text Representative PHILLIPS ORMONDE FITZPATRICK Expiry date 01/09/2002
+							387 container
+								388 text Office of origin
+								389 image image
+								390 text Australia - IPA
+								391 text Trade Marks: 2466091 (updated 20/10/2026)
+								392 link Description: View this trade mark in the office of origin, Value: search.ipaustralia.gov.au/trademarks/search/view/365067
+					393 container
+						394 row  - VENSIDE 19/12/2025 9, 35, 38, 41, 42, 45 Registered Switzerland - IGE-IPI 19547/2025 Süleyman Azun
+							395 cell
+								396 text 
+							397 cell
+								398 checkbox (settable, integer) 0
+							399 cell
+								400 text -
+							401 cell
+								402 link Description: VENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/CH502025000019547
+							403 cell
+								404 text 19/12/2025
+							405 cell
+								406 text 9, 35, 38, 41, 42, 45
+							407 cell
+								408 text Registered
+							409 cell
+								410 link Description: Switzerland - IGE-IPI, Value: ige.ch/en.html
+							411 cell
+								412 link Description: 19547/2025, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/CH502025000019547
+							413 cell
+								414 text Süleyman Azun
+						415 container
+							416 container
+								417 text Goods and Services
+								418 button Deutsch (Original) 
+									419 text Deutsch (Original)
+									420 text 
+							421 container
+								422 content list
+									423 container
+										424 text 09  - Computersoftware; aufgezeichnete und herunterladbare Medien; Apps für Mobiltelefone; herunterladbare Software und mobile Applikationen für soziale Netzwerke und Freundschaftsvermittlung; Software für die Vermittlung von Kontakten zwischen Nutzern mit gemeinsamen Interessen; Software für Echtzeit-Kommunikation und Messaging; Software für die Erstellung, Bearbeitung und Veröffentlichung von Video- und Bildmaterial; Software für standortbasierte Dienste und Geolokalisierung; Software mit künstlicher Intelligenz für Benutzerempfehlungen und Eventsuche; Software für die Organisation und Verwaltung von Veranstaltungen; herunterladbare elektronische Publikationen; Computersoftwareplattformen; gespeicherte oder herunterladbare Software-Plattformen.
+									425 container
+										426 text 35  - Werbung; Geschäftsführung; Werbung und Marketing; Online-Werbedienstleistungen; Bereitstellung von Werbeflächen auf elektronischen Medien; Bereitstellung von Online-Marktplätzen für Veranstalter und Event-Organisatoren; Sammlung, Systematisierung und Pflege von Daten in Computerdatenbanken; Geschäftsvermittlung für Event-Veranstalter; Verbreitung von Werbematerial über Online-Netzwerke; Werbung mittels Sponsoring; Erstellung von Statistiken und Analysen zu Nutzerverhalten; Unternehmensprofilierung und Organisatoren-Profile für kommerzielle Event-Anbieter; Social Media-Marketing; Dienstleistungen in Bezug auf Unternehmens-Networking.
+									427 container
+										428 text 38  - Telekommunikation; Telekommunikationsdienste; Bereitstellung des Zugangs zu Datenbanken und Online-Plattformen; Bereitstellen des Zugangs zu Plattformen im Internet und mobilen Internet; Bereitstellen des Zugriffs auf Computernetzwerke, Internetplattformen, Datenbanken und elektronische Publikationen; Bereitstellung des Zugangs zu elektronischen Informations-, Kommunikations- und Transaktionsplattformen im Internet; Übermittlung von Nachrichten und Bildern mittels Computer; Echtzeit-Chat- und Messaging-Dienste; Bereitstellung von Online-Foren und Chat-Räumen; Übertragung von Audio-, Video- und Multimediainhalten über Online-Netzwerke; Push-Benachrichtigungsdienste; Bereitstellung von Telekommunikationsverbindungen zu einem globalen Computernetzwerk; elektronischer Austausch von Nachrichten über Chat-Linien, Chatrooms und Internet-Foren; Bereitstellung von Zugängen zu interaktiven Online-Kommunikationsplattformen.
+									429 container
+										430 text 41  - Unterhaltung; sportliche und kulturelle Aktivitäten; Organisation, Durchführung und Vermittlung von Veranstaltungen in den Bereichen Unterhaltung, Kultur, Sport, Freizeit, Bildung und Gesundheit; Bereitstellung von Online-Plattformen für die Information über und Buchung von Veranstaltungen; Veröffentlichung von nutzergenerierten Inhalten; Bereitstellung von Online-Unterhaltungsdienstleistungen; Organisation von sozialen Zusammenkünften und Gruppenaktivitäten; Bereitstellung von nicht herunterladbaren Videos und Multimedia-Inhalten; Unterhaltungsdienstleistungen in Form von Benutzerpartizipation bei interaktiven Stories und Posts; Organisation und Durchführung von kulturellen, sportlichen und gesellschaftlichen Events; Organisation und Durchführung von Galaveranstaltungen und anderen gesellschaftlichen Anlässen (Events), nämlich von kulturellen und/oder sportlichen Veranstaltungen oder von solchen mit Unterhaltungscharakter sowie von Wettbewerben (einschliesslich Verleihung von Preisen); Vermittlung von Freizeitaktivitäten; Bereitstellung von Informationen im Bereich Veranstaltungen und Unterhaltung; elektronische Spiele- und Wettbewerbsdienste via Internet; Unterhaltung mittels elektronischer Plattformen.
+									431 container
+										432 text 42  - Technologische Dienstleistungen; Authentifizierungsdienstleistungen; Entwurf und Entwicklung von Computersoftware; Bereitstellung von Software als Dienstleistung (SaaS) für soziale Netzwerke und Freundschaftsvermittlung; Platform as a Service (PaaS); Hosting von Online-Plattformen für soziale Netzwerke; Hosting von Plattformen im Internet; Cloud-Computing-Dienste; Speicherung von elektronischen Daten; Softwareentwicklung für Anwendungen im Bereich soziale Medien; IT-Dienste, nämlich Entwicklung, Programmierung und Implementierung von Software; Bereitstellung von nicht herunterladbarer Software zur Ermöglichung von Uploads, Posts, Anzeigen und Teilen von Daten und Informationen; technische Beratungsdienste im Bereich sozialer Netzwerke; Dienste der künstlichen Intelligenz für Personensuche und Eventempfehlungen; Geo-Coding- und Standorterkennungsdienste; Bereitstellung von Plattformen für Datenexport und Datenverwaltung; Entwicklung von APIs für Drittanbieter-Integrationen; Entwicklung von Computerplattformen; Programmierung von Software für Internetplattformen.
+								433 link Description: Show 1 more, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/CH502025000019547?q=goodServices
+							434 text 
+							435 container
+								436 text Status
+								437 container
+									438 text Registered
+									439 image Registered
+								440 text Applicant name
+								441 content list
+									442 text Süleyman Azun
+								443 text Representative Rentsch Partner AG Expiry date 19/12/2035
+							444 container
+								445 text Office of origin
+								446 image image
+								447 text Switzerland - IGE-IPI
+								448 text Trade Marks: 621190 (updated 20/10/2026)
+								449 link Description: View this trade mark in the office of origin, Value: swissreg.ch/database-client/register/detail?type=trademark&no=19547/2025&lang=en
+					450 container
+						451 row  PENNSIDE 240 12/12/1978 5 Expired France - INPI 1079112 Société dite: PENNWALT CORPORATION,
+							452 cell
+								453 text 
+							454 cell
+								455 checkbox (settable, integer) 0
+							456 cell
+								457 link tmdn.org/tmview/advancedSearch.html#/tmview/detail/FR500000001079112
+							458 cell
+								459 link Description: PENNSIDE 240, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/FR500000001079112
+							460 cell
+								461 text 12/12/1978
+							462 cell
+								463 text 5
+							464 cell
+								465 text Expired
+							466 cell
+								467 link Description: France - INPI, Value: inpi.fr/
+							468 cell
+								469 link Description: 1079112, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/FR500000001079112
+							470 cell
+								471 text Société dite: PENNWALT CORPORATION,
+						472 container
+							473 container
+								474 text Goods and Services
+								475 button Français (Original) 
+									476 text Français (Original)
+									477 text 
+							478 container
+								479 content list
+									480 container
+										481 text 05  - Préparations pour détruire les animaux nuisibles, insecticides.
+								482 link Description: Show more, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/FR500000001079112?q=goodServices
+							483 text 
+							484 container
+								485 text Status
+								486 container
+									487 text Expired
+									488 image Expired
+								489 text Applicant name
+								490 content list
+									491 text Société dite: PENNWALT CORPORATION,
+							492 container
+								493 text Office of origin
+								494 image image
+								495 text France - INPI
+								496 text Trade Marks: 3531943 (updated 20/10/2026)
+								497 link Description: View this trade mark in the office of origin, Value: data.inpi.fr/marques/FR1079112
+					498 container
+						499 row  PENNSIDE 240 01/12/1988 5 Expired France - INPI 1501161 ELF ATOCHEM NORTH AMERICA, INC société constituée selon les lois de l'Etat de Pennsylvanie,
+							500 cell
+								501 text 
+							502 cell
+								503 checkbox (settable, integer) 0
+							504 cell
+								505 link tmdn.org/tmview/advancedSearch.html#/tmview/detail/FR500000001501161
+							506 cell
+								507 link Description: PENNSIDE 240, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/FR500000001501161
+							508 cell
+								509 text 01/12/1988
+							510 cell
+								511 text 5
+							512 cell
+								513 text Expired
+							514 cell
+								515 link Description: France - INPI, Value: inpi.fr/
+							516 cell
+								517 link Description: 1501161, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/FR500000001501161
+							518 cell
+								519 text ELF ATOCHEM NORTH AMERICA, INC société constituée selon les lois de l'Etat de Pennsylvanie,
+						520 container
+							521 container
+								522 text Goods and Services
+								523 button Français (Original) 
+									524 text Français (Original)
+									525 text 
+							526 container
+								527 content list
+									528 container
+										529 text 05  - Préparations pour détruire les animaux nuisibles, insecticides.
+								530 link Description: Show more, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/FR500000001501161?q=goodServices
+							531 text 
+							532 container
+								533 text Status
+								534 container
+									535 text Expired
+									536 image Expired
+								537 text Applicant name
+								538 content list
+									539 text ELF ATOCHEM NORTH AMERICA, INC société constituée selon les lois de l'Etat de Pennsylvanie,
+								540 text Representative RINUY, SANTARELLI
+							541 container
+								542 text Office of origin
+								543 image image
+								544 text France - INPI
+								545 text Trade Marks: 3531943 (updated 20/10/2026)
+								546 link Description: View this trade mark in the office of origin, Value: data.inpi.fr/marques/FR1501161
+			547 container
+				548 link 
+					549 text 
+				550 link 
+					551 text 
+				552 text 1-7 of 7
+				553 link 
+					554 text 
+			555 container
+				556 container
+					557 link Description: Search, Value: tmdn.org/tmview/advancedSearch.html#/tmview
+					558 link Description: Participating offices, Value: tmdn.org/tmview/advancedSearch.html#/tmview/participating
+					559 link Description: Help, Value: tmdn.org/tmview/advancedSearch.html#/tmview/help
+					560 link Your feedback
+						561 text Your feedback
+				562 link Description: EUIPN European Union Intellectual Property Network, Value: euipn.org/
+				563 text Avenida de Europa, 4, 03008 Alicante (SPAIN)
+				564 text Information Centre: +34 96 513 9100
+				565 container
+					566 text Copyright 2007-2026 EUIPO This website is coordinated and maintained by:
+					567 text European Union Intellectual Property Office
+				568 text The TMview and DesignView search tools do not constitute official registers and the information contained in the tools does not have any legal effect.
+				569 link Description: See Terms and Conditions, Value: tmdn.org/tmview/advancedSearch.html#/tmview/disclaimer
+				570 text TMDSVIEW-4.5.1-RC1.1
+				571 container
+					572 link Description: Compatibility, Value: tmdn.org/network/compatibility
+					573 link Description: Data protection, Value: tmdn.org/tmview/advancedSearch.html#/tmview/data-protection
+					574 link Description: Legal notice, Value: euipn.org/en/info/legal-notices
+					575 link Description: About, Value: tmdn.org/tmview/advancedSearch.html#/tmview/about
+
+The focused UI element is 28 button SEARCH

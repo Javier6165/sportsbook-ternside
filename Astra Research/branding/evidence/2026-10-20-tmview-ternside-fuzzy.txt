@@ -1,0 +1,624 @@
+Browser tab: 5, Title: "TMView", URL: "https://www.tmdn.org/tmview/advancedSearch.html#/tmview/results?page=1&pageSize=30&criteria=F&basicSearch=Ternside".
+0 AXWebArea TMView, URL: tmdn.org/tmview/advancedSearch.html#/tmview/results?page=1&pageSize=30&criteria=F&basicSearch=Ternside
+	1 container
+		2 container
+			3 link image
+				4 image image
+			5 button 
+			6 button 
+			7 button 
+			8 link Description: Help, Value: tmdn.org/tmview/advancedSearch.html#/tmview/help
+			9 button English (en) 
+				10 text English (en)
+				11 text 
+			12 container
+				13 button Sign in
+				14 button Register
+			15 container
+				16 button 
+					17 text 
+					18 text 
+				19 container
+					20 text Trade mark name :
+					21 container
+						22 button Fuzzy search 
+							23 text Fuzzy search
+							24 text 
+						576 container
+							577 combo box (collapsed, settable) Value: Ternside, Secondary Actions: Expand
+							578 button 
+						28 button SEARCH
+				29 button (disabled)  Save this search
+					30 text 
+					31 text Save this search
+				32 button  Share by email
+					33 text 
+					34 text 
+					35 text Share by email
+				36 button image
+					37 image image
+				38 container
+					39 button  Export
+						579 text 
+						580 text 
+						42 text Export
+					43 button (disabled)  Compare
+						44 text      Compare
+					45 button (disabled)  Alerts
+						46 text     Alerts
+					47 button (disabled)  Tags
+						48 text   Tags
+					581 link 
+						582 text 
+					583 link 
+						584 text 
+					585 text 1-18 of 18
+					586 link 
+						587 text 
+					588 button  Statistics view
+						589 text 
+						590 text 
+						591 text Statistics view
+					592 button  List view
+						593 text 
+						594 text 
+						595 text 
+						596 text 
+						597 text 
+						598 text 
+						599 text List view
+					600 button  Gallery view
+						601 text 
+						602 text 
+						603 text 
+						604 text 
+						605 text 
+						606 text 
+						607 text 
+						608 text 
+						609 text 
+						610 text Gallery view
+					611 button  Edit columns
+						612 text 
+						613 text 
+						614 text 
+						615 text Edit columns
+					616 button 
+			85 button  Edit
+				86 text 
+				87 text 
+				88 text 
+				89 text Edit
+			90 button 
+			91 button CLEAR FILTERS
+			92 button (disabled) APPLY
+			617 text Offices
+			618 container
+				619 checkbox (settable, integer) Description: Argentina - INPI (5), Value: 0
+				620 text Argentina - INPI (5)
+			621 container
+				622 checkbox (settable, integer) Description: Austria - OPA (1), Value: 0
+				623 text Austria - OPA (1)
+			624 container
+				625 checkbox (settable, integer) Description: Brazil - INPI (3), Value: 0
+				626 text Brazil - INPI (3)
+			627 button Show all 8 results
+			628 text Goods and Services
+			629 container
+				630 checkbox (settable, integer) Value: 0, Description: 1 Chemicals for use in industry, science and photography, as well as in agriculture, horticulture and forestry; Unprocessed artificial resins, unprocessed plastics; Fire extinguishing and fire prevention compositions; Tempering and soldering preparations; Substances for tanning animal skins and hides; Adhesives for use in industry; Putties and other paste fillers; Compost, manures, fertilizers; Biological preparations for use in industry and science (8)
+				631 text 1 Chemicals for use in industry, science and photography, as well as in agriculture, horticulture and forestry; Unprocessed artificial resins, unprocessed plastics; Fire extinguishing and fire prevention compositions; Tempering and soldering preparations; Substances for tanning animal skins and hides; Adhesives for use in industry; Putties and other paste fillers; Compost, manures, fertilizers; Biological preparations for use in industry and science (8)
+			632 container
+				633 checkbox (settable, integer) Value: 0, Description: 2 Paints, varnishes, lacquers; Preservatives against rust and against deterioration of wood; Colorants, dyes; Inks for printing, marking and engraving; Raw natural resins; Metals in foil and powder form for use in painting, decorating, printing and art (3)
+				634 text 2 Paints, varnishes, lacquers; Preservatives against rust and against deterioration of wood; Colorants, dyes; Inks for printing, marking and engraving; Raw natural resins; Metals in foil and powder form for use in painting, decorating, printing and art (3)
+			635 container
+				636 checkbox (settable, integer) Value: 0, Description: 3 Non-medicated cosmetics and toiletry preparations; Non-medicated dentifrices; Perfumery, essential oils; Bleaching preparations and other substances for laundry use; Cleaning, polishing, scouring and abrasive preparations (5)
+				637 text 3 Non-medicated cosmetics and toiletry preparations; Non-medicated dentifrices; Perfumery, essential oils; Bleaching preparations and other substances for laundry use; Cleaning, polishing, scouring and abrasive preparations (5)
+			638 button Show all 24 results
+			639 text Vienna codes
+			640 container
+				641 checkbox (settable, integer) Description: 26.07 DIFFERENT GEOMETRICAL FIGURES, JUXTAPOSED, JOINED OR INTERSECTING (2), Value: 0
+				1103 text 26.07 DIFFERENT GEOMETRICAL FIGURES, JUXTAPOSED, JOINED OR INTERSECTING (2)
+			642 container
+				643 checkbox (settable, integer) Value: 0, Description: 27.05 LETTERS PRESENTING A SPECIAL FORM OF WRITING (This code can only be used alone or togehter with code 27.7.1) (1)
+				1104 text 27.05 LETTERS PRESENTING A SPECIAL FORM OF WRITING (This code can only be used alone or togehter with code 27.7.1) (1)
+			644 container
+				645 checkbox (settable, integer) Description: 28.19 INSCRIPTIONS IN OTHER CHARACTERS & phonetic writing (1), Value: 0
+				1105 text 28.19 INSCRIPTIONS IN OTHER CHARACTERS & phonetic writing (1)
+			646 button Show all 4 results
+			647 text Trade mark status
+			648 container
+				649 checkbox (settable, integer) Description: Ended (3), Value: 0
+				650 text Ended (3)
+			651 container
+				652 checkbox (settable, integer) Description: Expired (6), Value: 0
+				653 text Expired (6)
+			654 container
+				655 checkbox (settable, integer) Description: Registered (9), Value: 0
+				656 text Registered (9)
+			657 text Trade mark type
+			658 container
+				659 checkbox (settable, integer) Description: Combined (3), Value: 0
+				660 text Combined (3)
+			661 container
+				662 checkbox (settable, integer) Description: Figurative (2), Value: 0
+				663 text Figurative (2)
+			664 container
+				665 checkbox (settable, integer) Description: Undefined (3), Value: 0
+				666 text Undefined (3)
+			667 button Show all 4 results
+			668 text Applicant name
+			669 container
+				1106 container react-select-8--value
+					1107 text Select a filter
+					1108 combo box (collapsed, settable) ID: select-fAName-selector, Secondary Actions: Expand
+				1109 text 
+			1110 text Application date
+			671 container
+				672 checkbox (settable, integer) Description: Today, Value: 0
+				1111 text Today
+			673 container
+				674 checkbox (settable, integer) Description: 1 day to 1 week, Value: 0
+				1112 text 1 day to 1 week
+			675 container
+				676 checkbox (settable, integer) Description: 1 week to 1 month, Value: 0
+				1113 text 1 week to 1 month
+			677 button Show all 7 results
+			1114 text Registration date
+			678 container
+				679 checkbox (settable, integer) Description: Today, Value: 0
+				1115 text Today
+			680 container
+				681 checkbox (settable, integer) Description: 1 day to 1 week, Value: 0
+				1116 text 1 day to 1 week
+			682 container
+				683 checkbox (settable, integer) Description: 1 week to 1 month, Value: 0
+				1117 text 1 week to 1 month
+			684 button Show all 7 results
+			1118 text Currently opposable
+			685 container
+				686 checkbox (settable, integer) Description: Currently opposable, Value: 0
+				1119 text Currently opposable
+			1120 text Seniority claimed
+			687 container
+				688 checkbox (settable, integer) Description: Seniority claimed, Value: 0
+				1121 text Seniority claimed
+			165 button CLEAR FILTERS
+			166 button (disabled) APPLY
+			689 container
+				690 table
+					691 row Graphic representation Trade mark name Application date Goods and Services Trade mark status Trade mark office Application number Applicant name
+						692 cell
+						693 cell
+							694 checkbox (settable, integer) 0
+						695 cell
+							696 text Graphic representation
+						697 cell
+							698 container
+								699 text Trade mark name 
+						700 cell
+							701 container
+								702 text Application date 
+						703 cell
+							704 container
+								705 text Goods and Services 
+						706 cell
+							707 container
+								708 text Trade mark status 
+						709 cell
+							710 container
+								711 text Trade mark office 
+						712 cell
+							713 container
+								714 text Application number 
+						715 cell
+							716 container
+								717 text Applicant name 
+					718 row  TEENSIDE TEENSIDE 04/09/1997 - Ended Brazil - INPI 820220949 ALTA VOLTAGEM COMERCIAL LTDA
+						719 cell
+							720 text 
+						721 cell
+							722 checkbox (settable, integer) 0
+						723 cell
+							724 link Description: TEENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/BR500000820220949
+						725 cell
+							726 link Description: TEENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/BR500000820220949
+						727 cell
+							728 text 04/09/1997
+						729 cell
+							730 text -
+						731 cell
+							732 text Ended
+						733 cell
+							734 link Description: Brazil - INPI, Value: inpi.gov.br/
+						735 cell
+							736 link Description: 820220949, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/BR500000820220949
+						737 cell
+							738 text ALTA VOLTAGEM COMERCIAL LTDA
+					739 row  - FERNSIDE 18/08/2000 33 Expired New Zealand - IPONZ 621313 LINTZ ESTATE LIMITED
+						740 cell
+							741 text 
+						742 cell
+							743 checkbox (settable, integer) 0
+						744 cell
+							745 text -
+						746 cell
+							747 link Description: FERNSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/NZ500000000621313
+						748 cell
+							749 text 18/08/2000
+						750 cell
+							751 text 33
+						752 cell
+							753 text Expired
+						754 cell
+							755 link Description: New Zealand - IPONZ, Value: iponz.govt.nz/
+						756 cell
+							757 link Description: 621313, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/NZ500000000621313
+						758 cell
+							759 text LINTZ ESTATE LIMITED
+					760 row  - Teenside 24/11/2006 25 Ended Brazil - INPI 900096756 TEXTIL MONTE VERDE LTDA ME
+						761 cell
+							762 text 
+						763 cell
+							764 checkbox (settable, integer) 0
+						765 cell
+							766 text -
+						767 cell
+							768 link Description: Teenside, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/BR500000900096756
+						769 cell
+							770 text 24/11/2006
+						771 cell
+							772 text 25
+						773 cell
+							774 text Ended
+						775 cell
+							776 link Description: Brazil - INPI, Value: inpi.gov.br/
+						777 cell
+							778 link Description: 900096756, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/BR500000900096756
+						779 cell
+							780 text TEXTIL MONTE VERDE LTDA ME
+					781 row  - Terntide 03/02/2020 9 Registered United Kingdom - UKIPO UK00003463669 Terntide Ltd
+						782 cell
+							783 text 
+						784 cell
+							785 checkbox (settable, integer) 0
+						786 cell
+							787 text -
+						788 cell
+							789 link Description: Terntide, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/GB500000003463669
+						790 cell
+							791 text 03/02/2020
+						792 cell
+							793 text 9
+						794 cell
+							795 text Registered
+						796 cell
+							797 link Description: United Kingdom - UKIPO, Value: ipo.gov.uk/
+						798 cell
+							799 link Description: UK00003463669, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/GB500000003463669
+						800 cell
+							801 text Terntide Ltd
+					802 row  - TENSIDE 25/01/1990 1 Expired Argentina - INPI 1722459 AUERNIGG VOX, FEDERICO 100,00%
+						803 cell
+							804 text 
+						805 cell
+							806 checkbox (settable, integer) 0
+						807 cell
+							808 text -
+						809 cell
+							810 link Description: TENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000001722459
+						811 cell
+							812 text 25/01/1990
+						813 cell
+							814 text 1
+						815 cell
+							816 text Expired
+						817 cell
+							818 link Description: Argentina - INPI, Value: inpi.gob.ar/
+						819 cell
+							820 link Description: 1722459, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000001722459
+						821 cell
+							822 text AUERNIGG VOX, FEDERICO 100,00%
+					823 row  TENSIDE 13/10/2020 1 Registered India - CGDPTM 4700323 M/S. AGRIUS INDIA PRIVATE LIMITED.
+						824 cell
+							825 text 
+						826 cell
+							827 checkbox (settable, integer) 0
+						828 cell
+							829 link tmdn.org/tmview/advancedSearch.html#/tmview/detail/IN500000004700323
+						830 cell
+							831 link Description: TENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/IN500000004700323
+						832 cell
+							833 text 13/10/2020
+						834 cell
+							835 text 1
+						836 cell
+							837 text Registered
+						838 cell
+							839 link Description: India - CGDPTM, Value: ipindia.gov.in/
+						840 cell
+							841 link Description: 4700323, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/IN500000004700323
+						842 cell
+							843 text M/S. AGRIUS INDIA PRIVATE LIMITED.
+					844 row  - TENSIDE 09/05/2013 1 Expired Argentina - INPI 3245046 AUERNIGG VOX, FEDERICO 100,00%
+						845 cell
+							846 text 
+						847 cell
+							848 checkbox (settable, integer) 0
+						849 cell
+							850 text -
+						851 cell
+							852 link Description: TENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000003245046
+						853 cell
+							854 text 09/05/2013
+						855 cell
+							856 text 1
+						857 cell
+							858 text Expired
+						859 cell
+							860 link Description: Argentina - INPI, Value: inpi.gob.ar/
+						861 cell
+							862 link Description: 3245046, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000003245046
+						863 cell
+							864 text AUERNIGG VOX, FEDERICO 100,00%
+					865 row  - TENSIDE 08/09/1986 3 Expired Argentina - INPI 1561028 PANNOCCHIA, LUIS EDUARDO %
+						866 cell
+							867 text 
+						868 cell
+							869 checkbox (settable, integer) 0
+						870 cell
+							871 text -
+						872 cell
+							873 link Description: TENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000001561028
+						874 cell
+							875 text 08/09/1986
+						876 cell
+							877 text 3
+						878 cell
+							879 text Expired
+						880 cell
+							881 link Description: Argentina - INPI, Value: inpi.gob.ar/
+						882 cell
+							883 link Description: 1561028, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000001561028
+						884 cell
+							885 text PANNOCCHIA, LUIS EDUARDO %
+					886 row  - TENSIDE 16/06/2000 3 Registered Brazil - INPI 822339218 OLEAK INDUSTRIA E COMERCIO LTDA
+						887 cell
+							888 text 
+						889 cell
+							890 checkbox (settable, integer) 0
+						891 cell
+							892 text -
+						893 cell
+							894 link Description: TENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/BR500000822339218
+						895 cell
+							896 text 16/06/2000
+						897 cell
+							898 text 3
+						899 cell
+							900 text Registered
+						901 cell
+							902 link Description: Brazil - INPI, Value: inpi.gov.br/
+						903 cell
+							904 link Description: 822339218, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/BR500000822339218
+						905 cell
+							906 text OLEAK INDUSTRIA E COMERCIO LTDA
+					907 row  - TENSIDE 07/02/2003 1 Expired Argentina - INPI 2411646 AUERNIGG VOX, FEDERICO 100,00%
+						908 cell
+							909 text 
+						910 cell
+							911 checkbox (settable, integer) 0
+						912 cell
+							913 text -
+						914 cell
+							915 link Description: TENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000002411646
+						916 cell
+							917 text 07/02/2003
+						918 cell
+							919 text 1
+						920 cell
+							921 text Expired
+						922 cell
+							923 link Description: Argentina - INPI, Value: inpi.gob.ar/
+						924 cell
+							925 link Description: 2411646, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000002411646
+						926 cell
+							927 text AUERNIGG VOX, FEDERICO 100,00%
+					928 row  TENSIDE 22/12/2014 20 Registered China - CNIPA 15984149 朱国华
+						929 cell
+							930 text 
+						931 cell
+							932 checkbox (settable, integer) 0
+						933 cell
+							934 link tmdn.org/tmview/advancedSearch.html#/tmview/detail/CN500001598414920
+						935 cell
+							936 link Description: TENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/CN500001598414920
+						937 cell
+							938 text 22/12/2014
+						939 cell
+							940 text 20
+						941 cell
+							942 text Registered
+						943 cell
+							944 link Description: China - CNIPA, Value: english.cnipa.gov.cn/
+						945 cell
+							946 link Description: 15984149, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/CN500001598414920
+						947 cell
+							948 text 朱国华
+					949 row  - TENSIDE 19/05/2023 1 Registered Argentina - INPI 4245672 AUERNIGG VOX, FEDERICO 100,00%
+						950 cell
+							951 text 
+						952 cell
+							953 checkbox (settable, integer) 0
+						954 cell
+							955 text -
+						956 cell
+							957 link Description: TENSIDE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000004245672
+						958 cell
+							959 text 19/05/2023
+						960 cell
+							961 text 1
+						962 cell
+							963 text Registered
+						964 cell
+							965 link Description: Argentina - INPI, Value: inpi.gob.ar/
+						966 cell
+							967 link Description: 4245672, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AR500000004245672
+						968 cell
+							969 text AUERNIGG VOX, FEDERICO 100,00%
+					970 row  甜馨 TERNSINE 15/09/2018 27 Registered China - CNIPA 33544441 优优淘电子商务有限公司 YOYOTAL E-COMMERCE LIMITED
+						971 cell
+							972 text 
+						973 cell
+							974 checkbox (settable, integer) 0
+						975 cell
+							976 link tmdn.org/tmview/advancedSearch.html#/tmview/detail/CN500003354444127
+						977 cell
+							978 link Description: 甜馨 TERNSINE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/CN500003354444127
+						979 cell
+							980 text 15/09/2018
+						981 cell
+							982 text 27
+						983 cell
+							984 text Registered
+						985 cell
+							986 link Description: China - CNIPA, Value: english.cnipa.gov.cn/
+						987 cell
+							988 link Description: 33544441, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/CN500003354444127
+						989 cell
+							990 text 优优淘电子商务有限公司 YOYOTAL E-COMMERCE LIMITED
+					991 row  - FERNSIDE-ARUHE TAHA 07/11/1973 31 Expired New Zealand - IPONZ 106210 Not available
+						992 cell
+							993 text 
+						994 cell
+							995 checkbox (settable, integer) 0
+						996 cell
+							997 text -
+						998 cell
+							999 link Description: FERNSIDE-ARUHE TAHA, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/NZ500000000106210
+						1000 cell
+							1001 text 07/11/1973
+						1002 cell
+							1003 text 31
+						1004 cell
+							1005 text Expired
+						1006 cell
+							1007 link Description: New Zealand - IPONZ, Value: iponz.govt.nz/
+						1008 cell
+							1009 link Description: 106210, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/NZ500000000106210
+						1010 cell
+							1011 text Not available
+					1012 row  甜馨 TERNSINE 01/04/2017 26 Registered China - CNIPA 23376265 蓝珀实业（香港）有限公司 LAMPER INDUSTRIES(HONG KONG)LIMITED
+						1013 cell
+							1014 text 
+						1015 cell
+							1016 checkbox (settable, integer) 0
+						1017 cell
+							1018 link tmdn.org/tmview/advancedSearch.html#/tmview/detail/CN500002337626526
+						1019 cell
+							1020 link Description: 甜馨 TERNSINE, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/CN500002337626526
+						1021 cell
+							1022 text 01/04/2017
+						1023 cell
+							1024 text 26
+						1025 cell
+							1026 text Registered
+						1027 cell
+							1028 link Description: China - CNIPA, Value: english.cnipa.gov.cn/
+						1029 cell
+							1030 link Description: 23376265, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/CN500002337626526
+						1031 cell
+							1032 text 蓝珀实业（香港）有限公司 LAMPER INDUSTRIES(HONG KONG)LIMITED
+					1033 row  LEUNA TENSIDE GMBH 26/06/2018 1, 2, 3, 4, 5, 42 Registered United Kingdom - UKIPO UK00917923381 Vantage Leuna GmbH
+						1034 cell
+							1035 text 
+						1036 cell
+							1037 checkbox (settable, integer) 0
+						1038 cell
+							1039 link tmdn.org/tmview/advancedSearch.html#/tmview/detail/GB500000917923381
+						1040 cell
+							1041 link Description: LEUNA TENSIDE GMBH, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/GB500000917923381
+						1042 cell
+							1043 text 26/06/2018
+						1044 cell
+							1045 text 1, 2, 3, 4, 5, 42
+						1046 cell
+							1047 text Registered
+						1048 cell
+							1049 link Description: United Kingdom - UKIPO, Value: ipo.gov.uk/
+						1050 cell
+							1051 link Description: UK00917923381, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/GB500000917923381
+						1052 cell
+							1053 text Vantage Leuna GmbH
+					1054 row  LEUNA TENSIDE GMBH 26/06/2018 1, 5, 2, 4, 42, 3 Registered EUIPO - EUIPO 017923381 Vantage Leuna GmbH
+						1055 cell
+							1056 text 
+						1057 cell
+							1058 checkbox (settable, integer) 0
+						1059 cell
+							1060 link tmdn.org/tmview/advancedSearch.html#/tmview/detail/EM500000017923381
+						1061 cell
+							1062 link Description: LEUNA TENSIDE GMBH, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/EM500000017923381
+						1063 cell
+							1064 text 26/06/2018
+						1065 cell
+							1066 text 1, 5, 2, 4, 42, 3
+						1067 cell
+							1068 text Registered
+						1069 cell
+							1070 link Description: EUIPO - EUIPO, Value: euipo.europa.eu/
+						1071 cell
+							1072 link Description: 017923381, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/EM500000017923381
+						1073 cell
+							1074 text Vantage Leuna GmbH
+					1075 row  UMWELTVERTRÄGLICH WEIL TENSIDE VOLLSTÄNDIG ABBAUBAR. GEMÄSS METABOLITEN-TEST. 03/01/1992 1, 2, 3, 4, 5, 9, 11, 26, 25, 21, 24, 16, 31, 27, 19, 17, 41, 40, 28, 35 Ended Austria - OPA 14/1992 HENKEL AUSTRIA GRUPPE BETEILIGUNGSVERWALTUNG GESELLSCHAFT M.B.H.
+						1076 cell
+							1077 text 
+						1078 cell
+							1079 checkbox (settable, integer) 0
+						1080 cell
+							1081 link tmdn.org/tmview/advancedSearch.html#/tmview/detail/AT501992000000014
+						1082 cell
+							1083 link Description: UMWELTVERTRÄGLICH WEIL TENSIDE VOLLSTÄNDIG ABBAUBAR. GEMÄSS METABOLITEN-TEST., Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AT501992000000014
+						1084 cell
+							1085 text 03/01/1992
+						1086 cell
+							1087 text 1, 2, 3, 4, 5, 9, 11, 26, 25, 21, 24, 16, 31, 27, 19, 17, 41, 40, 28, 35
+						1088 cell
+							1089 text Ended
+						1090 cell
+							1091 link Description: Austria - OPA, Value: patentamt.at/
+						1092 cell
+							1093 link Description: 14/1992, Value: tmdn.org/tmview/advancedSearch.html#/tmview/detail/AT501992000000014
+						1094 cell
+							1095 text HENKEL AUSTRIA GRUPPE BETEILIGUNGSVERWALTUNG GESELLSCHAFT M.B.H.
+			547 container
+				1096 link 
+					1097 text 
+				1098 link 
+					1099 text 
+				1100 text 1-18 of 18
+				1101 link 
+					1102 text 
+			555 container
+				556 container
+					557 link Description: Search, Value: tmdn.org/tmview/advancedSearch.html#/tmview
+					558 link Description: Participating offices, Value: tmdn.org/tmview/advancedSearch.html#/tmview/participating
+					559 link Description: Help, Value: tmdn.org/tmview/advancedSearch.html#/tmview/help
+					560 link Your feedback
+						561 text Your feedback
+				562 link Description: EUIPN European Union Intellectual Property Network, Value: euipn.org/
+				563 text Avenida de Europa, 4, 03008 Alicante (SPAIN)
+				564 text Information Centre: +34 96 513 9100
+				565 container
+					566 text Copyright 2007-2026 EUIPO This website is coordinated and maintained by:
+					567 text European Union Intellectual Property Office
+				568 text The TMview and DesignView search tools do not constitute official registers and the information contained in the tools does not have any legal effect.
+				569 link Description: See Terms and Conditions, Value: tmdn.org/tmview/advancedSearch.html#/tmview/disclaimer
+				570 text TMDSVIEW-4.5.1-RC1.1
+				571 container
+					572 link Description: Compatibility, Value: …
+					573 link Description: Data protection, Value: …
+					574 link Description: Legal notice, Value: …
+					575 link Description: About, Value: …
+
+The focused UI element is 28 button SEARCH

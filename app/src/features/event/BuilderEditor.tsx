@@ -105,11 +105,11 @@ export function BuilderEditor({ ev, explain }: { ev: SportEvent; explain: boolea
                     onClick={() => pick(id)}
                     aria-pressed={on}
                     className={clsx(
-                      'flex min-h-14 items-center justify-between gap-2 rounded-[16px] px-4 text-left text-[14px] font-semibold transition-colors',
+                      'flex min-h-[60px] flex-col items-start justify-center gap-0.5 rounded-[16px] px-3.5 text-left text-[14px] font-semibold transition-colors @tab:flex-row @tab:items-center @tab:justify-between @tab:px-4',
                       on ? 'bg-action text-white shadow-[0_10px_24px_-12px_rgba(41,72,255,.95)]' : 'bg-chip text-ink hover:bg-chip-hover',
                     )}
                   >
-                    <span className="min-w-0 truncate">{id === 'HOME' ? ev.home.name : id === 'AWAY' ? ev.away.name : labels[id]}</span>
+                    <span className="max-w-full min-w-0 truncate">{id === 'HOME' ? ev.home.name.split(' ')[0] : id === 'AWAY' ? ev.away.name.split(' ')[0] : labels[id].replace(' goals', '')}</span>
                     {on ? <Check size={17} strokeWidth={2.6} className="shrink-0" /> : <span className={clsx('shrink-0 text-[12.5px] tnum', 'text-secondary')}>{o.sel.odds}</span>}
                   </motion.button>
                 )

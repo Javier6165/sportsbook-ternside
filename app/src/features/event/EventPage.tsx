@@ -172,7 +172,7 @@ function MarketCard({ ev, m, prices, i }: { ev: SportEvent; m: Market; prices?: 
       ) : (
       <div className={clsx('mt-3.5 grid gap-2', cols)}>
         {m.selections.map((sel, k) => (
-          <OddsButton key={sel.id} ev={ev} market={m} sel={sel} odds={prices?.[k] ?? sel.odds} label={sel.label.replace('Daniel Costa — ', 'Costa ')} size="lg" variant={dark ? 'night' : 'light'} />
+          <OddsButton key={sel.id} ev={ev} market={m} sel={sel} odds={prices?.[k] ?? sel.odds} label={m.id === 'RESULT_90' && sel.id !== 'DRAW' ? sel.label.split(' ')[0] : sel.label.replace('Daniel Costa — ', 'Costa ')} size="lg" variant={dark ? 'night' : 'light'} />
         ))}
       </div>
       )}

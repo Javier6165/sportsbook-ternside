@@ -11,6 +11,7 @@ import { CountUp } from '../ui/CountUp'
 import { FlyLayer, LAND_EVENT } from '../ui/fly'
 import { Wordmark } from '../ui/Wordmark'
 import { SideNav } from './SideNav'
+import { SearchPanel } from '../features/search/SearchPanel'
 
 const NAV = [
   { to: '/sports', label: 'Sports', icon: Trophy },
@@ -21,7 +22,7 @@ const NAV = [
 
 const money = (n: number) => fmtMoney(n.toFixed(2))
 
-function Header() {
+function Header({ onSearch }: { onSearch: () => void }) {
   const { s } = useStore()
   const liveCount = EVENTS.filter((e) => e.status === 'live').length
   return (
@@ -45,8 +46,9 @@ function Header() {
           ))}
         </nav>
 
-        <Link
-          to="/search"
+        <button
+          type="button"
+          onClick={onSearch}
           className="ml-auto flex h-11 items-center gap-2.5 rounded-full bg-chip px-3.5 text-[14px] text-secondary transition-colors hover:bg-chip-hover @desk:ml-0 @desk:max-w-[300px] @desk:flex-1 @desk:px-4"
           aria-label="Search teams, players or markets"
         >
@@ -55,7 +57,7 @@ function Header() {
           <span className="ml-auto hidden items-center gap-0.5 rounded-md bg-surface px-1.5 py-0.5 text-[11px] font-semibold text-secondary @desk:flex">
             <Command size={11} />K
           </span>
-        </Link>
+        </button>
 
         <div className="flex items-center gap-2 @desk:ml-auto @desk:gap-3">
           <Link to="/wallet" className="flex flex-col items-end rounded-lg px-1 leading-tight" aria-label={`Available balance ${fmtMoney(s.available)}, demo money`}>
@@ -251,14 +253,25 @@ export function AppShell({ children }: { children: ReactNode }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const loc = useLocation()
+  const [search, setSearch] = useState(false)
   useEffect(() => {
     mainRef.current?.scrollTo({ top: 0 })
   }, [loc.pathname])
+  useEffect(() => {
+    const f = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setSearch((x) => !x)
+      }
+    }
+    window.addEventListener('keydown', f)
+    return () => window.removeEventListener('keydown', f)
+  }, [])
 
   return (
     <div ref={rootRef} className="@container relative flex h-full w-full flex-col overflow-hidden bg-canvas">
       <FlyLayer rootRef={rootRef}>
-        <Header />
+        <Header onSearch={() => setSearch(true)} />
         <div className="flex min-h-0 flex-1">
           <SideNav />
           <main ref={mainRef} id="main" className="thin-scrollbar relative min-w-0 flex-1 overflow-y-auto">
@@ -272,6 +285,22 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
         <SlipDock />
         <MobileSlipSheet />
+        <AnimatePresence>
+          {search && (
+            <motion.div key="search" className="absolute inset-0 z-[60] flex items-start justify-center @tab:pt-[10vh]" role="dialog" aria-modal="true" aria-label="Search">
+              <motion.div className="absolute inset-0 bg-[#0b0f1a]/45 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSearch(false)} />
+              <motion.div
+                initial={{ opacity: 0, y: -16, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -16, scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                className="relative flex h-full w-full flex-col overflow-hidden bg-surface shadow-2xl @tab:h-auto @tab:max-h-[70vh] @tab:max-w-[640px] @tab:rounded-[28px]"
+              >
+                <SearchPanel onClose={() => setSearch(false)} />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div id="overlay-root" className="pointer-events-none absolute inset-0 z-50" />
       </FlyLayer>
     </div>

@@ -6,6 +6,8 @@ import { SportPage } from './features/sport/SportPage'
 import { EventPage } from './features/event/EventPage'
 import { MyBets } from './features/mybets/MyBets'
 import { BetDetail } from './features/mybets/BetDetail'
+import { LivePage } from './features/live/LivePage'
+import { SearchPanel } from './features/search/SearchPanel'
 import { DemoFrame } from './presentation/DemoFrame'
 import { AppShell } from './shell/AppShell'
 import { StoreProvider } from './state/store'
@@ -20,13 +22,13 @@ export default function App() {
               <Route path="/" element={<Navigate to="/sports" replace />} />
               <Route path="/sports" element={<Home />} />
               <Route path="/sports/:sportId" element={<SportPage />} />
-              <Route path="/live" element={<Placeholder title="Live" />} />
+              <Route path="/live" element={<LivePage />} />
               <Route path="/my-bets" element={<MyBets />} />
               <Route path="/bets/:betId" element={<BetDetail />} />
               <Route path="/receipt/:betId" element={<BetDetail />} />
               <Route path="/account" element={<Placeholder title="Account" />} />
               <Route path="/wallet" element={<Placeholder title="Wallet" />} />
-              <Route path="/search" element={<Placeholder title="Search" />} />
+              <Route path="/search" element={<div className="mx-auto mt-6 max-w-[640px] overflow-hidden rounded-[28px] bg-surface"><SearchPanel /></div>} />
               <Route path="/safer-gambling" element={<Placeholder title="Safer gambling" />} />
               <Route path="/event/:eventId" element={<EventPage />} />
               <Route path="*" element={<NotFound />} />

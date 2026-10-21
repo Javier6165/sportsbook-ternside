@@ -19,8 +19,8 @@ export function MarketView({ prices, labels, colors }: { prices: string[]; label
   return (
     <div>
       <div className="mb-1.5 flex justify-between text-[11px] font-semibold text-white/50">
-        <span>Market view</span>
-        <span>implied by current odds</span>
+        <span>Win probability</span>
+        <span>from current odds</span>
       </div>
       <div className="flex h-2 gap-[3px] overflow-hidden rounded-full" aria-hidden="true">
         {pct.map((p, i) => (

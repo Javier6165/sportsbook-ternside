@@ -122,7 +122,7 @@ type Action =
 let seq = 0
 const newId = () => `draft-${Date.now().toString(36)}-${(seq++).toString(36)}`
 
-function reducer(s: State, a: Action): State {
+export function reducer(s: State, a: Action): State {
   switch (a.type) {
     case 'toggleSelection': {
       const existing = s.groups.find(

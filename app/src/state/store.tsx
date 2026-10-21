@@ -3,6 +3,8 @@ import { EVENTS, eventById, type SportEvent, type SportId } from '../data/catalo
 import { INITIAL_BETS, INITIAL_LEDGER, type AcceptedBet, type LedgerEntry, type Settlement } from '../domain/bets'
 import { D } from '../domain/money'
 import { applySim, type F01Phase } from '../demo/sim'
+import type { DepositRecord, LimitKey } from '../domain/limits'
+import { EVENT_NOW } from '../data/catalog'
 
 export interface DraftLeg {
   marketId: string
@@ -53,6 +55,13 @@ export interface State {
   ledger: LedgerEntry[]
   f01: F01Phase
   scene: string
+  deposits: DepositRecord[]
+  limits: Record<LimitKey, string>
+  pendingIncrease: { key: LimitKey; value: string; availableAt: string } | null
+  withdrawals: { id: string; amount: string; at: string; status: 'pending' | 'completed' | 'rejected' }[]
+  restriction: 'none' | 'paused' | 'excluded'
+  pausedUntil: string | null
+  accountOffsetH: number
 }
 
 const initial: State = {
@@ -69,6 +78,13 @@ const initial: State = {
   ledger: INITIAL_LEDGER,
   f01: 'pre',
   scene: 'fresh',
+  deposits: [],
+  limits: { daily: '20.00', weekly: '50.00', monthly: '100.00' },
+  pendingIncrease: null,
+  withdrawals: [],
+  restriction: 'none',
+  pausedUntil: null,
+  accountOffsetH: 0,
 }
 
 export const INITIAL_STATE = initial
@@ -93,6 +109,15 @@ type Action =
   | { type: 'reset' }
   | { type: 'load'; state: Partial<State> }
   | { type: 'f01'; phase: F01Phase }
+  | { type: 'deposit'; amount: string; at: string }
+  | { type: 'withdraw'; amount: string; at: string }
+  | { type: 'withdrawalResolve'; id: string; ok: boolean; at: string }
+  | { type: 'setLimit'; key: LimitKey; value: string; at: string }
+  | { type: 'confirmIncrease' }
+  | { type: 'cancelIncrease' }
+  | { type: 'pause'; until: string }
+  | { type: 'exclude'; at: string }
+  | { type: 'advanceAccount'; hours: number }
 
 let seq = 0
 const newId = () => `draft-${Date.now().toString(36)}-${(seq++).toString(36)}`
@@ -187,6 +212,60 @@ function reducer(s: State, a: Action): State {
       applySim(next.f01)
       return next
     }
+    case 'deposit': {
+      const id = `dep-${Date.now().toString(36)}`
+      return {
+        ...s,
+        available: D(s.available).plus(a.amount).toFixed(2),
+        deposits: [...s.deposits, { id, amount: D(a.amount).toFixed(2), at: a.at, status: 'confirmed' }],
+        ledger: [{ id, type: 'deposit', delta: D(a.amount).toFixed(2), at: a.at, label: 'Deposit · Demo debit card' }, ...s.ledger],
+      }
+    }
+    case 'withdraw': {
+      // R10: a withdrawal request reserves funds immediately; completing doesn't debit again.
+      const id = `wd-${Date.now().toString(36)}`
+      return {
+        ...s,
+        available: D(s.available).minus(a.amount).toFixed(2),
+        withdrawals: [{ id, amount: D(a.amount).toFixed(2), at: a.at, status: 'pending' }, ...s.withdrawals],
+        ledger: [{ id, type: 'withdrawal', delta: D(a.amount).neg().toFixed(2), at: a.at, label: 'Withdrawal requested · reserved' }, ...s.ledger],
+      }
+    }
+    case 'withdrawalResolve': {
+      const w = s.withdrawals.find((x) => x.id === a.id)
+      if (!w || w.status !== 'pending') return s
+      return {
+        ...s,
+        available: a.ok ? s.available : D(s.available).plus(w.amount).toFixed(2),
+        withdrawals: s.withdrawals.map((x) => (x.id === a.id ? { ...x, status: a.ok ? 'completed' : 'rejected' } : x)),
+        ledger: a.ok ? s.ledger : [{ id: `${w.id}-back`, type: 'deposit', delta: w.amount, at: a.at, label: 'Withdrawal rejected · funds back' }, ...s.ledger],
+      }
+    }
+    case 'setLimit': {
+      const cur = D(s.limits[a.key])
+      if (D(a.value).lte(cur)) return { ...s, limits: { ...s.limits, [a.key]: D(a.value).toFixed(2) }, pendingIncrease: s.pendingIncrease?.key === a.key ? null : s.pendingIncrease }
+      return { ...s, pendingIncrease: { key: a.key, value: D(a.value).toFixed(2), availableAt: new Date(Date.parse(a.at) + 24 * 3600_000).toISOString() } }
+    }
+    case 'confirmIncrease':
+      if (!s.pendingIncrease) return s
+      return { ...s, limits: { ...s.limits, [s.pendingIncrease.key]: s.pendingIncrease.value }, pendingIncrease: null }
+    case 'cancelIncrease':
+      return { ...s, pendingIncrease: null }
+    case 'pause':
+      return { ...s, restriction: 'paused', pausedUntil: a.until, groups: [], slipOpen: false }
+    case 'exclude':
+      // R11: closes gambling immediately; open bets keep their accepted rules.
+      return {
+        ...s,
+        restriction: 'excluded',
+        groups: [],
+        slipOpen: false,
+        ledger: D(s.available).gt(0) ? [{ id: `excl-${Date.now().toString(36)}`, type: 'withdrawal', delta: D(s.available).neg().toFixed(2), at: a.at, label: 'Balance reserved for return · self-exclusion' }, ...s.ledger] : s.ledger,
+        withdrawals: D(s.available).gt(0) ? [{ id: `excl-ret`, amount: s.available, at: a.at, status: 'pending' }, ...s.withdrawals] : s.withdrawals,
+        available: '0.00',
+      }
+    case 'advanceAccount':
+      return { ...s, accountOffsetH: s.accountOffsetH + a.hours }
     case 'f01':
       applySim(a.phase)
       // Advancing the match keeps drafts and bets; a pre-match builder draft can no longer be placed (C43).
@@ -289,3 +368,10 @@ export function currentOdds(group: DraftGroup, tick: number) {
 }
 
 export const liveEvents = () => EVENTS.filter((e) => e.status === 'live')
+
+/** Account clock (R11): independent of the match clock; can be advanced from Demo controls. */
+export function useAccountNow() {
+  const { s } = useStore()
+  const { elapsed } = useLiveClock()
+  return new Date(Date.parse(EVENT_NOW) + elapsed * 1000 + s.accountOffsetH * 3600_000).toISOString()
+}

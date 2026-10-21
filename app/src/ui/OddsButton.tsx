@@ -59,7 +59,10 @@ export function OddsButton({
       transition={{ type: 'spring', stiffness: 600, damping: 30 }}
       aria-pressed={selected}
       aria-label={name}
+      aria-disabled={s.restriction !== 'none' || undefined}
+      title={s.restriction === 'paused' ? 'Betting is off during your break' : undefined}
       onClick={(e) => {
+        if (s.restriction !== 'none') return
         if (!selected) fly(e.currentTarget, fmtOdds(odds))
         d({
           type: 'toggleSelection',
@@ -79,6 +82,7 @@ export function OddsButton({
             : variant === 'field'
               ? 'bg-white/[.94] text-ink shadow-[0_8px_24px_-16px_rgba(0,0,0,.5)] hover:bg-white'
               : 'on-dark bg-white/[.08] text-white hover:bg-white/[.14]',
+        s.restriction !== 'none' && 'cursor-not-allowed opacity-45',
         className,
       )}
     >

@@ -12,6 +12,7 @@ import { FlyLayer, LAND_EVENT } from '../ui/fly'
 import { Wordmark } from '../ui/Wordmark'
 import { SideNav } from './SideNav'
 import { SearchPanel } from '../features/search/SearchPanel'
+import { AccountClosed } from '../features/account/AccountClosed'
 
 const NAV = [
   { to: '/sports', label: 'Sports', icon: Trophy },
@@ -22,7 +23,7 @@ const NAV = [
 
 const money = (n: number) => fmtMoney(n.toFixed(2))
 
-function Header({ onSearch }: { onSearch: () => void }) {
+function Header({ onSearch, closed }: { onSearch: () => void; closed: boolean }) {
   const { s } = useStore()
   const liveCount = EVENTS.filter((e) => e.status === 'live').length
   return (
@@ -32,7 +33,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
           <Wordmark size={26} />
         </Link>
 
-        <nav aria-label="Primary" className="relative hidden rounded-full bg-chip p-1 @desk:flex">
+        <nav aria-label="Primary" className={clsx('relative hidden rounded-full bg-chip p-1', !closed && '@desk:flex')}>
           {NAV.map((n) => (
             <NavLink key={n.to} to={n.to} className="relative z-10 flex h-9 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold text-secondary transition-colors hover:text-ink aria-[current=page]:text-ink">
               {({ isActive }) => (
@@ -49,6 +50,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
         <button
           type="button"
           onClick={onSearch}
+          hidden={closed}
           className="ml-auto flex h-11 items-center gap-2.5 rounded-full bg-chip px-3.5 text-[14px] text-secondary transition-colors hover:bg-chip-hover @desk:ml-0 @desk:max-w-[300px] @desk:flex-1 @desk:px-4"
           aria-label="Search teams, players or markets"
         >
@@ -250,6 +252,8 @@ function MobileSlipSheet() {
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const { s } = useStore()
+  const closed = s.restriction === 'excluded'
   const rootRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const loc = useLocation()
@@ -271,20 +275,29 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div ref={rootRef} className="@container relative flex h-full w-full flex-col overflow-hidden bg-canvas">
       <FlyLayer rootRef={rootRef}>
-        <Header onSearch={() => setSearch(true)} />
+        <Header onSearch={() => setSearch(true)} closed={closed} />
         <div className="flex min-h-0 flex-1">
-          <SideNav />
+          {!closed && <SideNav />}
           <main ref={mainRef} id="main" className="thin-scrollbar relative min-w-0 flex-1 overflow-y-auto">
-            {children}
+            {s.restriction === 'paused' && s.pausedUntil && (
+              <div className="sticky top-0 z-30 flex items-center justify-center gap-2 bg-ink px-4 py-2.5 text-center text-[13px] font-medium text-white">
+                You’re on a break until {new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(s.pausedUntil))}. Betting and deposits are off.
+              </div>
+            )}
+            {closed ? <AccountClosed /> : children}
             <div className="h-24 @desk:h-28" />
           </main>
         </div>
-        <div className="relative">
-          <SlipBar />
-          <BottomNav />
-        </div>
-        <SlipDock />
-        <MobileSlipSheet />
+        {!closed && (
+          <>
+            <div className="relative">
+              <SlipBar />
+              <BottomNav />
+            </div>
+            <SlipDock />
+            <MobileSlipSheet />
+          </>
+        )}
         <AnimatePresence>
           {search && (
             <motion.div key="search" className="absolute inset-0 z-[60] flex items-start justify-center @tab:pt-[10vh]" role="dialog" aria-modal="true" aria-label="Search">

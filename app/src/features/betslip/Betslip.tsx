@@ -10,6 +10,9 @@ import { currentOdds, useLiveClock, useStore, type DraftGroup } from '../../stat
 import { CountUp } from '../../ui/CountUp'
 import { matchGradient } from '../../ui/MatchField'
 import { Perforation } from '../../ui/BuilderPass'
+import { planBets, type AcceptedBet } from '../../domain/bets'
+import { EVENT_NOW } from '../../data/catalog'
+import { DoneStep, PlacingStep, ReviewStep } from './Review'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const money = (n: number) => fmtMoney(n.toFixed(2))
@@ -169,7 +172,10 @@ function EmptySlip() {
 
 export function Betslip({ onClose }: { onClose?: () => void }) {
   const { s, d } = useStore()
-  const [note, setNote] = useState(false)
+  const { tick, elapsed } = useLiveClock()
+  const [step, setStep] = useState<'edit' | 'review' | 'placing' | 'done'>('edit')
+  const [planned, setPlanned] = useState<AcceptedBet[]>([])
+  const [consumes, setConsumes] = useState<string[]>([])
   const n = s.groups.length
   const singles = s.groups.filter((g) => g.type === 'single')
   const distinctEvents = new Set(singles.map((g) => g.eventId)).size
@@ -195,6 +201,38 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
         ? grossReturn(s.accaStake, accaPrice)
         : D(0)
   const ready = totalStake.gt(0)
+  const priceMoved = s.groups.some((g) => currentOdds(g, tick) !== g.odds)
+
+  const startReview = () => {
+    const at = new Date(Date.parse(EVENT_NOW) + elapsed * 1000).toISOString()
+    const groups = s.mode === 'acca' ? s.groups : s.groups
+    const plan = planBets(groups, s.mode, s.accaStake, at)
+    setPlanned(plan.map((p) => p.bet))
+    setConsumes(plan.flatMap((p) => p.consumes))
+    setStep('review')
+  }
+  const place = () => {
+    setStep('placing')
+    const live = planned.some((b) => b.live)
+    setTimeout(() => {
+      d({ type: 'placed', bets: planned, consumed: consumes, acca: s.mode === 'acca' })
+      setStep('done')
+    }, live ? 2000 : 1400)
+  }
+
+  if (step === 'review')
+    return <ReviewStep planned={planned} available={s.available} blocked={priceMoved ? 'A price changed. Go back and accept the new odds first.' : null} onBack={() => setStep('edit')} onPlace={place} />
+  if (step === 'placing') return <PlacingStep planned={planned} />
+  if (step === 'done')
+    return (
+      <DoneStep
+        placed={planned}
+        onClose={() => {
+          setStep('edit')
+          onClose?.()
+        }}
+      />
+    )
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-canvas">
@@ -302,7 +340,7 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
           </div>
           <motion.button
             whileTap={ready ? { scale: 0.98 } : undefined}
-            onClick={() => ready && setNote(true)}
+            onClick={() => ready && startReview()}
             aria-disabled={!ready}
             className={clsx('flex h-14 w-full items-center justify-center gap-2 rounded-[18px] text-[16px] font-semibold transition-colors', ready ? 'bg-ink text-white hover:bg-black' : 'bg-chip text-muted')}
           >
@@ -314,13 +352,7 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
               'Add a stake to continue'
             )}
           </motion.button>
-          <AnimatePresence>
-            {note && (
-              <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-2 text-center text-[12px] text-secondary" onAnimationComplete={() => setTimeout(() => setNote(false), 2600)}>
-                Review and placement arrive in the next build.
-              </motion.p>
-            )}
-          </AnimatePresence>
+
           <p className="mt-3 text-center text-[11.5px] text-muted">
             18+ · Fictional money ·{' '}
             <Link to="/safer-gambling" className="underline hover:text-ink">

@@ -28,7 +28,7 @@ export function BuilderEditor({ ev, explain }: { ev: SportEvent; explain: boolea
     }
     return null
   }
-  const labelOf = (id: string) => (id === 'HOME' ? `${ev.home.name} to win` : id === 'AWAY' ? `${ev.away.name} to win` : id === 'DRAW' ? 'Draw' : optionOf(id)!.sel.label.replace(' — ', ' '))
+  const labelOf = (id: string) => (id === 'HOME' ? `${ev.home.name} to win` : id === 'AWAY' ? `${ev.away.name} to win` : id === 'DRAW' ? 'Draw' : optionOf(id)!.sel.label.replace(' — ', ' ').replace(/^(Over|Under) 2\.5$/, '$1 2.5 goals'))
   const labels = useMemo(() => Object.fromEntries(BUILDER_GROUPS.flatMap((g) => g.options).map((id) => [id, labelOf(id)])), [ev.id])
 
   const ordered = BUILDER_GROUPS.flatMap((g) => sels.filter((x) => groupOf(x) === g.id))

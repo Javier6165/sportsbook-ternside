@@ -1,9 +1,10 @@
 import clsx from 'clsx'
-import { Monitor, Smartphone, SlidersHorizontal } from 'lucide-react'
-import { motion } from 'motion/react'
+import { Clapperboard, Monitor, Smartphone } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { useStore } from '../state/store'
 import { Wordmark } from '../ui/Wordmark'
+import { DemoControls } from './DemoControls'
 
 const PHONE_W = 390
 const PHONE_H = 844
@@ -59,7 +60,7 @@ function ViewToggle({ mobile, onChange, dark = true }: { mobile: boolean; onChan
 }
 
 /** Slim vertical dock in the left gutter, so it never covers product content. */
-function SideDock({ mobile, onChange }: { mobile: boolean; onChange: (m: boolean) => void }) {
+function SideDock({ mobile, onChange, onScenes, scenes }: { mobile: boolean; onChange: (m: boolean) => void; onScenes: () => void; scenes: boolean }) {
   return (
     <div className="group flex items-center gap-1 rounded-full bg-[#0b1120]/92 p-1.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,.6)] ring-1 ring-white/10 backdrop-blur-md" role="radiogroup" aria-label="Preview size">
       <span className="px-2 text-[10px] font-bold tracking-[.12em] text-[#f5c04a] uppercase">Demo</span>
@@ -79,6 +80,16 @@ function SideDock({ mobile, onChange }: { mobile: boolean; onChange: (m: boolean
           <o.icon size={16} />
         </button>
       ))}
+      <span className="mx-0.5 h-5 w-px bg-white/15" />
+      <button
+        onClick={onScenes}
+        aria-expanded={scenes}
+        aria-label="Demo controls"
+        title="Demo controls"
+        className={clsx('flex h-9 items-center gap-1.5 rounded-full px-3 text-[12.5px] font-semibold transition-colors', scenes ? 'bg-[#f5c04a] text-nav' : 'text-white/80 hover:bg-white/10')}
+      >
+        <Clapperboard size={15} /> Scenes
+      </button>
     </div>
   )
 }
@@ -95,6 +106,8 @@ export function DemoFrame({ children }: { children: ReactNode }) {
   const realMobile = win.w < 760
   const mobile = !realMobile && s.view === 'mobile'
   const k = Math.min(1, (win.h - 48) / (PHONE_H + BEZEL * 2), (win.w - 48) / (PHONE_W + BEZEL * 2))
+  const [scenes, setScenes] = useState(false)
+  const setView = (m: boolean) => d({ type: 'view', view: m ? 'mobile' : 'full' })
 
   return (
     <div className={clsx('relative h-full w-full overflow-hidden', mobile && 'bg-[#0b1120]')}>
@@ -145,17 +158,48 @@ export function DemoFrame({ children }: { children: ReactNode }) {
               <p className="mt-6 border-t border-white/10 pt-4 text-[11.5px] leading-relaxed text-white/40">Fictional demo · no real money, events or accounts. Concept & design by Javier Ortiz.</p>
             </motion.div>
           ) : null}
-          {!mobile ? (
-            <SideDock mobile={mobile} onChange={(m) => d({ type: 'view', view: m ? 'mobile' : 'full' })} />
-          ) : win.w < 1120 ? (
-            <div className="fixed bottom-4 left-4 flex items-center gap-1.5 rounded-full bg-[#0b1120]/90 p-1.5 pl-3 shadow-[0_12px_30px_-10px_rgba(0,0,0,.6)] ring-1 ring-white/10 backdrop-blur-md">
-              <span className="flex items-center gap-1.5 pr-1 text-[11px] font-semibold tracking-[.08em] text-[#f5c04a] uppercase">
-                <SlidersHorizontal size={13} /> Demo
-              </span>
-              <ViewToggle mobile={mobile} onChange={(m) => d({ type: 'view', view: m ? 'mobile' : 'full' })} />
+          {!mobile || win.w < 1120 ? (
+            <div className={clsx(mobile && 'fixed bottom-4 left-4')}>
+              <AnimatePresence>
+                {scenes && (
+                  <motion.div initial={{ opacity: 0, y: 12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.97 }} className="absolute bottom-[calc(100%+10px)] left-0 max-h-[calc(100vh-120px)] overflow-y-auto rounded-[26px]">
+                    <DemoControls onClose={() => setScenes(false)} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <SideDock mobile={mobile} onChange={setView} onScenes={() => setScenes((x) => !x)} scenes={scenes} />
             </div>
           ) : null}
         </div>
+      )}
+
+      {/* Mobile preview on wide screens: scenes sit beside the phone */}
+      {mobile && win.w >= 1120 && (
+        <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} className="absolute top-1/2 right-[max(24px,calc(50%-580px))] z-[100] w-[320px] -translate-y-1/2">
+          <DemoControls inline />
+        </motion.div>
+      )}
+
+      {/* Real phones: a small tab opens the same controls as a sheet */}
+      {realMobile && (
+        <>
+          <button
+            onClick={() => setScenes(true)}
+            className="on-dark absolute top-[46%] left-0 z-[100] rounded-r-[12px] bg-[#0b1120]/90 px-1.5 py-3 text-[10px] font-bold tracking-[.14em] text-[#f5c04a] uppercase shadow-lg [writing-mode:vertical-rl]"
+            aria-label="Open demo controls"
+          >
+            Demo
+          </button>
+          <AnimatePresence>
+            {scenes && (
+              <motion.div className="absolute inset-0 z-[110] flex items-end bg-black/50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setScenes(false)}>
+                <motion.div initial={{ y: 40 }} animate={{ y: 0 }} exit={{ y: 40 }} onClick={(e) => e.stopPropagation()} className="max-h-[85%] w-full overflow-y-auto rounded-t-[26px] [&>div]:w-full [&>div]:rounded-b-none">
+                  <DemoControls onClose={() => setScenes(false)} />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
       )}
     </div>
   )

@@ -1,5 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
 import { EVENTS, eventById, type SportEvent, type SportId } from '../data/catalog'
+import { INITIAL_BETS, INITIAL_LEDGER, type AcceptedBet, type LedgerEntry, type Settlement } from '../domain/bets'
+import { D } from '../domain/money'
+import { applySim, type F01Phase } from '../demo/sim'
 
 export interface DraftLeg {
   marketId: string
@@ -21,6 +24,7 @@ export interface DraftGroup {
   live?: boolean
 }
 
+export type { F01Phase }
 export type ViewMode = 'full' | 'mobile'
 
 export interface Prefs {
@@ -35,7 +39,7 @@ export const SAM_PREFS: Prefs = {
   teams: ['northbridge'],
 }
 
-interface State {
+export interface State {
   available: string
   groups: DraftGroup[]
   mode: 'singles' | 'acca'
@@ -45,6 +49,10 @@ interface State {
   slipOpen: boolean
   prefs: Prefs
   navOpen: boolean
+  bets: AcceptedBet[]
+  ledger: LedgerEntry[]
+  f01: F01Phase
+  scene: string
 }
 
 const initial: State = {
@@ -57,7 +65,13 @@ const initial: State = {
   slipOpen: false,
   prefs: SAM_PREFS,
   navOpen: false,
+  bets: INITIAL_BETS,
+  ledger: INITIAL_LEDGER,
+  f01: 'pre',
+  scene: 'fresh',
 }
+
+export const INITIAL_STATE = initial
 
 type Action =
   | { type: 'toggleSelection'; eventId: string; leg: DraftLeg; live?: boolean }
@@ -73,6 +87,12 @@ type Action =
   | { type: 'slip'; open: boolean }
   | { type: 'prefs'; prefs: Prefs }
   | { type: 'nav'; open: boolean }
+  | { type: 'placed'; bets: AcceptedBet[]; consumed: string[]; acca: boolean }
+  | { type: 'settle'; betId: string; status: 'won' | 'lost' | 'void'; settlement: Settlement }
+  | { type: 'cashOut'; betId: string; amount: string; at: string }
+  | { type: 'reset' }
+  | { type: 'load'; state: Partial<State> }
+  | { type: 'f01'; phase: F01Phase }
 
 let seq = 0
 const newId = () => `draft-${Date.now().toString(36)}-${(seq++).toString(36)}`
@@ -121,18 +141,70 @@ function reducer(s: State, a: Action): State {
       return { ...s, prefs: a.prefs }
     case 'nav':
       return { ...s, navOpen: a.open }
+    case 'placed': {
+      // One debit per accepted bet; the accepted groups leave the slip once (C46).
+      const total = a.bets.reduce((t, b) => t.plus(b.stake), D(0))
+      return {
+        ...s,
+        available: D(s.available).minus(total).toFixed(2),
+        bets: [...a.bets, ...s.bets],
+        ledger: [
+          ...a.bets.map((b) => ({ id: `stake-${b.id}`, type: 'stake' as const, delta: D(b.stake).neg().toFixed(2), betId: b.id, at: b.placedAt, label: `Stake · ${b.legs[0].eventLabel}` })),
+          ...s.ledger,
+        ],
+        groups: s.groups.filter((g) => !a.consumed.includes(g.id)),
+        accaStake: a.acca ? '' : s.accaStake,
+      }
+    }
+    case 'settle': {
+      const bet = s.bets.find((b) => b.id === a.betId)
+      if (!bet || bet.status !== 'open') return s // one terminal resolution only
+      const gross = D(a.settlement.gross)
+      return {
+        ...s,
+        available: D(s.available).plus(gross).toFixed(2),
+        bets: s.bets.map((b) => (b.id === a.betId ? { ...b, status: a.status, settlement: a.settlement } : b)),
+        ledger: gross.gt(0)
+          ? [{ id: `ret-${bet.id}`, type: a.status === 'void' ? 'void_return' : 'return', delta: gross.toFixed(2), betId: bet.id, at: a.settlement.at, label: `${a.status === 'void' ? 'Void return' : 'Return'} · ${bet.legs[0].eventLabel}` }, ...s.ledger]
+          : s.ledger,
+      }
+    }
+    case 'cashOut': {
+      const bet = s.bets.find((b) => b.id === a.betId)
+      if (!bet || bet.status !== 'open') return s
+      return {
+        ...s,
+        available: D(s.available).plus(a.amount).toFixed(2),
+        bets: s.bets.map((b) => (b.id === a.betId ? { ...b, status: 'cashed_out', settlement: { odds: '', gross: a.amount, reason: 'Cashed out before the end.', at: a.at } } : b)),
+        ledger: [{ id: `co-${bet.id}`, type: 'cash_out', delta: D(a.amount).toFixed(2), betId: bet.id, at: a.at, label: `Cash Out · ${bet.legs[0].eventLabel}` }, ...s.ledger],
+      }
+    }
+    case 'reset':
+      applySim('pre')
+      return { ...initial, view: s.view, navOpen: s.navOpen }
+    case 'load': {
+      const next = { ...initial, view: s.view, navOpen: s.navOpen, ...a.state }
+      applySim(next.f01)
+      return next
+    }
+    case 'f01':
+      applySim(a.phase)
+      // Advancing the match keeps drafts and bets; a pre-match builder draft can no longer be placed (C43).
+      return { ...s, f01: a.phase, groups: a.phase === 'pre' ? s.groups : s.groups.filter((g) => !(g.eventId === 'football-01' && !g.live)) }
   }
 }
 
-const KEY = 'ternside.demo.v2'
+const KEY = 'ternside.demo.v3'
 
 function load(): State {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return initial
     const parsed = JSON.parse(raw)
-    if (parsed?.v !== 2) return initial
-    return { ...initial, ...parsed.state, slipOpen: false }
+    if (parsed?.v !== 3) return initial
+    const st = { ...initial, ...parsed.state, slipOpen: false }
+    applySim(st.f01)
+    return st
   } catch {
     return initial
   }
@@ -144,7 +216,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [s, d] = useReducer(reducer, undefined, load)
   useEffect(() => {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ v: 2, state: s }))
+      localStorage.setItem(KEY, JSON.stringify({ v: 3, state: s }))
     } catch {
       /* storage unavailable: session-only */
     }
@@ -203,7 +275,7 @@ export function useLiveEvent(ev: SportEvent) {
   const { tick, elapsed } = useLiveClock()
   const prices = mainPrices(ev, tick)
   let minute = ev.live?.minute
-  if (minute != null) minute = Math.min(90, minute + Math.floor(elapsed / 60))
+  if (minute != null && !ev.live?.frozen) minute = Math.min(90, minute + Math.floor(elapsed / 60))
   return { prices, minute }
 }
 

@@ -21,11 +21,15 @@ export function buildFeed(p: Prefs) {
   const scheduled = EVENTS.filter((e) => e.status === 'scheduled').sort((a, b) => a.startsAt.localeCompare(b.startsAt))
   const live = EVENTS.filter((e) => e.status === 'live')
 
+  const f01 = EVENTS.find((e) => e.builder)
   const featured =
-    scheduled.find((e) => e.builder && reasonFor(e, p)) ?? scheduled.find((e) => reasonFor(e, p)?.kind === 'team') ?? scheduled.find((e) => e.builder)!
+    (f01 && f01.status !== 'finished' ? f01 : undefined) ??
+    scheduled.find((e) => reasonFor(e, p)?.kind === 'team') ??
+    scheduled.find((e) => e.popular) ??
+    scheduled[0]
 
-  const liveMine = live.filter((e) => reasonFor(e, p))
-  const liveOther = live.filter((e) => !reasonFor(e, p))
+  const liveMine = live.filter((e) => e.id !== featured.id && reasonFor(e, p))
+  const liveOther = live.filter((e) => e.id !== featured.id && !reasonFor(e, p))
 
   const picks = scheduled
     .filter((e) => e.id !== featured.id)

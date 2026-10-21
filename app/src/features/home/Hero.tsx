@@ -5,7 +5,7 @@ import { Link } from 'react-router'
 import { IMAGES, competitionById, teamColor, type SportEvent } from '../../data/catalog'
 import type { Reason } from '../../lib/feed'
 import { dayLabel, kickoffTime, secondsUntil } from '../../lib/time'
-import { useLiveClock } from '../../state/store'
+import { useLiveClock, useLiveEvent } from '../../state/store'
 import { Crest } from '../../ui/Crest'
 import { OddsButton } from '../../ui/OddsButton'
 
@@ -55,6 +55,8 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
   const [why, setWhy] = useState(false)
   const hc = teamColor(ev.home)
   const ac = teamColor(ev.away)
+  const { prices } = useLiveEvent(ev)
+  const live = ev.status === 'live'
 
   return (
     <section aria-labelledby="featured-title" className="on-dark relative isolate overflow-hidden bg-night text-white">
@@ -106,10 +108,21 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
             </h2>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45, duration: 0.6 }} className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
-              <div>
-                <div className="mb-1.5 text-[11px] font-bold tracking-[.12em] text-white/60 uppercase">Kick-off in</div>
-                <Countdown iso={ev.startsAt} />
-              </div>
+              {live && ev.live ? (
+                <div>
+                  <div className="led mb-1.5 flex items-center gap-2 text-[15px] text-volt [text-shadow:0_0_14px_rgba(198,255,61,.55)]">
+                    <span className="live-dot !bg-volt" /> Live · {ev.live.minute}'
+                  </div>
+                  <div className="font-display text-[44px] leading-none font-[800] tracking-[-0.05em] tnum">
+                    {ev.live.score[0]}–{ev.live.score[1]}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="mb-1.5 text-[11px] font-bold tracking-[.12em] text-white/60 uppercase">Kick-off in</div>
+                  <Countdown iso={ev.startsAt} />
+                </div>
+              )}
               <div className="text-[14px] leading-snug">
                 <div className="font-semibold">
                   {dayLabel(ev.startsAt)} · {kickoffTime(ev.startsAt)}
@@ -129,14 +142,14 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.7, ease }} className="w-full @desk:w-[460px]">
             <div className="mb-2.5 flex items-baseline justify-between text-[12.5px] font-medium text-white/75">
-              <span>Match result · {result.period}</span>
+              <span>{live ? 'Live · ' : ''}Match result · {result.period}</span>
               <Link to={`/event/${ev.id}`} className="flex items-center gap-1 font-semibold text-white hover:underline">
                 All markets <ArrowUpRight size={15} />
               </Link>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {result.selections.map((sel, i) => (
-                <OddsButton key={sel.id} ev={ev} market={result} sel={sel} odds={sel.odds} variant="field" size="lg" label={i === 0 ? first(ev.home.name) : i === 1 ? 'Draw' : first(ev.away.name)} />
+                <OddsButton key={sel.id} ev={ev} market={result} sel={sel} odds={live ? prices[i] : sel.odds} variant="field" size="lg" label={i === 0 ? first(ev.home.name) : i === 1 ? 'Draw' : first(ev.away.name)} />
               ))}
             </div>
             {ev.brief && (

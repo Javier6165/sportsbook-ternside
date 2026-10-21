@@ -50,7 +50,7 @@ export function Home() {
               Good evening, Sam<span className="text-action">.</span>
             </h1>
             <p className="mt-2 text-[15.5px] text-secondary @tab:text-[16.5px]">
-              {teamPlaying && reason ? `${feed.featured.home.name} play tonight. Here’s what matters to you.` : 'Here’s what’s worth your time tonight.'}
+              {teamPlaying && reason ? feed.featured.status === 'live' ? `${feed.featured.home.name} are playing right now.` : `${feed.featured.home.name} play tonight. Here’s what matters to you.` : 'Here’s what’s worth your time tonight.'}
             </p>
           </div>
           <div className="flex gap-2">
@@ -71,7 +71,7 @@ export function Home() {
       </div>
 
       <div className="mx-auto max-w-[1220px] px-4 @tab:px-8">
-        {feed.featured.builder && <BuilderRow ev={feed.featured} />}
+        {feed.featured.builder && feed.featured.status === 'scheduled' && <BuilderRow ev={feed.featured} />}
         <LiveNow mine={feed.liveMine} other={feed.liveOther} />
         <Picks picks={feed.picks} />
         <EverythingElse rest={feed.rest} hidden={feed.hiddenCount} />

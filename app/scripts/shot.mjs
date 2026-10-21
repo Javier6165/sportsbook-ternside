@@ -5,7 +5,7 @@ const out = process.env.SHOT_DIR || '/private/tmp/claude-501/-Users-javierortiz-
 const b = await chromium.launch()
 const p = await b.newPage({ viewport: { width: +w, height: +h }, deviceScaleFactor: 2 })
 await p.addInitScript((v) => {
-  localStorage.setItem('ternside.demo.v2', JSON.stringify({ v: 2, state: { view: v } }))
+  localStorage.setItem('ternside.demo.v3', JSON.stringify({ v: 3, state: { view: v } }))
 }, view)
 await p.goto('http://localhost:5173/' + hash)
 await p.waitForTimeout(1800)

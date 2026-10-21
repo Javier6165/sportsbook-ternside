@@ -52,6 +52,11 @@ export interface LiveState {
   clock?: string
   /** authored price path for the main market, cycled while live */
   path: string[][]
+  /** snapshot-driven (Demo controls): minute doesn't tick on its own */
+  frozen?: boolean
+  sot?: number
+  corrected?: boolean
+  quoteVersion?: string
 }
 
 export interface SportEvent {
@@ -61,7 +66,7 @@ export interface SportEvent {
   home: Participant
   away: Participant
   startsAt: string
-  status: 'scheduled' | 'live'
+  status: 'scheduled' | 'live' | 'finished'
   live?: LiveState
   markets: Market[]
   builder?: boolean

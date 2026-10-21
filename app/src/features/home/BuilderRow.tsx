@@ -27,7 +27,7 @@ function BuilderTile({ ev, b, i }: { ev: SportEvent; b: (typeof POPULAR_BUILDERS
     const legs = b.legs.map((id) => {
       const m = ev.markets.find((mk) => mk.selections.some((x) => x.id === id))!
       const sel = m.selections.find((x) => x.id === id)!
-      return { marketId: m.id, marketName: m.name, selectionId: id, label: id === 'HOME' ? `${ev.home.name} to win` : sel.label.replace('Daniel Costa — ', 'Daniel Costa '), odds: sel.odds, period: m.period }
+      return { marketId: m.id, marketName: m.name, selectionId: id, label: id === 'HOME' ? `${ev.home.name} to win` : sel.label.replace('Daniel Costa — ', 'Daniel Costa ').replace(/^(Over|Under) 2\.5$/, '$1 2.5 goals'), odds: sel.odds, period: m.period }
     })
     d({ type: 'addBuilder', eventId: ev.id, legs, odds: b.odds })
   }

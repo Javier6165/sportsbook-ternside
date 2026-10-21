@@ -86,7 +86,14 @@ function Header({ ev }: { ev: SportEvent }) {
             </motion.div>
           ))}
           <div className="col-start-2 row-start-1 text-center">
-            {live && L ? (
+            {ev.status === 'finished' && L ? (
+              <>
+                <div className="font-display text-[52px] leading-none font-[800] tracking-[-0.05em] tnum @tab:text-[72px]">
+                  {L.score[0]}–{L.score[1]}
+                </div>
+                <div className="mt-2 text-[13px] font-semibold text-white/70">Full time</div>
+              </>
+            ) : live && L ? (
               <>
                 <div className="font-display text-[52px] leading-none font-[800] tracking-[-0.05em] tnum @tab:text-[72px]">
                   {ev.sport === 'tennis' ? `${L.sets![0]}–${L.sets![1]}` : `${L.score[0]}–${L.score[1]}`}
@@ -131,6 +138,7 @@ function Header({ ev }: { ev: SportEvent }) {
 function MarketCard({ ev, m, prices, i }: { ev: SportEvent; m: Market; prices?: string[]; i: number }) {
   const [rule, setRule] = useState(false)
   const dark = ev.status === 'live'
+  const closed = ev.status === 'finished' || (ev.status === 'live' && m.id !== 'RESULT_90' && m.id !== 'WINNER')
   const n = m.selections.length
   const cols = n === 3 ? 'grid-cols-3' : n === 2 ? 'grid-cols-2' : n === 1 ? 'grid-cols-1' : 'grid-cols-2 @tab:grid-cols-3'
   return (
@@ -149,11 +157,18 @@ function MarketCard({ ev, m, prices, i }: { ev: SportEvent; m: Market; prices?: 
           </motion.p>
         )}
       </AnimatePresence>
+      {closed ? (
+        <div className={clsx('mt-3.5 flex items-center justify-between rounded-[16px] px-4 py-3.5 text-[13.5px] font-semibold', dark ? 'bg-white/[.06] text-white/60' : 'bg-chip text-secondary')}>
+          {ev.status === 'finished' ? 'Market settled — see My Bets' : 'Pre-match market closed'}
+          <span className="text-[12px] font-medium opacity-70">{ev.status === 'finished' ? 'Full time' : 'No live price'}</span>
+        </div>
+      ) : (
       <div className={clsx('mt-3.5 grid gap-2', cols)}>
         {m.selections.map((sel, k) => (
           <OddsButton key={sel.id} ev={ev} market={m} sel={sel} odds={prices?.[k] ?? sel.odds} label={sel.label.replace('Daniel Costa — ', 'Costa ')} size="lg" variant={dark ? 'night' : 'light'} />
         ))}
       </div>
+      )}
     </motion.section>
   )
 }
@@ -336,7 +351,7 @@ function Markets({ ev }: { ev: SportEvent }) {
   const rest = ev.markets.filter((m) => !POPULAR_IDS.includes(m.id))
   return (
     <div className="space-y-3">
-      {ev.brief && <Brief ev={ev} />}
+      {ev.brief && ev.status === 'scheduled' && <Brief ev={ev} />}
       {ev.status === 'live' && <LivePanel ev={ev} />}
       {popular.map((m, i) => (
         <MarketCard key={m.id} ev={ev} m={m} i={i} prices={i === 0 && ev.status === 'live' ? prices : undefined} />

@@ -4,6 +4,8 @@ import { Placeholder } from './features/Placeholder'
 import { NotFound } from './features/NotFound'
 import { SportPage } from './features/sport/SportPage'
 import { EventPage } from './features/event/EventPage'
+import { MyBets } from './features/mybets/MyBets'
+import { BetDetail } from './features/mybets/BetDetail'
 import { DemoFrame } from './presentation/DemoFrame'
 import { AppShell } from './shell/AppShell'
 import { StoreProvider } from './state/store'
@@ -19,7 +21,9 @@ export default function App() {
               <Route path="/sports" element={<Home />} />
               <Route path="/sports/:sportId" element={<SportPage />} />
               <Route path="/live" element={<Placeholder title="Live" />} />
-              <Route path="/my-bets" element={<Placeholder title="My Bets" />} />
+              <Route path="/my-bets" element={<MyBets />} />
+              <Route path="/bets/:betId" element={<BetDetail />} />
+              <Route path="/receipt/:betId" element={<BetDetail />} />
               <Route path="/account" element={<Placeholder title="Account" />} />
               <Route path="/wallet" element={<Placeholder title="Wallet" />} />
               <Route path="/search" element={<Placeholder title="Search" />} />

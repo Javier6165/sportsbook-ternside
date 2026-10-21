@@ -31,7 +31,7 @@ function FavButton({ id, name, dark }: { id: string; name: string; dark?: boolea
   )
 }
 
-function PickCard({ ev, reason, i }: { ev: SportEvent; reason: Reason; i: number }) {
+export function PickCard({ ev, reason, i }: { ev: SportEvent; reason: Reason; i: number }) {
   const m = ev.markets[0]
   const three = m.selections.length === 3
   const comp = competitionById(ev.competitionId)
@@ -100,7 +100,7 @@ export function Picks({ picks }: { picks: { e: SportEvent; r: Reason }[] }) {
 
 // —— Everything else: two levels of disclosure (sport → competition → matches) ——
 
-function CompactRow({ ev }: { ev: SportEvent }) {
+export function CompactRow({ ev }: { ev: SportEvent }) {
   const m = ev.markets[0]
   const three = m.selections.length === 3
   return (
@@ -122,8 +122,8 @@ function CompactRow({ ev }: { ev: SportEvent }) {
   )
 }
 
-function CompetitionFold({ c, evs }: { c: Competition; evs: SportEvent[] }) {
-  const [open, setOpen] = useState(false)
+export function CompetitionFold({ c, evs, defaultOpen = false }: { c: Competition; evs: SportEvent[]; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen)
   return (
     <div className="border-t border-line first:border-t-0">
       <button onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-center gap-3 py-3.5 text-left">

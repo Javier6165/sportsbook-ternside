@@ -251,6 +251,32 @@ const CORE_EVENTS: SportEvent[] = [
         period: REG,
         selections: [{ id: 'PLAYER_2_SOT', label: 'Daniel Costa — 2+ shots on target', odds: '1.90' }],
       },
+      doubleChance('1.28', '1.38', '1.75'),
+      btts('1.72', '2.05'),
+      {
+        id: 'ANYTIME_SCORER_90',
+        name: 'Anytime goalscorer',
+        period: REG,
+        selections: [
+          { id: 'SCORER_COSTA', label: 'Daniel Costa', odds: '2.30' },
+          { id: 'SCORER_ABARA', label: 'Kofi Abara', odds: '3.60' },
+          { id: 'SCORER_LINDE', label: 'Mats Linde (Southport)', odds: '3.25' },
+          { id: 'SCORER_REYES', label: 'Iker Reyes (Southport)', odds: '4.50' },
+        ],
+      },
+      {
+        id: 'CORRECT_SCORE_90',
+        name: 'Correct score',
+        period: REG,
+        selections: [
+          { id: 'CS_1_0', label: '1–0', odds: '8.50' },
+          { id: 'CS_2_1', label: '2–1', odds: '8.00' },
+          { id: 'CS_2_0', label: '2–0', odds: '10.00' },
+          { id: 'CS_1_1', label: '1–1', odds: '7.00' },
+          { id: 'CS_0_1', label: '0–1', odds: '13.00' },
+          { id: 'CS_1_2', label: '1–2', odds: '12.00' },
+        ],
+      },
     ],
   },
   {
@@ -489,3 +515,23 @@ export const POPULAR_BUILDERS: { id: string; eventId: string; title: string; sto
   { id: 'nb-open', eventId: 'football-01', title: 'An open game', story: 'Plenty of goals and Costa getting his shots away.', legs: ['OVER_2_5', 'PLAYER_2_SOT'], odds: '2.50', popularity: 'Popular' },
   { id: 'nb-tight', eventId: 'football-01', title: 'A tight home win', story: 'Northbridge edge it in a low-scoring match.', legs: ['HOME', 'UNDER_2_5'], odds: '6.60', popularity: 'Less common' },
 ]
+
+/** Fictional stats behind "Full stats" (collapsed by default on the match page). */
+export const MATCH_STATS: Record<string, { label: string; home: string; away: string; note?: string }[]> = {
+  'football-01': [
+    { label: 'Wins in last 5', home: '3', away: '3' },
+    { label: 'Goals per game (season)', home: '2.1', away: '1.6' },
+    { label: 'Games with 3+ goals (last 6)', home: '4', away: '4' },
+    { label: 'Clean sheets (last 6)', home: '2', away: '1' },
+    { label: 'Shots on target per game', home: '5.8', away: '4.4' },
+    { label: 'Home / away record', home: 'W4 D1 L0 at home', away: 'W2 D1 L2 away' },
+  ],
+}
+export const H2H: Record<string, { date: string; score: string; comp: string }[]> = {
+  'football-01': [
+    { date: 'Apr 2026', score: 'Northbridge 2–1 Southport', comp: 'Continental Cup' },
+    { date: 'Nov 2025', score: 'Southport 1–1 Northbridge', comp: 'Continental Cup' },
+    { date: 'Aug 2025', score: 'Northbridge 3–0 Southport', comp: 'Friendly' },
+  ],
+}
+export const PLAYER_FORM = { name: 'Daniel Costa', team: 'Northbridge FC', role: 'Striker', lastSix: [3, 2, 1, 2, 2, 0], note: '2+ shots on target in 4 of his last 6 starts' }

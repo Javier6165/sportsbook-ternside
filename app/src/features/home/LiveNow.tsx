@@ -12,7 +12,7 @@ import { OddsButton } from '../../ui/OddsButton'
  * (1/odds, normalised). Moves smoothly when a price ticks — so the motion
  * on the card always means something.
  */
-function MarketView({ prices, labels, colors }: { prices: string[]; labels: string[]; colors: string[] }) {
+export function MarketView({ prices, labels, colors }: { prices: string[]; labels: string[]; colors: string[] }) {
   const inv = prices.map((p) => 1 / Number(p))
   const sum = inv.reduce((a, b) => a + b, 0)
   const pct = inv.map((v) => Math.round((v / sum) * 100))
@@ -58,7 +58,7 @@ function LiveAura({ hc, ac }: { hc: string; ac: string }) {
   )
 }
 
-const lighten = (c: string) => `color-mix(in oklab, ${c} 70%, white)`
+export const lighten = (c: string) => `color-mix(in oklab, ${c} 70%, white)`
 
 export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?: string }) {
   const { prices, minute } = useLiveEvent(ev)
@@ -67,7 +67,7 @@ export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?
   const m = ev.markets[0]
   const hc = teamColor(ev.home)
   const ac = teamColor(ev.away)
-  const clock = ev.sport === 'football' ? `${minute}’` : ev.sport === 'basketball' ? `${L.period} ${L.clock}` : L.period
+  const clock = ev.sport === 'football' ? `${minute}'` : ev.sport === 'basketball' ? `${L.period} ${L.clock}` : L.period
   return (
     <motion.article
       layout

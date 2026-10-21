@@ -8,6 +8,7 @@ import { D, fmtMoney, fmtOdds } from '../../domain/money'
 import { dayLabel, kickoffTime } from '../../lib/time'
 import { useLiveEvent } from '../../state/store'
 import { matchGradient } from '../../ui/MatchField'
+import { LiveBadge } from '../../ui/LiveBadge'
 
 export const STATUS_CHIP: Record<BetStatus, { label: string; cls: string }> = {
   open: { label: 'Open', cls: 'bg-white/20 text-white' },
@@ -23,9 +24,7 @@ function WhenChip({ eventId }: { eventId: string }) {
   if (!ev) return null
   if (ev.status === 'live')
     return (
-      <span className="led flex items-center gap-1.5 text-[14px] text-volt">
-        <span className="live-dot !bg-volt" /> {ev.sport === 'football' ? `${live.minute}'` : ev.live?.period}
-      </span>
+      <LiveBadge tone="solid" clock={ev.sport === 'football' ? `${live.minute}'` : ev.live?.period} />
     )
   return (
     <span className="text-[12.5px] font-semibold text-white/80">
@@ -34,10 +33,16 @@ function WhenChip({ eventId }: { eventId: string }) {
   )
 }
 
-export function legIcon(r?: 'won' | 'lost' | 'void') {
+export function legIcon(r?: 'won' | 'lost' | 'void', tone?: 'good' | 'bad' | 'neutral' | 'warn') {
   if (r === 'won') return <span className="grid size-5 shrink-0 place-items-center rounded-full bg-won-ink text-white"><Check size={12} strokeWidth={3} /></span>
   if (r === 'lost') return <span className="grid size-5 place-items-center rounded-full bg-lost-ink text-white"><X size={12} strokeWidth={3} /></span>
   if (r === 'void') return <span className="grid size-5 place-items-center rounded-full bg-void-ink text-white"><Ban size={11} strokeWidth={3} /></span>
+  if (tone && tone !== 'neutral')
+    return (
+      <span className={'relative grid size-5 place-items-center rounded-full border-[2.5px] bg-surface ' + (tone === 'good' ? 'border-won-ink' : tone === 'bad' ? 'border-lost-ink' : 'border-warn-ink')}>
+        <span className={'size-2 animate-pulse rounded-full ' + (tone === 'good' ? 'bg-won-ink' : tone === 'bad' ? 'bg-lost-ink' : 'bg-warn-ink')} />
+      </span>
+    )
   return <span className="block size-5 rounded-full border-[2.5px] border-action bg-surface" />
 }
 

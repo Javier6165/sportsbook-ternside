@@ -6,7 +6,6 @@ import { H2H, MATCH_STATS, PLAYER_FORM, teamColor, type SportEvent } from '../..
 import { useLiveClock } from '../../state/store'
 
 const ease = [0.16, 1, 0.3, 1] as const
-const lighten = (c: string, p = 72) => `color-mix(in oklab, ${c} ${p}%, white)`
 const short = (n: string) => {
   const w = n.split(' ')
   return w[0].endsWith('.') ? w[w.length - 1] : w[0]
@@ -131,8 +130,8 @@ export function Advanced({ rows, dark }: { rows: { label: string; home: string; 
 /** Live: "The story so far" — plain sentences first, numbers behind a fold. */
 export function LiveStory({ ev }: { ev: SportEvent }) {
   const { tick } = useLiveClock()
-  const hc = lighten(teamColor(ev.home))
-  const ac = lighten(teamColor(ev.away))
+  const hc = teamColor(ev.home)
+  const ac = teamColor(ev.away)
   const H = short(ev.home.name)
   const A = short(ev.away.name)
   const poss = 54 + Math.round(Math.sin(tick / 20) * 1.5)
@@ -142,13 +141,13 @@ export function LiveStory({ ev }: { ev: SportEvent }) {
   if (ev.sport === 'tennis') {
     items = (
       <>
-        <Insight dark title={`${H} is winning his serve points`} visual={<OutOfTen n={7} color={hc} dark />}>
+        <Insight title={`${H} is winning his serve points`} visual={<OutOfTen n={7} color={hc} />}>
           When his first serve goes in, he wins about 7 points in every 10.
         </Insight>
-        <Insight dark title={`${H} has broken serve twice`} visual={<Versus dark a={2} b={0} ca={hc} cb={ac} la={H} lb={A} />}>
+        <Insight title={`${H} has broken serve twice`} visual={<Versus a={2} b={0} ca={hc} cb={ac} la={H} lb={A} />}>
           Winning a game on your opponent’s serve is the big swing in tennis. {A} hasn’t managed it yet.
         </Insight>
-        <Insight dark title="Short, sharp points" visual={<OutOfTen n={6} color="rgba(255,255,255,.75)" dark />}>
+        <Insight title="Short, sharp points" visual={<OutOfTen n={6} color={ac} />}>
           About 6 in 10 points end within four shots — the server is in control.
         </Insight>
       </>
@@ -163,13 +162,13 @@ export function LiveStory({ ev }: { ev: SportEvent }) {
   } else if (ev.sport === 'basketball') {
     items = (
       <>
-        <Insight dark title={`${H} are shooting better`} visual={<Versus dark a={48} b={44} ca={hc} cb={ac} la={`${H} %`} lb={`${A} %`} />}>
+        <Insight title={`${H} are shooting better`} visual={<Versus a={48} b={44} ca={hc} cb={ac} la={`${H} %`} lb={`${A} %`} />}>
           Out of every 100 shots, {H} are making 48 and {A} 44.
         </Insight>
-        <Insight dark title={`${H} on a 9–2 run`} visual={<OutOfTen n={8} color={hc} dark />}>
+        <Insight title={`${H} on a 9–2 run`} visual={<OutOfTen n={8} color={hc} />}>
           They’ve scored most of the recent points, which is why their price has shortened.
         </Insight>
-        <Insight dark title={`${A} are giving the ball away`} visual={<Versus dark a={9} b={12} ca={hc} cb={ac} la="Turnovers" lb="Turnovers" />}>
+        <Insight title={`${A} are giving the ball away`} visual={<Versus a={9} b={12} ca={hc} cb={ac} la="Turnovers" lb="Turnovers" />}>
           Losing the ball without a shot — {A} have done it 12 times.
         </Insight>
       </>
@@ -183,13 +182,13 @@ export function LiveStory({ ev }: { ev: SportEvent }) {
   } else {
     items = (
       <>
-        <Insight dark title={`${H} have had more of the ball`} visual={<Versus dark a={poss} b={100 - poss} ca={hc} cb={ac} la={`${H} %`} lb={`${A} %`} />}>
+        <Insight title={`${H} have had more of the ball`} visual={<Versus a={poss} b={100 - poss} ca={hc} cb={ac} la={`${H} %`} lb={`${A} %`} />}>
           Out of every 10 minutes, {H} have had the ball for about {Math.round(poss / 10)}.
         </Insight>
-        <Insight dark title={`${H} are creating more`} visual={<Versus dark a={5} b={2} ca={hc} cb={ac} la="Shots on target" lb="Shots on target" />}>
+        <Insight title={`${H} are creating more`} visual={<Versus a={5} b={2} ca={hc} cb={ac} la="Shots on target" lb="Shots on target" />}>
           Shots that would go in without a save. {H} have tested the keeper five times.
         </Insight>
-        <Insight dark title="Pressure on the visitors’ goal" visual={<Versus dark a={6} b={3} ca={hc} cb={ac} la="Corners" lb="Corners" />}>
+        <Insight title="Pressure on the visitors’ goal" visual={<Versus a={6} b={3} ca={hc} cb={ac} la="Corners" lb="Corners" />}>
           Corners are a rough sign of who’s pushing. {H} have twice as many.
         </Insight>
       </>
@@ -209,12 +208,12 @@ export function LiveStory({ ev }: { ev: SportEvent }) {
         <h3 id="story-title" className="font-display text-[22px] font-[780] tracking-[-0.04em]">
           The story so far
         </h3>
-        <span className="text-[11.5px] font-semibold text-white/45">Fictional live data</span>
+        <span className="text-[11.5px] font-semibold text-muted">Fictional live data</span>
       </div>
-      {ev.live?.detail && <p className="mb-3 text-[15px] text-white/80">{ev.live.detail}.</p>}
+      {ev.live?.detail && <p className="mb-3 text-[15px] text-secondary">{ev.live.detail}.</p>}
       <ul className="grid gap-3 @tab:grid-cols-3">{items}</ul>
       <div className="mt-3">
-        <Advanced rows={adv} dark />
+        <Advanced rows={adv} />
       </div>
     </section>
   )

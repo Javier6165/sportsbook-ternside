@@ -3,7 +3,7 @@ import { ArrowLeft, ChevronDown, Info, MapPin, Sparkles, Star } from 'lucide-rea
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
-import { IMAGES, MATCH_STATS, competitionById, eventById, teamColor, type Market, type SportEvent } from '../../data/catalog'
+import { IMAGES, MATCH_STATS, briefFor, competitionById, eventById, teamColor, type Market, type SportEvent } from '../../data/catalog'
 import { ruleFor } from '../../data/quotes'
 import { dayLabel, kickoffTime, secondsUntil } from '../../lib/time'
 import { useLiveClock, useLiveEvent, useStore } from '../../state/store'
@@ -13,6 +13,7 @@ import { Footer } from '../home/Home'
 import { NotFound } from '../NotFound'
 import { BuilderEditor } from './BuilderEditor'
 import { MatchCentre } from './MatchCentre'
+import { LiveBadge } from '../../ui/LiveBadge'
 import { LiveStory, PreMatchStats } from './StatsViews'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -38,20 +39,15 @@ function Header({ ev }: { ev: SportEvent }) {
   const L = ev.live
 
   return (
-    <section className={clsx('on-dark relative isolate overflow-hidden text-white @tab:rounded-[32px]', live ? 'bg-night' : 'bg-nav')}>
-      {!live && ev.id === 'football-01' && <img src={IMAGES.heroNight} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover blur-[3px] saturate-[.85]" />}
+    <section className="on-dark relative isolate overflow-hidden bg-nav text-white @tab:rounded-[32px]">
+      {ev.id === 'football-01' && <img src={IMAGES.heroNight} alt="" className="absolute inset-0 -z-20 h-full w-full object-cover blur-[3px] saturate-[.85]" />}
       <div
         aria-hidden="true"
         className="absolute inset-0 -z-10"
         style={{
-          background: live
-            ? `radial-gradient(60% 120% at 0% 0%, color-mix(in oklab, ${hc} 55%, transparent), transparent 60%), radial-gradient(60% 120% at 100% 0%, color-mix(in oklab, ${ac} 50%, transparent), transparent 60%)`
-            : `linear-gradient(100deg, color-mix(in oklab, ${hc} 92%, #05070d) 0%, color-mix(in oklab, ${hc} 65%, transparent) 40%, transparent 60%, color-mix(in oklab, ${ac} 70%, transparent) 100%), linear-gradient(0deg, rgba(5,7,13,.7), rgba(5,7,13,.15))`,
+          background: `linear-gradient(100deg, color-mix(in oklab, ${hc} 92%, #05070d) 0%, color-mix(in oklab, ${hc} 65%, transparent) 40%, transparent 60%, color-mix(in oklab, ${ac} 70%, transparent) 100%), linear-gradient(0deg, rgba(5,7,13,.7), rgba(5,7,13,.15))`,
         }}
       />
-      {live && (
-        <motion.span aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-full" animate={{ opacity: [0.5, 0.8, 0.5] }} transition={{ duration: 6, repeat: Infinity }} style={{ background: 'radial-gradient(40% 60% at 50% -10%, rgba(198,255,61,.18), transparent 70%)' }} />
-      )}
 
       <div className="mx-auto max-w-[1220px] px-4 pt-4 pb-6 @tab:px-8 @tab:pt-6 @tab:pb-8">
         <div className="flex items-center gap-2">
@@ -104,10 +100,7 @@ function Header({ ev }: { ev: SportEvent }) {
                 <div className="font-display text-[52px] leading-none font-[800] tracking-[-0.05em] tnum @tab:text-[72px]">
                   {ev.sport === 'tennis' ? `${L.sets![0]}–${L.sets![1]}` : `${L.score[0]}–${L.score[1]}`}
                 </div>
-                <div className="led mt-2 flex items-center justify-center gap-2 text-[20px] text-volt [text-shadow:0_0_14px_rgba(198,255,61,.55)]">
-                  <span className="live-dot !bg-volt" />
-                  {ev.sport === 'football' ? `${minute}'` : ev.sport === 'basketball' ? `${L.period} ${L.clock}` : `${L.period} · ${L.games![0]}–${L.games![1]}`}
-                </div>
+                <div className="mt-2 flex justify-center"><LiveBadge tone="solid" size="lg" clock={ev.sport === 'football' ? `${minute}'` : ev.sport === 'basketball' ? `${L.period} ${L.clock}` : L.period} /></div>
               </>
             ) : (
               <>
@@ -144,7 +137,7 @@ function Header({ ev }: { ev: SportEvent }) {
 
 function MarketCard({ ev, m, prices, i }: { ev: SportEvent; m: Market; prices?: string[]; i: number }) {
   const [rule, setRule] = useState(false)
-  const dark = ev.status === 'live'
+  const dark = false
   const closed = ev.status === 'finished' || (ev.status === 'live' && m.id !== 'RESULT_90' && m.id !== 'WINNER')
   const n = m.selections.length
   const cols = n === 3 ? 'grid-cols-3' : n === 2 ? 'grid-cols-2' : n === 1 ? 'grid-cols-1' : 'grid-cols-2 @tab:grid-cols-3'
@@ -181,7 +174,8 @@ function MarketCard({ ev, m, prices, i }: { ev: SportEvent; m: Market; prices?: 
 }
 
 function Brief({ ev }: { ev: SportEvent }) {
-  if (!ev.brief) return null
+  const brief = briefFor(ev)
+  if (!brief) return null
   return (
     <section className="rounded-[24px] bg-ink p-5 text-white @tab:p-6">
       <div className="flex flex-wrap items-center gap-2">
@@ -190,7 +184,7 @@ function Brief({ ev }: { ev: SportEvent }) {
         <span className="ml-auto text-[11.5px] font-medium text-white/50">AI summary of fictional match data · not a tip</span>
       </div>
       <ul className="mt-4 grid gap-x-8 gap-y-3 @desk:grid-cols-2">
-        {ev.brief.map((b, i) => (
+        {brief.map((b, i) => (
           <li key={i} className="flex gap-3 text-[14.5px] leading-snug text-white/85">
             <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-brand-dark" />
             {b}
@@ -208,7 +202,7 @@ function Markets({ ev }: { ev: SportEvent }) {
   const rest = ev.markets.filter((m) => !POPULAR_IDS.includes(m.id))
   return (
     <div className="space-y-3">
-      {ev.brief && ev.status === 'scheduled' && <Brief ev={ev} />}
+      {ev.status === 'scheduled' && <Brief ev={ev} />}
       {popular.map((m, i) => (
         <MarketCard key={m.id} ev={ev} m={m} i={i} prices={i === 0 && ev.status === 'live' ? prices : undefined} />
       ))}
@@ -254,17 +248,17 @@ export function EventPage() {
     ...(MATCH_STATS[ev.id] ? [{ id: 'stats', label: 'Stats' }] : []),
   ]
   const tab = tabs.find((t) => t.id === q.get('tab'))?.id ?? 'markets'
-  const live = ev.status === 'live'
+
 
   return (
-    <div className={clsx(live && 'on-dark -mb-28 min-h-full bg-night pb-28 text-white')}>
+    <div>
       <div className="@tab:px-8 @tab:pt-6">
         <div className="mx-auto max-w-[1600px]">
           <Header ev={ev} />
         </div>
       </div>
       <div className="mx-auto max-w-[1220px] px-4 @tab:px-8">
-        <div role="tablist" aria-label="Match sections" className={clsx('sticky top-0 z-10 -mx-4 flex gap-1 px-4 py-3 backdrop-blur-xl @tab:mx-0 @tab:px-0', live ? 'bg-night/90' : 'bg-canvas/95')}>
+        <div role="tablist" aria-label="Match sections" className={clsx('sticky top-0 z-10 -mx-4 flex gap-1 px-4 py-3 backdrop-blur-xl @tab:mx-0 @tab:px-0', 'bg-canvas/95')}>
           {tabs.map((t) => (
             <button
               type="button"
@@ -272,9 +266,9 @@ export function EventPage() {
               role="tab"
               aria-selected={tab === t.id}
               onClick={() => setQ(t.id === 'markets' ? {} : { tab: t.id }, { replace: true })}
-              className={clsx('relative h-10 rounded-full px-4 text-[14px] font-semibold transition-colors', tab === t.id ? (live ? 'text-night' : 'text-white') : live ? 'text-white/60 hover:text-white' : 'text-secondary hover:text-ink')}
+              className={clsx('relative h-10 rounded-full px-4 text-[14px] font-semibold transition-colors', tab === t.id ? 'text-white' : 'text-secondary hover:text-ink')}
             >
-              {tab === t.id && <motion.span layoutId="event-tab" className={clsx('absolute inset-0 -z-10 rounded-full', live ? 'bg-volt' : 'bg-ink')} transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
+              {tab === t.id && <motion.span layoutId="event-tab" className={clsx('absolute inset-0 -z-10 rounded-full', 'bg-ink')} transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
               <span className="relative">{t.label}</span>
             </button>
           ))}
@@ -284,7 +278,7 @@ export function EventPage() {
           {tab === 'builder' && <BuilderEditor ev={ev} explain={q.get('explain') === '1'} />}
           {tab === 'stats' && <PreMatchStats ev={ev} brief={<Brief ev={ev} />} />}
         </div>
-        {live ? <p className="pt-10 pb-6 text-[12px] text-white/40">18+ · Fictional demo · Live information can be delayed.</p> : <Footer />}
+        <Footer />
       </div>
     </div>
   )

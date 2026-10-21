@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { teamColor, type SportEvent } from '../../data/catalog'
 import { useLiveClock, useLiveEvent } from '../../state/store'
 import { Crest } from '../../ui/Crest'
+import { LiveBadge } from '../../ui/LiveBadge'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const lighten = (c: string, p = 70) => `color-mix(in oklab, ${c} ${p}%, white)`
@@ -177,15 +178,15 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
               </>
             )}
           </div>
-          <div className="led mt-2 flex items-center justify-center gap-2 text-[15px] whitespace-nowrap text-volt @tab:text-[20px] [text-shadow:0_0_16px_rgba(198,255,61,.6)]">
-            <span className="live-dot !bg-volt" />
-            {sport === 'football' ? `${minute}'` : sport === 'basketball' ? `${L.period} ${L.clock}` : `${L.period} · ${L.games![0]}–${L.games![1]}`}
+          <div className="mt-2.5 flex justify-center">
+            <LiveBadge tone="solid" size="lg" clock={sport === 'football' ? `${minute}'` : sport === 'basketball' ? `${L.period} ${L.clock}` : `${L.period} · ${L.games![0]}–${L.games![1]}`} />
           </div>
         </div>
       </div>
 
+      <div className="mt-2 grid items-center gap-6 @desk:mt-0 @desk:grid-cols-[minmax(0,1fr)_300px] @desk:gap-10">
       {/* Pitch */}
-      <div className="relative mx-auto -mt-2 aspect-[1000/560] w-full max-w-[880px] [perspective:1100px] @tab:-mt-4">
+      <div className="relative aspect-[1000/560] w-full [perspective:1100px]">
         <div className="absolute inset-0 origin-bottom overflow-hidden rounded-[22px] shadow-[0_40px_80px_-30px_rgba(0,0,0,.8)] [transform:rotateX(28deg)] @tab:[transform:rotateX(34deg)]">
           <Surface sport={sport} />
           {/* attacking third glow */}
@@ -203,7 +204,7 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
             <motion.span
               key={i}
               aria-hidden="true"
-              className="absolute size-[2.2%] min-h-2 min-w-2 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-white/70"
+              className="absolute size-[2.4%] min-h-2.5 min-w-2.5 -translate-x-1/2 -translate-y-1/2 scale-y-[1.24] rounded-full ring-2 ring-white/80"
               animate={{ left: `${p.x}%`, top: `${p.y}%` }}
               transition={{ duration: 3.2, ease: 'easeInOut' }}
               style={{ background: tColor(p.side), boxShadow: `0 0 14px ${tColor(p.side)}` }}
@@ -212,7 +213,7 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
           {/* ball + glow */}
           <motion.span
             aria-hidden="true"
-            className="absolute size-[1.6%] min-h-2 min-w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+            className="absolute size-[1.6%] min-h-2 min-w-2 -translate-x-1/2 -translate-y-1/2 scale-y-[1.24] rounded-full bg-white"
             animate={{ left: `${ball.x}%`, top: `${ball.y}%` }}
             transition={{ duration: 1.6, ease: [0.45, 0, 0.2, 1] }}
             style={{ boxShadow: '0 0 0 6px rgba(255,255,255,.18), 0 0 30px 8px rgba(255,255,255,.55)' }}
@@ -228,7 +229,7 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
               animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
               exit={{ opacity: 0, y: -14, filter: 'blur(6px)' }}
               transition={{ duration: 0.5, ease }}
-              className={clsx('pointer-events-none absolute top-[14%] z-10', toast.side === 0 ? 'left-[56%]' : 'right-[56%]')}
+              className={clsx('pointer-events-none absolute top-[4%] left-1/2 z-10 -translate-x-1/2 @tab:top-[14%] @tab:translate-x-0', toast.side === 0 ? '@tab:left-[56%]' : '@tab:right-[56%] @tab:left-auto')}
               role="status"
             >
               <div className="flex items-center gap-2.5 rounded-[16px] bg-black/55 px-4 py-2.5 ring-1 ring-white/15 backdrop-blur-xl" style={{ boxShadow: `0 0 40px -6px ${tColor(toast.side)}` }}>
@@ -243,11 +244,11 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
         </AnimatePresence>
       </div>
 
-      {/* Win probability */}
-      <div className="relative z-10 mx-auto mt-2 max-w-[880px]">
-        <div className="mb-2 flex items-baseline justify-between text-[12px] font-semibold text-white/55">
-          <span className="text-[13px] text-white">Win probability</span>
-          <span>from current odds · not a prediction</span>
+      {/* Win probability + moments */}
+      <div className="relative z-10">
+        <div className="mb-2 flex items-baseline justify-between text-[12px] font-semibold text-white/60">
+          <span className="text-[14px] text-white">Win probability</span>
+          <span>from current odds</span>
         </div>
         <div className="relative flex h-4 gap-1 overflow-hidden rounded-full">
           {pct.map((p, i) => (
@@ -256,21 +257,58 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
               animate={{ flexGrow: Math.max(p, 3) }}
               transition={{ duration: 1.2, ease }}
               className="relative h-full overflow-hidden rounded-full"
-              style={{ flexBasis: 0, background: three && i === 1 ? 'rgba(255,255,255,.28)' : lighten(i === 0 ? hc : ac, 78) }}
+              style={{ flexBasis: 0, background: three && i === 1 ? 'rgba(255,255,255,.3)' : lighten(i === 0 ? hc : ac, 78) }}
             >
               <motion.span className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent" animate={{ x: ['-100%', '300%'] }} transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }} />
             </motion.span>
           ))}
         </div>
-        <div className="mt-2.5 grid grid-cols-3 text-[13px] font-semibold">
+        <div className="mt-2.5 grid grid-cols-3 text-[12.5px] font-semibold">
           <span>
-            {shortName(ev.home.name)} <span className="font-display text-[22px] font-[800] tracking-[-0.03em] tnum">{pct[0]}%</span>
+            <span className="block font-display text-[26px] leading-none font-[800] tracking-[-0.03em] tnum">{pct[0]}%</span>
+            {shortName(ev.home.name)}
           </span>
-          <span className="text-center text-white/70">{three ? <>Draw <span className="font-display text-[22px] font-[800] text-white tracking-[-0.03em] tnum">{pct[1]}%</span></> : ''}</span>
+          <span className="text-center text-white/70">
+            {three && (
+              <>
+                <span className="block font-display text-[26px] leading-none font-[800] tracking-[-0.03em] text-white tnum">{pct[1]}%</span>
+                Draw
+              </>
+            )}
+          </span>
           <span className="text-right">
-            <span className="font-display text-[22px] font-[800] tracking-[-0.03em] tnum">{pct[pct.length - 1]}%</span> {shortName(ev.away.name)}
+            <span className="block font-display text-[26px] leading-none font-[800] tracking-[-0.03em] tnum">{pct[pct.length - 1]}%</span>
+            {shortName(ev.away.name)}
           </span>
         </div>
+        <p className="mt-2 text-[11.5px] text-white/50">What the prices imply right now — not a prediction.</p>
+
+        <div className="mt-6 hidden @desk:block">
+          <div className="mb-2 text-[12px] font-bold tracking-[.1em] text-white/50 uppercase">Latest</div>
+          <ul className="space-y-1.5">
+            <AnimatePresence initial={false}>
+              {[0, 1, 2, 3].map((k) => {
+                const idx = (evIdx - k + events.length * 4) % events.length
+                const m = events[idx]
+                return (
+                  <motion.li
+                    key={`${Math.floor(tick / 7) - k}`}
+                    layout
+                    initial={{ opacity: 0, x: 12 }}
+                    animate={{ opacity: 1 - k * 0.2, x: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center gap-2.5 rounded-[12px] bg-white/[.07] px-3 py-2 text-[13px]"
+                  >
+                    <span className="h-5 w-1 rounded-full" style={{ background: lighten(tColor(m.side), 80) }} />
+                    <span className="font-semibold">{m.kind}</span>
+                    <span className="ml-auto text-white/55">{sideName(m.side)}</span>
+                  </motion.li>
+                )
+              })}
+            </AnimatePresence>
+          </ul>
+        </div>
+      </div>
       </div>
     </section>
   )

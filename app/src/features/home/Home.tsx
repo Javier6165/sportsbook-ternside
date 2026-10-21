@@ -22,7 +22,7 @@ export function Footer() {
         <Link to="/safer-gambling" className="font-semibold text-ink hover:text-sel-ink">
           Deposit limits
         </Link>
-        <span>Rules RULES-GB-01 · rev. 0.4</span>
+        <span>Betting rules · RULES-GB-01 rev 0.4</span>
       </div>
       <p className="mt-4 max-w-[640px] leading-relaxed text-muted">
         Ternside is a fictional sportsbook concept by Javier Ortiz, built for a design portfolio. Teams, players, competitions and prices are invented. No real money, accounts or

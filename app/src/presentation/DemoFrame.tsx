@@ -61,8 +61,20 @@ function ViewToggle({ mobile, onChange, dark = true }: { mobile: boolean; onChan
 
 /** Slim vertical dock in the left gutter, so it never covers product content. */
 function SideDock({ mobile, onChange, onScenes, scenes }: { mobile: boolean; onChange: (m: boolean) => void; onScenes: () => void; scenes: boolean }) {
+  const [open, setOpen] = useState(false)
+  if (!open && !scenes)
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        onMouseEnter={() => setOpen(true)}
+        className="flex h-11 items-center gap-2 rounded-full bg-[#0b1120]/92 px-4 text-[11px] font-bold tracking-[.12em] text-[#f5c04a] uppercase shadow-[0_12px_30px_-10px_rgba(0,0,0,.6)] ring-1 ring-white/10 backdrop-blur-md"
+        aria-label="Open demo tools"
+      >
+        <Clapperboard size={14} /> Demo
+      </button>
+    )
   return (
-    <div className="group flex items-center gap-1 rounded-full bg-[#0b1120]/92 p-1.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,.6)] ring-1 ring-white/10 backdrop-blur-md" role="radiogroup" aria-label="Preview size">
+    <div onMouseLeave={() => !scenes && setOpen(false)} className="group flex items-center gap-1 rounded-full bg-[#0b1120]/92 p-1.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,.6)] ring-1 ring-white/10 backdrop-blur-md" role="radiogroup" aria-label="Preview size">
       <span className="px-2 text-[10px] font-bold tracking-[.12em] text-[#f5c04a] uppercase">Demo</span>
       {[
         { m: false, label: 'Full view', icon: Monitor },

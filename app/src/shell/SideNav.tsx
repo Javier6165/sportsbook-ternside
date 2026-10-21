@@ -43,6 +43,18 @@ function Item({ to, icon, label, meta, open, active }: { to: string; icon: React
   )
 }
 
+const COMP_COLOURS = ['#2948FF', '#C8102E', '#0F5E4A', '#5B21B6', '#0E7490', '#9A3412', '#BE185D']
+function CompBadge({ id, name }: { id: string; name: string }) {
+  let h = 0
+  for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) | 0
+  const c = COMP_COLOURS[Math.abs(h) % COMP_COLOURS.length]
+  return (
+    <span className="grid size-6 place-items-center rounded-[8px] font-display text-[10px] font-[800] text-white shadow-[inset_0_1px_0_rgba(255,255,255,.25)]" style={{ background: `linear-gradient(140deg, ${c}, color-mix(in oklab, ${c} 60%, #000))` }}>
+      {name.split(' ').map((w) => w[0]).join('').slice(0, 2)}
+    </span>
+  )
+}
+
 function Section({ open, children }: { open: boolean; children: ReactNode }) {
   return open ? <div className="px-[14px] pt-5 pb-1.5 text-[11px] font-bold tracking-[.12em] whitespace-nowrap text-muted uppercase">{children}</div> : <div className="mx-auto my-3 h-px w-8 bg-line-strong" />
 }
@@ -102,7 +114,7 @@ export function SideNav() {
           <Item
             key={c.id}
             to={`/sports/${c.sport}?competition=${c.id}`}
-            icon={<span className="grid size-6 place-items-center rounded-lg bg-chip font-display text-[10.5px] font-[800] text-ink">{c.name.split(' ').map((w) => w[0]).join('').slice(0, 2)}</span>}
+            icon={<CompBadge id={c.id} name={c.name} />}
             label={c.name}
             open={open}
             active={comp === c.id}

@@ -7,6 +7,7 @@ import { COMPETITIONS, EVENTS, competitionById, type SportEvent } from '../../da
 import { dayLabel, kickoffTime } from '../../lib/time'
 import { Crest } from '../../ui/Crest'
 import { SportIcon } from '../../ui/SportIcon'
+import { LiveBadge } from '../../ui/LiveBadge'
 
 interface Hit {
   id: string
@@ -193,7 +194,7 @@ export function SearchPanel({ onClose, autoFocus = true }: { onClose?: () => voi
                           <span className="block truncate text-[14.5px] font-semibold">{h.title}</span>
                           <span className="block truncate text-[12.5px] text-secondary">{h.sub}</span>
                         </span>
-                        {h.ev?.status === 'live' && <span className="led text-[13px] text-live">LIVE</span>}
+                        {h.ev?.status === 'live' && <LiveBadge />}
                         <ArrowRight size={16} className="text-muted" />
                       </button>
                     </li>

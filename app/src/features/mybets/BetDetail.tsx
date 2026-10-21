@@ -10,8 +10,9 @@ import { D, fmtMoney, fmtOdds } from '../../domain/money'
 import { dayLabel, kickoffTime } from '../../lib/time'
 import { mainPrices, useLiveClock, useLiveEvent, useStore } from '../../state/store'
 import { Crest } from '../../ui/Crest'
+import { LiveBadge } from '../../ui/LiveBadge'
 import { matchGradient } from '../../ui/MatchField'
-import { Perforation } from '../../ui/BuilderPass'
+import { Perforation } from '../../ui/Perforation'
 import { Inspector } from '../event/Inspector'
 import { NotFound } from '../NotFound'
 import { STATUS_CHIP, legIcon } from './BetPass'
@@ -195,9 +196,7 @@ export function BetDetail() {
                   <div className="font-display text-[30px] leading-none font-[800] tracking-[-0.045em] @tab:text-[40px]">{title}</div>
                   <div className="mt-1.5 text-[13px] text-white/75">
                     {live ? (
-                      <span className="led text-[15px] text-volt">
-                        {ev.live!.score[0]}–{ev.live!.score[1]} · {ev.sport === 'football' ? `${minute}'` : ev.live!.period}
-                      </span>
+                      <span className="flex items-center gap-2"><LiveBadge tone="solid" clock={ev.sport === 'football' ? `${minute}'` : ev.live!.period} /><span className="font-display text-[18px] font-[800] text-white tnum">{ev.live!.score[0]}–{ev.live!.score[1]}</span></span>
                     ) : bet.status === 'open' ? (
                       `${dayLabel(ev.startsAt)} · ${kickoffTime(ev.startsAt)} · not started`
                     ) : (
@@ -218,7 +217,7 @@ export function BetDetail() {
               return (
                 <li key={l.eventId + l.selectionId} className="relative flex gap-3 pb-5 last:pb-2">
                   {i < bet.legs.length - 1 && <span className="absolute top-6 bottom-0 left-[9px] w-[2px] rounded bg-sel" />}
-                  <span className="relative mt-0.5 shrink-0">{legIcon(res)}</span>
+                  <span className="relative mt-0.5 shrink-0">{legIcon(res, reading?.tone)}</span>
                   <span className="min-w-0 flex-1">
                     <span className="flex flex-wrap items-baseline justify-between gap-x-3">
                       <span className={clsx('text-[16px] font-semibold', res === 'void' && 'text-void-ink line-through')}>{l.label}</span>

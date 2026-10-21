@@ -540,3 +540,27 @@ export const H2H: Record<string, { date: string; score: string; comp: string }[]
   ],
 }
 export const PLAYER_FORM = { name: 'Daniel Costa', team: 'Northbridge FC', role: 'Striker', lastSix: [3, 2, 1, 2, 2, 0], note: '2+ shots on target in 4 of his last 6 starts' }
+
+/** Neutral, plain-English read of the prices for events without an authored brief. */
+export function briefFor(ev: SportEvent): string[] | undefined {
+  if (ev.brief) return ev.brief
+  const m = ev.markets[0]
+  if (!m || ev.status !== 'scheduled') return undefined
+  const inv = m.selections.map((x) => 1 / Number(x.odds))
+  const sum = inv.reduce((a, b) => a + b, 0)
+  const pct = inv.map((v) => Math.round((v / sum) * 100))
+  const order = m.selections.map((x, i) => ({ x, p: pct[i] })).sort((a, b) => b.p - a.p)
+  const fav = order[0]
+  const close = order[0].p - order[1].p < 10
+  const are = ev.sport === 'tennis' ? 'is' : 'are'
+  const out = [
+    close
+      ? `This one is tight: ${fav.x.label} ${are} only a slight favourite, with the price implying about ${fav.p}%.`
+      : `${fav.x.label} ${are} the favourite — ${fav.x.odds} implies roughly a ${fav.p}% chance.`,
+  ]
+  const draw = m.selections.find((x) => x.id === 'DRAW')
+  if (draw) out.push(`The draw at ${draw.odds} suggests about a ${pct[m.selections.indexOf(draw)]}% chance of a level game after 90 minutes.`)
+  if (ev.sport === 'tennis') out.push('Tennis prices move quickly once the match starts, especially after a break of serve.')
+  if (ev.sport === 'basketball') out.push('There are no draws here: overtime is played until there’s a winner, and it counts.')
+  return out
+}

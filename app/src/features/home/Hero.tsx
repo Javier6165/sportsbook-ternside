@@ -7,6 +7,7 @@ import type { Reason } from '../../lib/feed'
 import { dayLabel, kickoffTime, secondsUntil } from '../../lib/time'
 import { useLiveClock, useLiveEvent } from '../../state/store'
 import { Crest } from '../../ui/Crest'
+import { LiveBadge } from '../../ui/LiveBadge'
 import { OddsButton } from '../../ui/OddsButton'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -110,8 +111,8 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45, duration: 0.6 }} className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
               {live && ev.live ? (
                 <div>
-                  <div className="led mb-1.5 flex items-center gap-2 text-[15px] text-volt [text-shadow:0_0_14px_rgba(198,255,61,.55)]">
-                    <span className="live-dot !bg-volt" /> Live · {ev.live.minute}'
+                  <div className="mb-2">
+                    <LiveBadge tone="solid" size="lg" clock={`${ev.live.minute}'`} />
                   </div>
                   <div className="font-display text-[44px] leading-none font-[800] tracking-[-0.05em] tnum">
                     {ev.live.score[0]}–{ev.live.score[1]}
@@ -125,7 +126,7 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
               )}
               <div className="text-[14px] leading-snug">
                 <div className="font-semibold">
-                  {dayLabel(ev.startsAt)} · {kickoffTime(ev.startsAt)}
+                  {live ? `Kicked off ${kickoffTime(ev.startsAt)}` : `${dayLabel(ev.startsAt)} · ${kickoffTime(ev.startsAt)}`}
                 </div>
                 <div className="flex items-center gap-1 text-white/70">
                   <MapPin size={13} /> {ev.venue}
@@ -152,7 +153,7 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
                 <OddsButton key={sel.id} ev={ev} market={result} sel={sel} odds={live ? prices[i] : sel.odds} variant="field" size="lg" label={i === 0 ? first(ev.home.name) : i === 1 ? 'Draw' : first(ev.away.name)} />
               ))}
             </div>
-            {ev.brief && (
+            {ev.brief && !live && (
               <button
                 onClick={() => setWhy((w) => !w)}
                 aria-expanded={why}
@@ -169,7 +170,7 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
         </div>
 
         <AnimatePresence initial={false}>
-          {why && ev.brief && (
+          {why && ev.brief && !live && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.5, ease }} className="overflow-hidden">
               <div className="mt-5 rounded-[24px] bg-black/35 p-5 ring-1 ring-white/10 backdrop-blur-xl @tab:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-2">

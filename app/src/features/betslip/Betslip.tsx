@@ -9,7 +9,7 @@ import { kickoffTime } from '../../lib/time'
 import { currentOdds, useLiveClock, useStore, type DraftGroup } from '../../state/store'
 import { CountUp } from '../../ui/CountUp'
 import { matchGradient } from '../../ui/MatchField'
-import { Perforation } from '../../ui/BuilderPass'
+import { Perforation } from '../../ui/Perforation'
 import { planBets, type AcceptedBet } from '../../domain/bets'
 import { EVENT_NOW } from '../../data/catalog'
 import { DoneStep, PlacingStep, ReviewStep } from './Review'
@@ -221,7 +221,7 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
   }
 
   if (step === 'review')
-    return <ReviewStep planned={planned} available={s.available} blocked={priceMoved ? 'A price changed. Go back and accept the new odds first.' : null} onBack={() => setStep('edit')} onPlace={place} />
+    return <ReviewStep planned={planned} available={s.available} blocked={s.restriction !== 'none' ? 'Betting is off while your break is active.' : priceMoved ? 'A price changed. Go back and accept the new odds first.' : null} onBack={() => setStep('edit')} onPlace={place} />
   if (step === 'placing') return <PlacingStep planned={planned} />
   if (step === 'done')
     return (

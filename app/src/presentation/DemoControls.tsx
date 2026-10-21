@@ -75,7 +75,7 @@ export function DemoControls({ onClose, inline }: { onClose?: () => void; inline
                     <button
                       key={st.phase}
                       onClick={() => d({ type: 'f01', phase: st.phase })}
-                      className={clsx('h-8 rounded-full px-3 text-[12px] font-semibold', s.f01 === st.phase ? 'bg-volt text-nav' : 'bg-white/10 text-white/80 hover:bg-white/20')}
+                      className={clsx('h-8 rounded-full px-3 text-[12px] font-semibold', s.f01 === st.phase ? 'bg-[#f5c04a] text-nav' : 'bg-white/10 text-white/80 hover:bg-white/20')}
                     >
                       {st.label}
                     </button>

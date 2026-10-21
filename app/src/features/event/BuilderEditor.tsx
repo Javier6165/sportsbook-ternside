@@ -7,7 +7,7 @@ import { BUILDER_GROUPS, MARKET_RULES, groupOf, quoteFor } from '../../data/quot
 import { useStore } from '../../state/store'
 import { useFly } from '../../ui/fly'
 import { matchGradient } from '../../ui/MatchField'
-import { Perforation } from '../../ui/BuilderPass'
+import { Perforation } from '../../ui/Perforation'
 import { Inspector } from './Inspector'
 
 const ease = [0.16, 1, 0.3, 1] as const

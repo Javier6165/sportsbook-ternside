@@ -3,7 +3,7 @@ import { ChevronDown, ChevronRight, Star } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { competitionById, teamColor, type Competition, type SportEvent } from '../../data/catalog'
+import { competitionById, type Competition, type SportEvent } from '../../data/catalog'
 import type { Reason, buildFeed } from '../../lib/feed'
 import { dayLabel, kickoffTime } from '../../lib/time'
 import { useStore } from '../../state/store'
@@ -43,7 +43,6 @@ export function PickCard({ ev, reason, i }: { ev: SportEvent; reason: Reason; i:
       transition={{ delay: (i % 2) * 0.06, duration: 0.6, ease }}
       className="relative overflow-hidden rounded-[26px] bg-surface p-5"
     >
-      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[5px]" style={{ background: `linear-gradient(90deg, ${teamColor(ev.home)}, ${teamColor(ev.away)})` }} />
       <div className="flex items-center gap-2">
         <span
           className={clsx(

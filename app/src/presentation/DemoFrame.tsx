@@ -61,8 +61,8 @@ function ViewToggle({ mobile, onChange, dark = true }: { mobile: boolean; onChan
 /** Slim vertical dock in the left gutter, so it never covers product content. */
 function SideDock({ mobile, onChange }: { mobile: boolean; onChange: (m: boolean) => void }) {
   return (
-    <div className="group flex flex-col items-center gap-1 rounded-full bg-[#0b1120]/92 p-1.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,.6)] ring-1 ring-white/10 backdrop-blur-md" role="radiogroup" aria-label="Preview size">
-      <span className="py-1 text-[9px] font-bold tracking-[.12em] text-[#f5c04a] uppercase [writing-mode:vertical-rl] rotate-180">Demo</span>
+    <div className="group flex items-center gap-1 rounded-full bg-[#0b1120]/92 p-1.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,.6)] ring-1 ring-white/10 backdrop-blur-md" role="radiogroup" aria-label="Preview size">
+      <span className="px-2 text-[10px] font-bold tracking-[.12em] text-[#f5c04a] uppercase">Demo</span>
       {[
         { m: false, label: 'Full view', icon: Monitor },
         { m: true, label: 'Mobile view', icon: Smartphone },
@@ -131,7 +131,7 @@ export function DemoFrame({ children }: { children: ReactNode }) {
 
       {/* Presentation controls — outside the sportsbook UI */}
       {!realMobile && (
-        <div className={clsx('on-dark absolute z-[100]', mobile ? 'top-1/2 left-[max(24px,calc(50%-560px))] w-[280px] -translate-y-1/2' : 'top-1/2 left-2.5 -translate-y-1/2')}>
+        <div className={clsx('on-dark absolute z-[100]', mobile ? 'top-1/2 left-[max(24px,calc(50%-560px))] w-[280px] -translate-y-1/2' : 'bottom-5 transition-[left] duration-300')} style={mobile ? undefined : { left: win.w < 1056 ? 16 : s.navOpen ? 284 : 92 }}>
           {mobile ? (
             <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} className="hidden text-white min-[1120px]:block">
               <Wordmark size={44} />

@@ -3,30 +3,58 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { competitionById, teamColor, type SportEvent } from '../../data/catalog'
-import { useLiveClock, useLiveEvent } from '../../state/store'
+import { useLiveEvent } from '../../state/store'
 import { Crest } from '../../ui/Crest'
 import { OddsButton } from '../../ui/OddsButton'
 
-function Momentum({ seed, home, away }: { seed: number; home: string; away: string }) {
-  const { tick } = useLiveClock()
-  const bars = Array.from({ length: 30 }, (_, i) => {
-    const k = i + Math.floor(tick / 3)
-    return Math.sin(k * 1.7 + seed) * 0.5 + Math.sin(k * 0.6 + seed * 2) * 0.5
-  })
+/**
+ * What the market currently thinks, derived only from the live prices
+ * (1/odds, normalised). Moves smoothly when a price ticks — so the motion
+ * on the card always means something.
+ */
+function MarketView({ prices, labels, colors }: { prices: string[]; labels: string[]; colors: string[] }) {
+  const inv = prices.map((p) => 1 / Number(p))
+  const sum = inv.reduce((a, b) => a + b, 0)
+  const pct = inv.map((v) => Math.round((v / sum) * 100))
   return (
-    <div className="relative flex h-8 gap-[2px]" aria-hidden="true">
-      <span className="absolute inset-x-0 top-1/2 h-px bg-white/10" />
-      {bars.map((v, i) => (
-        <span key={i} className="flex h-full flex-1 flex-col" style={{ opacity: 0.25 + (i / bars.length) * 0.75 }}>
-          <span className="flex h-1/2 items-end">
-            <motion.span animate={{ height: v > 0 ? `${Math.max(12, v * 100)}%` : '0%' }} transition={{ duration: 0.8 }} className="w-full rounded-t-[2px]" style={{ background: home }} />
+    <div>
+      <div className="mb-1.5 flex justify-between text-[11px] font-semibold text-white/50">
+        <span>Market view</span>
+        <span>implied by current odds</span>
+      </div>
+      <div className="flex h-2 gap-[3px] overflow-hidden rounded-full" aria-hidden="true">
+        {pct.map((p, i) => (
+          <motion.span key={i} animate={{ flexGrow: Math.max(p, 4) }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }} className="h-full rounded-full" style={{ flexBasis: 0, background: colors[i] }} />
+        ))}
+      </div>
+      <div className="mt-1.5 flex justify-between text-[11.5px] font-semibold text-white/75 tnum">
+        {pct.map((p, i) => (
+          <span key={i} className={i === 1 && pct.length === 3 ? 'text-center' : i === pct.length - 1 ? 'text-right' : ''}>
+            {labels[i]} {p}%
           </span>
-          <span className="flex h-1/2 items-start">
-            <motion.span animate={{ height: v < 0 ? `${Math.max(12, -v * 100)}%` : '0%' }} transition={{ duration: 0.8 }} className="w-full rounded-b-[2px]" style={{ background: away }} />
-          </span>
-        </span>
-      ))}
+        ))}
+      </div>
     </div>
+  )
+}
+
+/** Slow drifting floodlight glow in the teams' colours — the card's "live" heartbeat. */
+function LiveAura({ hc, ac }: { hc: string; ac: string }) {
+  return (
+    <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      <motion.span
+        className="absolute -top-28 -left-20 size-64 rounded-full blur-3xl"
+        style={{ background: hc }}
+        animate={{ x: [0, 40, 0], y: [0, 20, 0], opacity: [0.35, 0.55, 0.35] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.span
+        className="absolute -top-28 -right-20 size-64 rounded-full blur-3xl"
+        style={{ background: ac }}
+        animate={{ x: [0, -40, 0], y: [0, 24, 0], opacity: [0.3, 0.5, 0.3] }}
+        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+      />
+    </span>
   )
 }
 
@@ -50,8 +78,7 @@ export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?
       className="on-dark relative flex min-w-0 flex-col overflow-hidden rounded-[26px] bg-[#0a0e18] p-5 text-white"
     >
       <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[5px]" style={{ background: `linear-gradient(90deg, ${hc}, ${ac})` }} />
-      <span aria-hidden="true" className="pointer-events-none absolute -top-24 -left-16 size-56 rounded-full opacity-35 blur-3xl" style={{ background: hc }} />
-      <span aria-hidden="true" className="pointer-events-none absolute -top-24 -right-16 size-56 rounded-full opacity-30 blur-3xl" style={{ background: ac }} />
+      <LiveAura hc={hc} ac={ac} />
 
       <div className="relative flex items-center justify-between gap-2">
         <span className="truncate text-[12.5px] font-semibold text-white/55">{comp.name}</span>
@@ -80,12 +107,12 @@ export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?
         ))}
       </Link>
 
-      <div className="relative mt-4">
-        {ev.sport === 'football' ? (
-          <Momentum seed={i * 3 + 1} home={lighten(hc)} away="rgba(255,255,255,.4)" />
-        ) : (
-          <p className="line-clamp-1 text-[12.5px] text-white/55">{ev.sport === 'tennis' ? 'Lindqvist broke in game 4 · 71% first serves' : 'Mariners on a 9–2 run'}</p>
-        )}
+      <div className="relative mt-5">
+        <MarketView
+          prices={prices}
+          labels={m.selections.length === 3 ? [ev.home.short, 'Draw', ev.away.short] : [ev.home.name.split(' ').pop()!, ev.away.name.split(' ').pop()!]}
+          colors={m.selections.length === 3 ? [lighten(hc), 'rgba(255,255,255,.35)', lighten(ac)] : [lighten(hc), lighten(ac)]}
+        />
       </div>
 
       <div className={`relative mt-4 grid gap-2 ${m.selections.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>

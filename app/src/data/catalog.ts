@@ -472,3 +472,20 @@ export const BUILDER_SHOWCASE = {
 
 export const eventById = (id: string) => EVENTS.find((e) => e.id === id)
 export const competitionById = (id: string) => COMPETITIONS.find((c) => c.id === id)!
+
+/** Placeholder imagery (Unsplash, hotlinked) until Astra's art lands. */
+export const IMAGES = {
+  heroNight: 'https://images.unsplash.com/photo-1706675780107-7c43cc487928?w=2400&q=80&auto=format&fit=crop',
+}
+
+/**
+ * Popular Bet Builders for football-01. Each one is a single coherent story
+ * (correlated conditions from the same match). Prices come from Astra's
+ * authored qv1 subset table — never multiplied legs.
+ */
+export const POPULAR_BUILDERS: { id: string; eventId: string; title: string; story: string; legs: string[]; odds: string; popularity: string }[] = [
+  { id: 'nb-top', eventId: 'football-01', title: 'Northbridge on top', story: 'A home win in a lively game, with Costa leading the line.', legs: ['HOME', 'OVER_2_5', 'PLAYER_2_SOT'], odds: '3.40', popularity: 'Most built' },
+  { id: 'nb-costa', eventId: 'football-01', title: 'Costa does the damage', story: 'Northbridge win and their striker is busy in front of goal.', legs: ['HOME', 'PLAYER_2_SOT'], odds: '2.80', popularity: 'Popular' },
+  { id: 'nb-open', eventId: 'football-01', title: 'An open game', story: 'Plenty of goals and Costa getting his shots away.', legs: ['OVER_2_5', 'PLAYER_2_SOT'], odds: '2.50', popularity: 'Popular' },
+  { id: 'nb-tight', eventId: 'football-01', title: 'A tight home win', story: 'Northbridge edge it in a low-scoring match.', legs: ['HOME', 'UNDER_2_5'], odds: '6.60', popularity: 'Less common' },
+]

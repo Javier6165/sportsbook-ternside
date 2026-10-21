@@ -44,6 +44,7 @@ interface State {
   view: ViewMode
   slipOpen: boolean
   prefs: Prefs
+  navOpen: boolean
 }
 
 const initial: State = {
@@ -55,6 +56,7 @@ const initial: State = {
   view: 'full',
   slipOpen: false,
   prefs: SAM_PREFS,
+  navOpen: false,
 }
 
 type Action =
@@ -70,6 +72,7 @@ type Action =
   | { type: 'view'; view: ViewMode }
   | { type: 'slip'; open: boolean }
   | { type: 'prefs'; prefs: Prefs }
+  | { type: 'nav'; open: boolean }
 
 let seq = 0
 const newId = () => `draft-${Date.now().toString(36)}-${(seq++).toString(36)}`
@@ -116,6 +119,8 @@ function reducer(s: State, a: Action): State {
       return { ...s, slipOpen: a.open }
     case 'prefs':
       return { ...s, prefs: a.prefs }
+    case 'nav':
+      return { ...s, navOpen: a.open }
   }
 }
 

@@ -10,6 +10,7 @@ import { useStore } from '../state/store'
 import { CountUp } from '../ui/CountUp'
 import { FlyLayer, LAND_EVENT } from '../ui/fly'
 import { Wordmark } from '../ui/Wordmark'
+import { SideNav } from './SideNav'
 
 const NAV = [
   { to: '/sports', label: 'Sports', icon: Trophy },
@@ -258,10 +259,13 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div ref={rootRef} className="@container relative flex h-full w-full flex-col overflow-hidden bg-canvas">
       <FlyLayer rootRef={rootRef}>
         <Header />
-        <main ref={mainRef} id="main" className="thin-scrollbar relative min-h-0 flex-1 overflow-y-auto">
-          {children}
-          <div className="h-24 @desk:h-28" />
-        </main>
+        <div className="flex min-h-0 flex-1">
+          <SideNav />
+          <main ref={mainRef} id="main" className="thin-scrollbar relative min-w-0 flex-1 overflow-y-auto">
+            {children}
+            <div className="h-24 @desk:h-28" />
+          </main>
+        </div>
         <div className="relative">
           <SlipBar />
           <BottomNav />

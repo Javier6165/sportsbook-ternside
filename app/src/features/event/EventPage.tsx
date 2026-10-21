@@ -3,7 +3,7 @@ import { ArrowLeft, ChevronDown, Info, MapPin, Sparkles, Star } from 'lucide-rea
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
-import { H2H, IMAGES, MATCH_STATS, PLAYER_FORM, competitionById, eventById, teamColor, type Market, type SportEvent } from '../../data/catalog'
+import { IMAGES, MATCH_STATS, competitionById, eventById, teamColor, type Market, type SportEvent } from '../../data/catalog'
 import { ruleFor } from '../../data/quotes'
 import { dayLabel, kickoffTime, secondsUntil } from '../../lib/time'
 import { useLiveClock, useLiveEvent, useStore } from '../../state/store'
@@ -12,7 +12,8 @@ import { OddsButton } from '../../ui/OddsButton'
 import { Footer } from '../home/Home'
 import { NotFound } from '../NotFound'
 import { BuilderEditor } from './BuilderEditor'
-import { MarketView, lighten } from '../home/LiveNow'
+import { MatchCentre } from './MatchCentre'
+import { LiveStory, PreMatchStats } from './StatsViews'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const POPULAR_IDS = ['RESULT_90', 'WINNER', 'TOTAL_2_5_90', 'PLAYER_SOT_90', 'BTTS_90']
@@ -72,6 +73,11 @@ function Header({ ev }: { ev: SportEvent }) {
           </motion.button>
         </div>
 
+        {live ? (
+          <div className="mt-6">
+            <MatchCentre ev={ev} />
+          </div>
+        ) : (
         <div className="mt-8 grid grid-cols-[1fr_auto_1fr] items-center gap-3 @tab:mt-10 @tab:gap-6">
           {[ev.home, ev.away].map((t, i) => (
             <motion.div
@@ -120,6 +126,7 @@ function Header({ ev }: { ev: SportEvent }) {
           </div>
         </div>
 
+        )}
         {(ev.venue || live) && (
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[12.5px] text-white/65">
             {ev.venue && (
@@ -173,67 +180,6 @@ function MarketCard({ ev, m, prices, i }: { ev: SportEvent; m: Market; prices?: 
   )
 }
 
-function LivePanel({ ev }: { ev: SportEvent }) {
-  const { prices } = useLiveEvent(ev)
-  const { tick } = useLiveClock()
-  const m = ev.markets[0]
-  const hc = teamColor(ev.home)
-  const ac = teamColor(ev.away)
-  const three = m.selections.length === 3
-  const seed = ev.id.length
-  const wob = (base: number, k: number) => base + Math.round(Math.sin(tick / 20 + k + seed) * 1.5)
-  const rows =
-    ev.sport === 'football'
-      ? [
-          { label: 'Possession', h: `${wob(54, 1)}%`, a: `${100 - wob(54, 1)}%`, hv: wob(54, 1) },
-          { label: 'Shots on target', h: '5', a: '2', hv: 71 },
-          { label: 'Corners', h: '6', a: '3', hv: 66 },
-          { label: 'Fouls', h: '8', a: '11', hv: 42 },
-        ]
-      : ev.sport === 'tennis'
-        ? [
-            { label: '1st serve in', h: '71%', a: '64%', hv: 53 },
-            { label: 'Aces', h: '6', a: '3', hv: 67 },
-            { label: 'Break points won', h: '2/4', a: '0/2', hv: 75 },
-          ]
-        : [
-            { label: 'Field goal %', h: '48%', a: '44%', hv: 52 },
-            { label: 'Rebounds', h: '31', a: '27', hv: 53 },
-            { label: 'Turnovers', h: '9', a: '12', hv: 43 },
-          ]
-  return (
-    <section className="rounded-[24px] bg-white/[.05] p-5 ring-1 ring-white/[.06]">
-      <div className="flex items-center justify-between">
-        <h3 className="font-display text-[19px] font-[760] tracking-[-0.03em]">Match so far</h3>
-        <span className="text-[11.5px] font-semibold text-white/45">Fictional live data · updated 18s ago</span>
-      </div>
-      {ev.live?.detail && <p className="mt-2 text-[14px] text-white/75">{ev.live.detail}.</p>}
-      <div className="mt-5">
-        <MarketView
-          prices={prices}
-          labels={three ? [ev.home.short, 'Draw', ev.away.short] : [ev.home.name.split(' ').pop()!, ev.away.name.split(' ').pop()!]}
-          colors={three ? [lighten(hc), 'rgba(255,255,255,.35)', lighten(ac)] : [lighten(hc), lighten(ac)]}
-        />
-      </div>
-      <ul className="mt-5 space-y-3">
-        {rows.map((r) => (
-          <li key={r.label}>
-            <div className="flex justify-between text-[13.5px] font-semibold tnum">
-              <span>{r.h}</span>
-              <span className="text-[12.5px] font-medium text-white/55">{r.label}</span>
-              <span>{r.a}</span>
-            </div>
-            <div className="mt-1.5 flex h-1.5 gap-1 overflow-hidden rounded-full">
-              <motion.span animate={{ flexGrow: r.hv }} transition={{ duration: 1, ease }} className="rounded-full" style={{ flexBasis: 0, background: lighten(hc) }} />
-              <motion.span animate={{ flexGrow: 100 - r.hv }} transition={{ duration: 1, ease }} className="rounded-full" style={{ flexBasis: 0, background: lighten(ac) }} />
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
-}
-
 function Brief({ ev }: { ev: SportEvent }) {
   if (!ev.brief) return null
   return (
@@ -255,95 +201,6 @@ function Brief({ ev }: { ev: SportEvent }) {
   )
 }
 
-function Stats({ ev }: { ev: SportEvent }) {
-  const stats = MATCH_STATS[ev.id]
-  const h2h = H2H[ev.id]
-  const [open, setOpen] = useState<string | null>('form')
-  if (!stats) return <p className="rounded-[24px] bg-surface p-6 text-[14px] text-secondary">No detailed stats for this fixture in the demo.</p>
-  const sections = [
-    {
-      id: 'form',
-      title: 'Form and season',
-      body: (
-        <table className="w-full text-[14px]">
-          <thead>
-            <tr className="text-[12px] text-secondary">
-              <th className="py-2 text-left font-semibold">{ev.home.name}</th>
-              <th />
-              <th className="py-2 text-right font-semibold">{ev.away.name}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stats.map((r) => (
-              <tr key={r.label} className="border-t border-line">
-                <td className="py-2.5 font-semibold tnum">{r.home}</td>
-                <td className="py-2.5 text-center text-[12.5px] text-secondary">{r.label}</td>
-                <td className="py-2.5 text-right font-semibold tnum">{r.away}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ),
-    },
-    {
-      id: 'h2h',
-      title: 'Head to head',
-      body: (
-        <ul>
-          {h2h.map((m) => (
-            <li key={m.date} className="flex justify-between border-t border-line py-2.5 text-[14px] first:border-t-0">
-              <span className="font-semibold">{m.score}</span>
-              <span className="text-secondary">
-                {m.comp} · {m.date}
-              </span>
-            </li>
-          ))}
-        </ul>
-      ),
-    },
-    {
-      id: 'player',
-      title: `${PLAYER_FORM.name} · shots on target`,
-      body: (
-        <div>
-          <div className="flex h-24 items-end gap-2">
-            {PLAYER_FORM.lastSix.map((v, i) => (
-              <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                <motion.div initial={{ height: 0 }} animate={{ height: `${(v / 3) * 100}%` }} transition={{ delay: i * 0.05, ease }} className={clsx('w-full rounded-t-[8px]', v >= 2 ? 'bg-action' : 'bg-chip-hover')} />
-                <span className="text-[12px] font-semibold tnum">{v}</span>
-              </div>
-            ))}
-          </div>
-          <p className="mt-2 text-[13px] text-secondary">Last six starts, oldest first. {PLAYER_FORM.note}.</p>
-        </div>
-      ),
-    },
-  ]
-  return (
-    <div className="space-y-3">
-      <Brief ev={ev} />
-      {sections.map((sec) => (
-        <div key={sec.id} className="rounded-[24px] bg-surface">
-          <button onClick={() => setOpen(open === sec.id ? null : sec.id)} aria-expanded={open === sec.id} className="flex w-full items-center justify-between px-5 py-4 text-left">
-            <span className="font-display text-[18px] font-[740] tracking-[-0.03em]">{sec.title}</span>
-            <motion.span animate={{ rotate: open === sec.id ? 180 : 0 }}>
-              <ChevronDown size={18} />
-            </motion.span>
-          </button>
-          <AnimatePresence initial={false}>
-            {open === sec.id && (
-              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                <div className="px-5 pb-5">{sec.body}</div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      ))}
-      <p className="px-1 text-[12px] text-muted">All statistics are fictional demo data.</p>
-    </div>
-  )
-}
-
 function Markets({ ev }: { ev: SportEvent }) {
   const { prices } = useLiveEvent(ev)
   const [more, setMore] = useState(false)
@@ -352,10 +209,14 @@ function Markets({ ev }: { ev: SportEvent }) {
   return (
     <div className="space-y-3">
       {ev.brief && ev.status === 'scheduled' && <Brief ev={ev} />}
-      {ev.status === 'live' && <LivePanel ev={ev} />}
       {popular.map((m, i) => (
         <MarketCard key={m.id} ev={ev} m={m} i={i} prices={i === 0 && ev.status === 'live' ? prices : undefined} />
       ))}
+      {ev.status === 'live' && (
+        <div className="pt-5">
+          <LiveStory ev={ev} />
+        </div>
+      )}
       {rest.length > 0 && (
         <>
           <button onClick={() => setMore((x) => !x)} aria-expanded={more} className="flex w-full items-center justify-between rounded-[24px] bg-surface px-5 py-4 text-left">
@@ -396,7 +257,7 @@ export function EventPage() {
   const live = ev.status === 'live'
 
   return (
-    <div className={clsx(live && 'on-dark min-h-full bg-night text-white')}>
+    <div className={clsx(live && 'on-dark -mb-28 min-h-full bg-night pb-28 text-white')}>
       <div className="@tab:px-8 @tab:pt-6">
         <div className="mx-auto max-w-[1600px]">
           <Header ev={ev} />
@@ -421,7 +282,7 @@ export function EventPage() {
         <div className="pt-2">
           {tab === 'markets' && <Markets ev={ev} />}
           {tab === 'builder' && <BuilderEditor ev={ev} explain={q.get('explain') === '1'} />}
-          {tab === 'stats' && <Stats ev={ev} />}
+          {tab === 'stats' && <PreMatchStats ev={ev} brief={<Brief ev={ev} />} />}
         </div>
         {live ? <p className="pt-10 pb-6 text-[12px] text-white/40">18+ · Fictional demo · Live information can be delayed.</p> : <Footer />}
       </div>

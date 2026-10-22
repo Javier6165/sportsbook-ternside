@@ -6,7 +6,7 @@ La demo se ejecuta con `npm --prefix app run dev`. La fuente está en `app/` y e
 
 ## 0. Estado a 22-10-2026 · primera versión publicada
 
-- **Netlify:** https://ternside-sportsbook.netlify.app (proyecto `ternside-sportsbook`). Se construye desde `netlify.toml` en la raíz (base `app`, `npm ci && npm run build`, publica `dist`). Ahora mismo pide el login de equipo de Netlify; Javier decide cuándo se abre al público.
+- **Netlify:** https://ternside-sportsbook.netlify.app (proyecto `ternside-sportsbook`), **pública**. Está conectada a GitHub: **cada push a `main` de `Javier6165/sportsbook-ternside` publica una versión nueva automáticamente** (build definido en `netlify.toml`: base `app`, `npm ci && npm run build`, publica `dist`). Antes de hacer push, comprueba que `npm --prefix app run build` y `npm --prefix app test` pasan; si rompes el build, la web se queda en la versión anterior.
 - **Última ronda (pulido visual):**
   - Camisetas 3D en tiempo real (three.js, `app/src/ui/Kit3D.tsx`) generadas con los colores y el patrón de cada equipo, en los banners y en la cabecera del partido. No necesitan imágenes.
   - Titulares que se revelan letra a letra (`ui/Reveal.tsx`).
@@ -122,3 +122,66 @@ Javier propuso montar sesiones de test ficticias con mejoras en porcentaje. Como
 - la plantilla de registro.
 
 Si algo no se llega a medir, en el case study va como hipótesis con métrica prevista.
+
+
+## 5. Material para el case study
+
+Todo lo que sigue es para que lo uses al redactar. Nada de esto está validado con usuarios; donde hay una afirmación de mejora, preséntala como hipótesis hasta que exista el test de [TEST-PLAN.md](TEST-PLAN.md).
+
+### 5.1 Tesis en una frase
+
+> **Ternside: menos, pero más claro.** Un sportsbook que te enseña lo que te importa y te explica lo que apuestas.
+
+Dos mitades: tu research (el ticket legible y continuo, reglas explicadas) y la regla de Javier (curar el 20 % relevante y plegar el resto, sin patrones depredadores).
+
+### 5.2 Problema (a respaldar con tu research de 4.2)
+
+1. **Sobrecarga:** el sportsbook medio enseña miles de partidos y mercados, con tipografía pequeña y densidad máxima. Prioriza velocidad y amplitud sobre comprensión.
+2. **Empuje depredador:** combinadas «aumentadas» de cuota altísima en la home (la captura de bet365 con cuota 78.17), boosts, contadores de popularidad y «crea tu apuesta» dirigidos a principiantes.
+3. **Reglas opacas:** qué pasa si un jugador no juega, si hay prórroga o si se suspende el partido depende de letra pequeña distinta en cada operador (tu benchmark S02/S09/S37).
+4. **Estadísticas para expertos:** pestañas de datos técnicos que un aficionado ocasional no sabe interpretar (el tenis es el ejemplo más claro).
+5. **Directo pobre:** o no hay nada, o una mini pantalla con un gráfico feo y muchas cifras.
+
+### 5.3 Principios de diseño (y dónde se ven en la demo)
+
+| Principio | Cómo se materializa | Dónde enseñarlo |
+| --- | --- | --- |
+| Curar el 20 % | Home «For you» por intereses declarados; «Everything else» plegado por deporte → competición; «Tune your feed» | Home, botón Tune your feed |
+| Nunca ocultar lo obligatorio | Reglas a un toque (i) en cada mercado, periodo visible, dinero siempre en pantalla, «Deposit limits» desde home y betslip | Página de partido, betslip |
+| No depredador | Banners de partidos y funciones, nunca promociones; solo Bet Builders coherentes de un partido, máximo 3 condiciones; acumuladas de 3 como máximo | Banners, Popular Bet Builders |
+| Explicar antes de apostar | «Why these odds?» en lenguaje llano; «Explore outcomes» con 6 supuestos | Hero, pestaña Bet Builder |
+| El mismo ticket de principio a fin | El «pase» (cabecera de colores, troquel, stake/retorno) en betslip, recibo, My Bets y detalle | Flujo de apuesta completo |
+| Directo espectacular y honesto | Match centre animado; lecturas «provisional»; «Nothing is paid from the live score» | Escena Live tracking |
+| Stats en dos capas | Frases llanas con un gráfico cada una; «Advanced stats» plegado con definiciones | Pestaña Stats, directo |
+| Dinero exacto | Una única cuenta (ledger), redondeo una vez, nunca doble cobro | Wallet → Activity |
+
+### 5.4 Evolución del proyecto (la historia del case study)
+
+1. **Research (Astra):** idea inicial de IA → precedentes encontrados (AceAI, Sky Bet) → el foco pasa a la representación de la apuesta. 48 casos, reglas RULES-GB-01, marca BRAND-01.
+2. **Primer corte (Claude):** correcto pero genérico, muy parecido a cualquier sportsbook. Lección: rigor sin identidad no se recuerda.
+3. **Exploración de identidad:** tres direcciones (`app/public/explore/directions.html`): A «Colour of the game», B «Floodlight», C «Kit & stamp». Se elige A.
+4. **Principios de Javier:** curación del 20 %, no depredador, explicar las cuotas, stats en dos capas.
+5. **Descarte del modo noche para el directo:** se probó un tema oscuro con LED y Javier lo rechazó como «doble branding». El directo pasa a usar la misma identidad y un solo sello «LIVE». Buen ejemplo de coherencia de sistema.
+6. **Pulido:** camisetas 3D, entradas animadas y microinteracciones para que la demo transmita producto premium.
+7. **Siguiente:** test real con 5–8 personas y segunda iteración.
+
+### 5.5 Recorrido para enseñar la demo (3–4 minutos)
+
+1. Home: «Good evening, Sam.», banners con camisetas 3D entrando, Popular Bet Builders, Live now, Everything else plegado.
+2. Partido Northbridge v Southport: «Why these odds?», mercados con su regla, pestaña Bet Builder → «Explore outcomes» → «Costa doesn’t play» (£27, no £34).
+3. Añadir el Bet Builder (la cuota «vuela» al betslip), poner £10, revisar, colocar → sello «Accepted».
+4. Demo → Scenes → «Live tracking»: match centre, condiciones en directo, avanzar a 72′ y la corrección de la estadística.
+5. Scenes → «Settled: Costa didn’t play»: aceptada a 3.40, liquidada a 2.70, £27.
+6. Opcional para entrevistas: «Price change at review», «Checking your bet», «Settlement corrected», Cash Out (£8, −£2 neto), límites de depósito y autoexclusión.
+7. Selector Full/Mobile: el mismo estado en el iPhone.
+
+### 5.6 Cifras que sí se pueden afirmar (son de la demo, no de impacto)
+
+- 15 flows activos, 48 casos especificados; 26 tests automáticos de dinero y reglas pasando; 11 escenas de demostración.
+- Unos 60 partidos en 16 competiciones ficticias, de los que la home enseña unos 10 por defecto (el resto, plegado). Úsalo para ilustrar la curación, no como estadística de mercado.
+- Escaneo automático de accesibilidad (axe, WCAG 2 A/AA) sin incidencias en 8 pantallas; navegación por teclado completa. No es una auditoría manual.
+- Stack: React 19, TypeScript, Vite, Tailwind 4, Motion, three.js (camisetas 3D en tiempo real), decimal.js para el dinero.
+
+### 5.7 Capturas recomendadas (para que hagas los mockups)
+
+Escritorio 1440 px y móvil 390 px de: home con banner y camisetas; banner «Explore outcomes»; página de partido con «Why these odds?»; Bet Builder con Explore outcomes; betslip con el pase; recibo «Accepted»; match centre en directo; detalle de apuesta en directo; liquidación con void; stats en dos capas; límites de depósito. Para un «antes/después» honesto, compáralas con capturas públicas de la competencia sin manipularlas y con su fuente.

@@ -47,7 +47,7 @@ function Surface({ sport }: { sport: SportEvent['sport'] }) {
       <svg viewBox="0 0 1000 560" className="absolute inset-0 h-full w-full" aria-hidden="true">
         <rect width="1000" height="560" fill="#123a6b" />
         <rect x="80" y="60" width="840" height="440" fill="#1d5aa0" />
-        <g stroke={line} strokeWidth="4" fill="none">
+        <g stroke={line} strokeWidth="4" fill="none" className="draw-lines">
           <rect x="80" y="60" width="840" height="440" />
           <line x1="80" y1="115" x2="920" y2="115" />
           <line x1="80" y1="445" x2="920" y2="445" />
@@ -63,7 +63,7 @@ function Surface({ sport }: { sport: SportEvent['sport'] }) {
       <svg viewBox="0 0 1000 560" className="absolute inset-0 h-full w-full" aria-hidden="true">
         <rect width="1000" height="560" fill="#3b2412" />
         <rect x="40" y="40" width="920" height="480" fill="#8a5a2b" />
-        <g stroke={line} strokeWidth="4" fill="none">
+        <g stroke={line} strokeWidth="4" fill="none" className="draw-lines">
           <rect x="40" y="40" width="920" height="480" />
           <line x1="500" y1="40" x2="500" y2="520" />
           <circle cx="500" cy="280" r="70" />
@@ -83,7 +83,7 @@ function Surface({ sport }: { sport: SportEvent['sport'] }) {
         </pattern>
       </defs>
       <rect width="1000" height="560" fill="url(#stripes)" />
-      <g stroke={line} strokeWidth="3.5" fill="none">
+      <g stroke={line} strokeWidth="3.5" fill="none" className="draw-lines">
         <rect x="30" y="30" width="940" height="500" />
         <line x1="500" y1="30" x2="500" y2="530" />
         <circle cx="500" cy="280" r="70" />
@@ -141,6 +141,11 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
     return [...home, ...away]
   }, [ball, phase, sport])
 
+  const [trail, setTrail] = useState<{ x: number; y: number; k: number }[]>([])
+  useEffect(() => {
+    setTrail((t) => [{ ...ball, k: phase }, ...t].slice(0, 4))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ball])
   const [toast, setToast] = useState<{ id: number; text: string; side: number; big: boolean } | null>(null)
   useEffect(() => {
     setToast({ id: evIdx + tick, text: moment.kind, side: moment.side, big: moment.big })
@@ -187,7 +192,7 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
       <div className="mt-2 grid items-center gap-6 @desk:mt-0 @desk:grid-cols-[minmax(0,1fr)_300px] @desk:gap-10">
       {/* Pitch */}
       <div className="relative aspect-[1000/560] w-full [perspective:1100px]">
-        <div className="absolute inset-0 origin-bottom overflow-hidden rounded-[22px] shadow-[0_40px_80px_-30px_rgba(0,0,0,.8)] [transform:rotateX(28deg)] @tab:[transform:rotateX(34deg)]">
+        <motion.div initial={{ rotateX: 72, scale: 0.82, opacity: 0, y: 40 }} animate={{ rotateX: 32, scale: 1, opacity: 1, y: 0 }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }} className="absolute inset-0 origin-bottom overflow-hidden rounded-[22px] shadow-[0_40px_80px_-30px_rgba(0,0,0,.8)]">
           <Surface sport={sport} />
           {/* attacking third glow */}
           <motion.div
@@ -204,21 +209,40 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
             <motion.span
               key={i}
               aria-hidden="true"
-              className="absolute size-[2.4%] min-h-2.5 min-w-2.5 -translate-x-1/2 -translate-y-1/2 scale-y-[1.24] rounded-full ring-2 ring-white/80"
+              className="absolute size-[2.4%] min-h-2.5 min-w-2.5 -translate-x-1/2 -translate-y-1/2 scale-y-[1.9] rounded-full ring-2 ring-white/80"
               animate={{ left: `${p.x}%`, top: `${p.y}%` }}
               transition={{ duration: 3.2, ease: 'easeInOut' }}
               style={{ background: tColor(p.side), boxShadow: `0 0 14px ${tColor(p.side)}` }}
             />
           ))}
+          {/* trail */}
+          {trail.map((p, k) => (
+            <motion.span key={`${p.k}`} aria-hidden="true" className="absolute size-[1.2%] min-h-1.5 min-w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" style={{ left: `${p.x}%`, top: `${p.y}%` }} initial={{ opacity: 0.45 - k * 0.08, scale: 1 }} animate={{ opacity: 0, scale: 0.3 }} transition={{ duration: 1.6 }} />
+          ))}
+          {/* shockwave on big moments */}
+          <AnimatePresence>
+            {moment.big && (
+              <motion.span
+                key={`sw${evIdx}${Math.floor(tick / 7)}`}
+                aria-hidden="true"
+                className="absolute size-[10%] -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px]"
+                style={{ left: `${ball.x}%`, top: `${ball.y}%`, borderColor: lighten(tColor(attacking), 70) }}
+                initial={{ scale: 0.2, opacity: 0.9 }}
+                animate={{ scale: 3, opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              />
+            )}
+          </AnimatePresence>
           {/* ball + glow */}
           <motion.span
             aria-hidden="true"
-            className="absolute size-[1.6%] min-h-2 min-w-2 -translate-x-1/2 -translate-y-1/2 scale-y-[1.24] rounded-full bg-white"
+            className="absolute size-[1.6%] min-h-2 min-w-2 -translate-x-1/2 -translate-y-1/2 scale-y-[1.9] rounded-full bg-white"
             animate={{ left: `${ball.x}%`, top: `${ball.y}%` }}
             transition={{ duration: 1.6, ease: [0.45, 0, 0.2, 1] }}
             style={{ boxShadow: '0 0 0 6px rgba(255,255,255,.18), 0 0 30px 8px rgba(255,255,255,.55)' }}
           />
-        </div>
+        </motion.div>
 
         {/* Moment banner, floating above the tilted pitch */}
         <AnimatePresence>

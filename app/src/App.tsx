@@ -1,4 +1,5 @@
-import { HashRouter, Navigate, Route, Routes } from 'react-router'
+import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router'
+import { AnimatePresence, motion } from 'motion/react'
 import { Home } from './features/home/Home'
 import { NotFound } from './features/NotFound'
 import { SportPage } from './features/sport/SportPage'
@@ -15,13 +16,19 @@ import { DemoFrame } from './presentation/DemoFrame'
 import { AppShell } from './shell/AppShell'
 import { StoreProvider } from './state/store'
 
-export default function App() {
+/** Route changes fade up softly; the store keeps state, so nothing is lost. */
+function AnimatedRoutes() {
+  const loc = useLocation()
   return (
-    <StoreProvider>
-      <HashRouter>
-        <DemoFrame>
-          <AppShell>
-            <Routes>
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={loc.pathname}
+        initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        exit={{ opacity: 0, y: -6, filter: 'blur(2px)', transition: { duration: 0.14 } }}
+        transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <Routes location={loc}>
               <Route path="/" element={<Navigate to="/sports" replace />} />
               <Route path="/sports" element={<Home />} />
               <Route path="/sports/:sportId" element={<SportPage />} />
@@ -36,7 +43,19 @@ export default function App() {
               <Route path="/safer-gambling" element={<SaferGambling />} />
               <Route path="/event/:eventId" element={<EventPage />} />
               <Route path="*" element={<NotFound />} />
-            </Routes>
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
+export default function App() {
+  return (
+    <StoreProvider>
+      <HashRouter>
+        <DemoFrame>
+          <AppShell>
+            <AnimatedRoutes />
           </AppShell>
         </DemoFrame>
       </HashRouter>

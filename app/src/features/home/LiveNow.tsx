@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 import { competitionById, teamColor, type SportEvent } from '../../data/catalog'
 import { useLiveEvent } from '../../state/store'
 import { Crest } from '../../ui/Crest'
+import { Tilt } from '../../ui/Tilt'
 import { LiveBadge } from '../../ui/LiveBadge'
 import { matchGradient } from '../../ui/MatchField'
 import { OddsButton } from '../../ui/OddsButton'
@@ -51,13 +52,14 @@ export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?
   const ac = teamColor(ev.away)
   const clock = ev.sport === 'football' ? `${minute}'` : ev.sport === 'basketball' ? `${L.period} ${L.clock}` : L.period
   return (
+    <Tilt className="min-w-0 rounded-[26px]">
     <motion.article
       layout
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97 }}
       transition={{ delay: i * 0.06, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-      className="relative flex min-w-0 flex-col overflow-hidden rounded-[26px] bg-surface"
+      className="relative flex h-full min-w-0 flex-col overflow-hidden rounded-[26px] bg-surface"
     >
       {/* Same colour-of-the-game header as every pass; the sweep is the live heartbeat */}
       <div className="on-dark relative flex items-center justify-between gap-2 overflow-hidden px-5 py-3 text-white" style={{ background: matchGradient(ev) }}>
@@ -118,6 +120,7 @@ export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?
         {reason && <div className="mt-3 text-[11.5px] font-medium text-muted">{reason}</div>}
       </div>
     </motion.article>
+    </Tilt>
   )
 }
 
@@ -128,10 +131,10 @@ export function LiveNow({ mine, other }: { mine: SportEvent[]; other: SportEvent
   return (
     <section aria-labelledby="live-title" className="mt-14">
       <div className="mb-5 flex items-end justify-between gap-3">
-        <h2 id="live-title" className="font-display text-[34px] leading-none font-[780] tracking-[-0.045em] @tab:text-[40px]">
+        <motion.h2 initial={{ opacity: 0, y: 22, clipPath: "inset(0 0 100% 0)" }} whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)" }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} id="live-title" className="font-display text-[34px] leading-none font-[780] tracking-[-0.045em] @tab:text-[40px]">
           Live now
           <span className="ml-3 align-middle font-sans text-[13px] font-semibold tracking-normal text-secondary">{mine.length ? `${mine.length} you follow` : 'Popular'}</span>
-        </h2>
+        </motion.h2>
         <Link to="/live" className="pb-1 text-[14px] font-semibold text-sel-ink hover:underline">
           All live
         </Link>

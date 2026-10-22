@@ -1,3 +1,4 @@
+import { Tilt } from '../../ui/Tilt'
 import clsx from 'clsx'
 import { ArrowRight, Check, Layers, Plus } from 'lucide-react'
 import { motion } from 'motion/react'
@@ -33,11 +34,12 @@ function BuilderTile({ ev, b, i }: { ev: SportEvent; b: (typeof POPULAR_BUILDERS
   }
 
   return (
+    <Tilt className="w-[272px] shrink-0 snap-start rounded-[24px] @desk:w-auto">
     <motion.article
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25 + i * 0.07, duration: 0.6, ease }}
-      className="flex w-[272px] shrink-0 snap-start flex-col rounded-[24px] bg-surface p-5 @desk:w-auto"
+      className="flex h-full flex-col rounded-[24px] bg-surface p-5"
     >
       <div className="flex items-center justify-between">
         <span className="text-[11.5px] font-semibold text-secondary">
@@ -67,6 +69,7 @@ function BuilderTile({ ev, b, i }: { ev: SportEvent; b: (typeof POPULAR_BUILDERS
         </motion.button>
       </div>
     </motion.article>
+    </Tilt>
   )
 }
 
@@ -77,9 +80,9 @@ export function BuilderRow({ ev }: { ev: SportEvent }) {
     <section aria-labelledby="builders-title" className="mt-8">
       <div className="mb-4 flex items-end justify-between gap-3">
         <div>
-          <h2 id="builders-title" className="flex items-center gap-2 font-display text-[24px] leading-none font-[780] tracking-[-0.04em] @tab:text-[28px]">
+          <motion.h2 initial={{ opacity: 0, y: 22, clipPath: "inset(0 0 100% 0)" }} whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)" }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} id="builders-title" className="flex items-center gap-2 font-display text-[24px] leading-none font-[780] tracking-[-0.04em] @tab:text-[28px]">
             <Layers size={22} className="text-action" /> Popular Bet Builders
-          </h2>
+          </motion.h2>
           <p className="mt-1.5 text-[14px] text-secondary">
             {ev.home.name.split(' ')[0]} v {ev.away.name.split(' ')[0]} · each one tells a single story, priced as one bet.
           </p>

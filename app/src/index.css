@@ -207,3 +207,15 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Pitch / court lines draw themselves in */
+@keyframes draw-line {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.draw-lines * {
+  stroke-dasharray: 3200;
+  stroke-dashoffset: 3200;
+  animation: draw-line 2.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}

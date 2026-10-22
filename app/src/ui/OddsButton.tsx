@@ -38,6 +38,7 @@ export function OddsButton({
     (g) => g.type === 'single' && g.eventId === ev.id && g.legs[0].marketId === market.id && g.legs[0].selectionId === sel.id,
   )
 
+  const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([])
   const prev = useRef(odds)
   const [dir, setDir] = useState<0 | 1 | -1>(0)
   useEffect(() => {
@@ -63,6 +64,11 @@ export function OddsButton({
       title={s.restriction === 'paused' ? 'Betting is off during your break' : undefined}
       onClick={(e) => {
         if (s.restriction !== 'none') return
+        const r = e.currentTarget.getBoundingClientRect()
+        const scale = r.width / e.currentTarget.offsetWidth || 1
+        const id = Date.now()
+        setRipples((rs) => [...rs, { id, x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale }])
+        setTimeout(() => setRipples((rs) => rs.filter((x) => x.id !== id)), 700)
         if (!selected) fly(e.currentTarget, fmtOdds(odds))
         d({
           type: 'toggleSelection',
@@ -111,6 +117,30 @@ export function OddsButton({
           </motion.span>
         </AnimatePresence>
       </span>
+      {ripples.map((rp) => (
+        <motion.span
+          key={rp.id}
+          aria-hidden="true"
+          className={clsx('pointer-events-none absolute size-10 -translate-x-1/2 -translate-y-1/2 rounded-full', selected ? 'bg-sel-ink/25' : 'bg-white/60')}
+          style={{ left: rp.x, top: rp.y }}
+          initial={{ scale: 0, opacity: 0.9 }}
+          animate={{ scale: 6, opacity: 0 }}
+          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+        />
+      ))}
+      <AnimatePresence>
+        {selected && (
+          <motion.span
+            key="sel-glint"
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent"
+            initial={{ x: '-120%' }}
+            animate={{ x: '260%' }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          />
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {dir !== 0 && (
           <motion.span

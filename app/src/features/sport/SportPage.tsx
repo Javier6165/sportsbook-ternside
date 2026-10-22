@@ -106,9 +106,9 @@ export function SportPage() {
       <div className="mx-auto max-w-[1220px] px-4 @tab:px-8">
         {live.length > 0 && (
           <section className="mt-10" aria-labelledby="sp-live">
-            <h2 id="sp-live" className="mb-4 font-display text-[28px] leading-none font-[780] tracking-[-0.045em]">
+            <motion.h2 initial={{ opacity: 0, y: 22, clipPath: "inset(0 0 100% 0)" }} whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)" }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} id="sp-live" className="mb-4 font-display text-[28px] leading-none font-[780] tracking-[-0.045em]">
               Live now
-            </h2>
+            </motion.h2>
             <div className="grid gap-3 @tab:grid-cols-2 @wide:grid-cols-3">
               {live.map((ev, i) => (
                 <LiveCard key={ev.id} ev={ev} i={i} />
@@ -119,9 +119,9 @@ export function SportPage() {
 
         {highlights.length > 0 && (
           <section className="mt-10" aria-labelledby="sp-high">
-            <h2 id="sp-high" className="mb-4 font-display text-[28px] leading-none font-[780] tracking-[-0.045em]">
+            <motion.h2 initial={{ opacity: 0, y: 22, clipPath: "inset(0 0 100% 0)" }} whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)" }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} id="sp-high" className="mb-4 font-display text-[28px] leading-none font-[780] tracking-[-0.045em]">
               {comp || team ? 'Next up' : 'Worth a look'}
-            </h2>
+            </motion.h2>
             <div className="grid gap-3 @tab:grid-cols-2">
               {highlights.map((x, i) => (
                 <PickCard key={x.e.id} ev={x.e} reason={x.r} i={i} />
@@ -132,9 +132,9 @@ export function SportPage() {
 
         {groups.length > 0 && (
           <section className="mt-10" aria-labelledby="sp-all">
-            <h2 id="sp-all" className="font-display text-[28px] leading-none font-[780] tracking-[-0.045em]">
+            <motion.h2 initial={{ opacity: 0, y: 22, clipPath: "inset(0 0 100% 0)" }} whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)" }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} id="sp-all" className="font-display text-[28px] leading-none font-[780] tracking-[-0.045em]">
               {comp ? 'More fixtures' : 'By competition'}
-            </h2>
+            </motion.h2>
             <div className="mt-4 rounded-[24px] bg-surface px-5 py-1">
               {groups.map((g) => (
                 <CompetitionFold key={g.c.id} c={g.c} evs={g.evs} defaultOpen={!!comp || s.prefs.competitions.includes(g.c.id)} />

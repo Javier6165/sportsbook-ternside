@@ -8,6 +8,8 @@ import type { Reason, buildFeed } from '../../lib/feed'
 import { dayLabel, kickoffTime } from '../../lib/time'
 import { useStore } from '../../state/store'
 import { Crest } from '../../ui/Crest'
+import { Tilt } from '../../ui/Tilt'
+import { Burst } from '../../ui/Burst'
 import { OddsButton } from '../../ui/OddsButton'
 import { SportIcon } from '../../ui/SportIcon'
 
@@ -24,9 +26,12 @@ function FavButton({ id, name, dark }: { id: string; name: string; dark?: boolea
       aria-label={fav ? `Remove ${name} from favourites` : `Add ${name} to favourites`}
       className={clsx('grid size-9 shrink-0 place-items-center rounded-full', fav ? 'text-[#f5a623]' : dark ? 'text-white/40 hover:text-white' : 'text-[#c4c9d2] hover:bg-chip hover:text-secondary')}
     >
-      <motion.span key={String(fav)} initial={{ scale: fav ? 0.4 : 1, rotate: fav ? -40 : 0 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 500, damping: 14 }}>
-        <Star size={17} fill={fav ? 'currentColor' : 'none'} strokeWidth={fav ? 1.5 : 2} />
-      </motion.span>
+      <span className="relative grid place-items-center">
+        {fav && <Burst key={`b${s.favourites.length}`} />}
+        <motion.span key={String(fav)} initial={{ scale: fav ? 0.4 : 1, rotate: fav ? -72 : 0 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 500, damping: 12 }}>
+          <Star size={17} fill={fav ? 'currentColor' : 'none'} strokeWidth={fav ? 1.5 : 2} />
+        </motion.span>
+      </span>
     </motion.button>
   )
 }
@@ -36,12 +41,13 @@ export function PickCard({ ev, reason, i }: { ev: SportEvent; reason: Reason; i:
   const three = m.selections.length === 3
   const comp = competitionById(ev.competitionId)
   return (
+    <Tilt className="rounded-[26px]">
     <motion.article
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ delay: (i % 2) * 0.06, duration: 0.6, ease }}
-      className="relative overflow-hidden rounded-[26px] bg-surface p-5"
+      className="relative h-full overflow-hidden rounded-[26px] bg-surface p-5"
     >
       <div className="flex items-center gap-2">
         <span
@@ -76,6 +82,7 @@ export function PickCard({ ev, reason, i }: { ev: SportEvent; reason: Reason; i:
         ))}
       </div>
     </motion.article>
+    </Tilt>
   )
 }
 
@@ -83,9 +90,9 @@ export function Picks({ picks }: { picks: { e: SportEvent; r: Reason }[] }) {
   return (
     <section aria-labelledby="picks-title" className="mt-14">
       <div className="mb-5">
-        <h2 id="picks-title" className="font-display text-[34px] leading-none font-[780] tracking-[-0.045em] @tab:text-[40px]">
+        <motion.h2 initial={{ opacity: 0, y: 22, clipPath: "inset(0 0 100% 0)" }} whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)" }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} id="picks-title" className="font-display text-[34px] leading-none font-[780] tracking-[-0.045em] @tab:text-[40px]">
           Coming up for you
-        </h2>
+        </motion.h2>
         <p className="mt-2 text-[15px] text-secondary">Your teams and competitions first, then the few matches worth knowing about.</p>
       </div>
       <div className="grid gap-3 @tab:grid-cols-2">
@@ -185,9 +192,9 @@ export function EverythingElse({ rest, hidden }: { rest: ReturnType<typeof build
   const comps = rest.reduce((a, g) => a + g.comps.length, 0)
   return (
     <section aria-labelledby="rest-title" className="mt-14">
-      <h2 id="rest-title" className="font-display text-[34px] leading-none font-[780] tracking-[-0.045em] @tab:text-[40px]">
+      <motion.h2 initial={{ opacity: 0, y: 22, clipPath: "inset(0 0 100% 0)" }} whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)" }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} id="rest-title" className="font-display text-[34px] leading-none font-[780] tracking-[-0.045em] @tab:text-[40px]">
         Everything else
-      </h2>
+      </motion.h2>
       <p className="mt-2 max-w-[560px] text-[15px] text-secondary">
         {hidden} more matches in {comps} competitions, tucked away so the rest of the page stays calm. Open what you need.
       </p>

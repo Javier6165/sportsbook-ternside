@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { ArrowLeft, ChevronDown, Info, MapPin, Sparkles, Star } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { IMAGES, MATCH_STATS, briefFor, competitionById, eventById, teamColor, type Market, type SportEvent } from '../../data/catalog'
 import { ruleFor } from '../../data/quotes'
@@ -15,6 +15,8 @@ import { BuilderEditor } from './BuilderEditor'
 import { MatchCentre } from './MatchCentre'
 import { LiveBadge } from '../../ui/LiveBadge'
 import { LiveStory, PreMatchStats } from './StatsViews'
+
+const Kits3D = lazy(() => import('../../ui/Kit3D'))
 
 const ease = [0.16, 1, 0.3, 1] as const
 const POPULAR_IDS = ['RESULT_90', 'WINNER', 'TOTAL_2_5_90', 'PLAYER_SOT_90', 'BTTS_90', 'SET_BETTING', 'HANDICAP']
@@ -69,6 +71,13 @@ function Header({ ev }: { ev: SportEvent }) {
           </motion.button>
         </div>
 
+        {!live && ev.home.crest && ev.away.crest && (
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-[24%] top-[14%] bottom-[-10%] -z-[5] hidden @tab:block">
+            <Suspense fallback={null}>
+              <Kits3D home={ev.home} away={ev.away} kind={ev.sport === 'basketball' ? 'vest' : 'shirt'} />
+            </Suspense>
+          </div>
+        )}
         {live ? (
           <div className="mt-6">
             <MatchCentre ev={ev} />
@@ -103,7 +112,7 @@ function Header({ ev }: { ev: SportEvent }) {
                 <div className="mt-2 flex justify-center"><LiveBadge tone="solid" size="lg" clock={ev.sport === 'football' ? `${minute}'` : ev.sport === 'basketball' ? `${L.period} ${L.clock}` : L.period} /></div>
               </>
             ) : (
-              <>
+              <div className="rounded-[22px] bg-black/30 px-4 py-3 ring-1 ring-white/10 backdrop-blur-xl @tab:px-6 @tab:py-4">
                 <div className="font-display text-[34px] leading-none font-[800] tracking-[-0.05em] @tab:text-[48px]">{kickoffTime(ev.startsAt)}</div>
                 <div className="mt-1.5 text-[12.5px] font-semibold text-white/70">
                   {dayLabel(ev.startsAt)}
@@ -114,7 +123,7 @@ function Header({ ev }: { ev: SportEvent }) {
                     </>
                   )}
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
@@ -123,7 +132,7 @@ function Header({ ev }: { ev: SportEvent }) {
         {(ev.venue || live) && (
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[12.5px] text-white/65">
             {ev.venue && (
-              <span className="flex items-center gap-1">
+              <span className={clsx('flex items-center gap-1', !live && ev.home.crest && '@tab:hidden')}>
                 <MapPin size={13} /> {ev.venue}
               </span>
             )}

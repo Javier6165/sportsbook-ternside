@@ -5,10 +5,19 @@ Decimal.set({ precision: 40, rounding: Decimal.ROUND_HALF_UP })
 
 export const D = (v: string | number | Decimal) => new Decimal(v)
 
+/** Text the user may still be typing ("", ".", "1.") — allowed in the field, never parsed. */
+export const EDITABLE_AMOUNT = /^\d*(\.\d{0,2})?$/
+
+/** A complete, positive pounds-and-pence amount, or null. Never throws. */
+export function parseAmount(v: string | null | undefined): Decimal | null {
+  if (typeof v !== 'string' || !/^\d+(\.\d{1,2})?$/.test(v)) return null
+  const d = new Decimal(v)
+  return d.gt(0) ? d : null
+}
+
 export function isValidStake(v: string) {
-  if (!/^\d+(\.\d{1,2})?$/.test(v)) return false
-  const d = D(v)
-  return d.gte(1) && d.lte(50)
+  const d = parseAmount(v)
+  return !!d && d.gte(1) && d.lte(50)
 }
 
 export function grossReturn(stake: string, odds: string | Decimal) {

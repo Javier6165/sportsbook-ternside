@@ -1,9 +1,11 @@
+import { shortName } from '../../data/catalog'
 import { ArrowRight, Ban, Check, CircleDashed, ShieldCheck, SlidersHorizontal, Sparkles } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { TEAMS } from '../../data/catalog'
 import { Crest } from '../../ui/Crest'
+import { BRAND_GRADIENT } from '../../ui/MatchField'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -13,7 +15,7 @@ const ease = [0.16, 1, 0.3, 1] as const
  */
 function Shell({ eyebrow, title, body, cta, visual, tint }: { eyebrow: string; title: ReactNode; body: string; cta: ReactNode; visual: ReactNode; tint: [string, string] }) {
   return (
-    <section className="on-dark relative isolate h-full overflow-hidden text-white" style={{ background: `linear-gradient(115deg, ${tint[0]} 0%, ${tint[1]} 100%)` }}>
+    <section className="on-dark relative isolate h-full overflow-hidden text-white" style={{ background: `radial-gradient(55% 80% at 85% 10%, ${tint[1]}, transparent 70%), ${BRAND_GRADIENT}` }}>
       <motion.span aria-hidden="true" className="absolute -top-40 -left-24 -z-10 size-[520px] rounded-full bg-white/10 blur-3xl" animate={{ x: [0, 60, 0], y: [0, 30, 0] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }} />
       <motion.span aria-hidden="true" className="absolute -right-32 -bottom-40 -z-10 size-[560px] rounded-full bg-black/25 blur-3xl" animate={{ x: [0, -50, 0] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} />
       <div className="mx-auto grid h-full min-h-[580px] max-w-[1220px] items-center gap-8 px-4 pt-8 pb-20 @tab:min-h-[620px] @tab:pb-24 @tab:px-8 @desk:grid-cols-[minmax(0,1fr)_minmax(0,460px)]">
@@ -126,7 +128,7 @@ function FeedVisual() {
             animate={{ opacity: 1, scale: on ? 1.04 : 0.94, y: [0, on ? -6 : 4, 0] }}
             transition={{ opacity: { delay: 0.3 + i * 0.05 }, scale: { delay: 0.3 + i * 0.05 }, y: { duration: 4 + (i % 3), repeat: Infinity, ease: 'easeInOut' } }}
           >
-            <Crest team={t} size={18} /> {t.name.split(' ')[0]} {on && <Check size={14} strokeWidth={3} className="text-action" />}
+            <Crest team={t} size={18} /> {shortName(t.name)} {on && <Check size={14} strokeWidth={3} className="text-action" />}
           </motion.span>
         )
       })}
@@ -139,7 +141,7 @@ export function FeatureSlide({ kind, onTune }: { kind: 'explore' | 'limits' | 'f
     return (
       <Shell
         eyebrow="How Ternside works"
-        tint={['#1a2a8f', '#2948ff']}
+        tint={['', 'rgba(41,72,255,.38)']}
         title={
           <>
             Know how your bet settles
@@ -160,7 +162,7 @@ export function FeatureSlide({ kind, onTune }: { kind: 'explore' | 'limits' | 'f
     return (
       <Shell
         eyebrow="Safer gambling"
-        tint={['#0d4d33', '#14653a']}
+        tint={['', 'rgba(52,170,120,.22)']}
         title={
           <>
             Your limits,
@@ -168,7 +170,7 @@ export function FeatureSlide({ kind, onTune }: { kind: 'explore' | 'limits' | 'f
             <span className="text-white/60">your call.</span>
           </>
         }
-        body="Set deposit limits, take a break or step away for longer. They’re one tap from every page, and we never suggest a budget for you."
+        body="Set deposit limits, take a break or step away for longer. Change them whenever you like."
         cta={
           <Link to="/safer-gambling" className={ctaCls}>
             Manage your limits <ArrowRight size={18} />
@@ -180,7 +182,7 @@ export function FeatureSlide({ kind, onTune }: { kind: 'explore' | 'limits' | 'f
   return (
     <Shell
       eyebrow="Your feed"
-      tint={['#111318', '#3a4256']}
+      tint={['', 'rgba(255,255,255,.06)']}
       title={
         <>
           Less noise.

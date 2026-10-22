@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { Ticket } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { D, fmtMoney } from '../../domain/money'
 import { useStore } from '../../state/store'
@@ -12,7 +13,14 @@ export function MyBets() {
   const tab = q.get('tab') === 'settled' ? 'settled' : 'open'
   const open = s.bets.filter((b) => b.status === 'open')
   const settled = s.bets.filter((b) => b.status !== 'open')
-  const list = tab === 'open' ? open : settled
+  const [kind, setKind] = useState<'all' | 'single' | 'builder' | 'acca'>('all')
+  const [result, setResult] = useState<'all' | 'won' | 'lost' | 'void' | 'cashed_out'>('all')
+  const list = (tab === 'open' ? open : settled).filter((b) => (kind === 'all' || b.type === kind) && (tab === 'open' || result === 'all' || b.status === result))
+  // Settled summary: cash stakes and what came back. Free-bet stakes were never the customer's money.
+  const staked = settled.reduce((t, b) => (b.freeBet ? t : t.plus(b.stake)), D(0))
+  const returned = settled.reduce((t, b) => t.plus(b.settlement?.gross ?? 0), D(0))
+  const netAll = returned.minus(staked)
+  const chip = (on: boolean) => clsx('h-9 shrink-0 rounded-full px-3.5 text-[13px] font-semibold transition-colors', on ? 'bg-ink text-white' : 'bg-surface text-ink hover:bg-chip')
   const atStake = open.reduce((t, b) => t.plus(b.stake), D(0))
   const potential = open.reduce((t, b) => t.plus(b.potentialReturn), D(0))
 
@@ -23,7 +31,6 @@ export function MyBets() {
           <h1 className="font-display text-[40px] leading-[.95] font-[800] tracking-[-0.05em] @tab:text-[56px]">
             My Bets<span className="text-action">.</span>
           </h1>
-          <p className="mt-2 text-[15.5px] text-secondary">The same ticket you built, from placement to settlement.</p>
         </div>
         {open.length > 0 && (
           <dl className="flex gap-6 text-[12.5px] text-secondary">
@@ -54,7 +61,43 @@ export function MyBets() {
         ))}
       </div>
 
-      <div className="mt-6 grid gap-3 @tab:grid-cols-2 @wide:grid-cols-3">
+      {tab === 'settled' && settled.length > 0 && (
+        <dl className="mt-5 grid grid-cols-3 gap-2 rounded-[22px] bg-surface p-4 @tab:max-w-[560px]">
+          <div>
+            <dt className="text-[12px] font-semibold text-secondary">Staked</dt>
+            <dd className="font-display text-[20px] font-[760] tnum">{fmtMoney(staked)}</dd>
+          </div>
+          <div>
+            <dt className="text-[12px] font-semibold text-secondary">Returned</dt>
+            <dd className="font-display text-[20px] font-[760] tnum">{fmtMoney(returned)}</dd>
+          </div>
+          <div>
+            <dt className="text-[12px] font-semibold text-secondary">Net</dt>
+            <dd className={clsx('font-display text-[20px] font-[760] tnum', netAll.gt(0) ? 'text-won-ink' : netAll.lt(0) ? 'text-lost-ink' : '')}>
+              {netAll.gt(0) ? '+' : ''}
+              {fmtMoney(netAll)}
+            </dd>
+          </div>
+          <dd className="col-span-3 text-[11.5px] text-muted">These settled bets. Free-bet stakes aren’t counted as staked.</dd>
+        </dl>
+      )}
+
+      <div className="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 @tab:mx-0 @tab:flex-wrap @tab:px-0" role="group" aria-label="Filter bets">
+        {(['all', 'single', 'builder', 'acca'] as const).map((k) => (
+          <button key={k} aria-pressed={kind === k} onClick={() => setKind(k)} className={chip(kind === k)}>
+            {k === 'all' ? 'All types' : k === 'single' ? 'Singles' : k === 'builder' ? 'Bet Builders' : 'Accumulators'}
+          </button>
+        ))}
+        {tab === 'settled' && <span className="mx-1 my-2 w-px shrink-0 bg-line-strong" />}
+        {tab === 'settled' &&
+          (['all', 'won', 'lost', 'void', 'cashed_out'] as const).map((k) => (
+            <button key={k} aria-pressed={result === k} onClick={() => setResult(k)} className={chip(result === k)}>
+              {k === 'all' ? 'Any result' : k === 'cashed_out' ? 'Cashed out' : k[0].toUpperCase() + k.slice(1)}
+            </button>
+          ))}
+      </div>
+
+      <div className="mt-4 grid gap-3 @tab:grid-cols-2 @wide:grid-cols-3">
         <AnimatePresence mode="popLayout">
           {list.map((b, i) => (
             <BetPass key={b.id} bet={b} i={i} />
@@ -67,7 +110,7 @@ export function MyBets() {
           <span className="mx-auto grid size-14 place-items-center rounded-full bg-chip">
             <Ticket size={24} />
           </span>
-          <div className="mt-4 font-display text-[22px] font-[780] tracking-[-0.04em]">{tab === 'open' ? 'No open bets' : 'Nothing settled yet'}</div>
+          <div className="mt-4 font-display text-[22px] font-[780] tracking-[-0.04em]">{kind !== 'all' || result !== 'all' ? 'No bets match these filters' : tab === 'open' ? 'No open bets' : 'Nothing settled yet'}</div>
           <p className="mx-auto mt-1.5 max-w-[340px] text-[14px] text-secondary">
             {tab === 'open' ? 'Bets you place appear here with every condition, so you can follow them live.' : 'Settled bets show what won, lost or was void — and exactly why.'}
           </p>

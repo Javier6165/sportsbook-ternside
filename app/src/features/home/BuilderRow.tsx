@@ -1,3 +1,4 @@
+import { shortName } from '../../data/catalog'
 import { Tilt } from '../../ui/Tilt'
 import clsx from 'clsx'
 import { ArrowRight, Check, Layers, Plus } from 'lucide-react'
@@ -20,7 +21,7 @@ function BuilderTile({ ev, b, i }: { ev: SportEvent; b: (typeof POPULAR_BUILDERS
   const fly = useFly()
   const key = b.legs.join('+')
   const inSlip = s.groups.some((g) => g.type === 'builder' && g.eventId === ev.id && g.legs.map((l) => l.selectionId).join('+') === key)
-  const label = (id: string) => (id === 'HOME' ? `${ev.home.name.split(' ')[0]} to win` : LEG_LABEL[id])
+  const label = (id: string) => (id === 'HOME' ? `${shortName(ev.home.name)} to win` : LEG_LABEL[id])
 
   const add = (el: HTMLElement) => {
     if (inSlip) return d({ type: 'slip', open: true })
@@ -43,7 +44,7 @@ function BuilderTile({ ev, b, i }: { ev: SportEvent; b: (typeof POPULAR_BUILDERS
     >
       <div className="flex items-center justify-between">
         <span className="text-[11.5px] font-semibold text-secondary">
-          {b.legs.length} conditions · {b.popularity}
+          {b.legs.length} conditions · one price
         </span>
       </div>
       <h3 className="mt-1.5 font-display text-[20px] leading-tight font-[760] tracking-[-0.035em]">{b.title}</h3>
@@ -81,10 +82,10 @@ export function BuilderRow({ ev }: { ev: SportEvent }) {
       <div className="mb-4 flex items-end justify-between gap-3">
         <div>
           <motion.h2 initial={{ opacity: 0, y: 22, clipPath: "inset(0 0 100% 0)" }} whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)" }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} id="builders-title" className="flex items-center gap-2 font-display text-[24px] leading-none font-[780] tracking-[-0.04em] @tab:text-[28px]">
-            <Layers size={22} className="text-action" /> Popular Bet Builders
+            <Layers size={22} className="text-action" /> Bet Builder ideas
           </motion.h2>
           <p className="mt-1.5 text-[14px] text-secondary">
-            {ev.home.name.split(' ')[0]} v {ev.away.name.split(' ')[0]} · each one tells a single story, priced as one bet.
+            {shortName(ev.home.name)} v {shortName(ev.away.name)}
           </p>
         </div>
         <Link to={`/event/${ev.id}?tab=builder`} className="hidden items-center gap-1 pb-0.5 text-[14px] font-semibold text-sel-ink hover:underline @tab:flex">

@@ -1,6 +1,6 @@
 import { chromium } from 'playwright'
 import AxeBuilder from '@axe-core/playwright'
-const routes = ['#/sports', '#/event/football-01', '#/event/football-01?tab=builder', '#/event/football-cc-live', '#/my-bets', '#/wallet', '#/safer-gambling', '#/live']
+const routes = ['#/sports', '#/event/football-01', '#/event/football-01?tab=builder', '#/event/football-cc-live', '#/my-bets', '#/wallet', '#/safer-gambling', '#/live', '#/sports?hub=popular', '#/promotions', '#/promotions/predictor', '#/account', '#/sports/football?competition=continental-cup&view=standings', '#/sports/football?competition=premier-division&view=outrights', '#/event/football-02']
 const b = await chromium.launch()
 for (const r of routes) {
   const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } }); const p = await ctx.newPage()

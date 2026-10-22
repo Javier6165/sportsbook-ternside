@@ -1,13 +1,14 @@
+import { shortName } from '../../data/catalog'
 import { ChevronDown } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { competitionById, teamColor, type SportEvent } from '../../data/catalog'
+import { competitionById, type SportEvent } from '../../data/catalog'
 import { useLiveEvent } from '../../state/store'
 import { Crest } from '../../ui/Crest'
 import { Tilt } from '../../ui/Tilt'
 import { LiveBadge } from '../../ui/LiveBadge'
-import { matchGradient } from '../../ui/MatchField'
+import { LIVE_GRADIENT } from '../../ui/MatchField'
 import { OddsButton } from '../../ui/OddsButton'
 
 /**
@@ -22,8 +23,8 @@ export function MarketView({ prices, labels, colors }: { prices: string[]; label
   return (
     <div>
       <div className="mb-1.5 flex justify-between text-[11px] font-semibold text-secondary">
-        <span>Win probability</span>
-        <span>from current odds</span>
+        <span>Implied by odds</span>
+        <span>margin removed</span>
       </div>
       <div className="flex h-2 gap-[3px] overflow-hidden rounded-full" aria-hidden="true">
         {pct.map((p, i) => (
@@ -48,8 +49,6 @@ export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?
   const comp = competitionById(ev.competitionId)
   const L = ev.live!
   const m = ev.markets[0]
-  const hc = teamColor(ev.home)
-  const ac = teamColor(ev.away)
   const clock = ev.sport === 'football' ? `${minute}'` : ev.sport === 'basketball' ? `${L.period} ${L.clock}` : L.period
   return (
     <Tilt className="min-w-0 rounded-[26px]">
@@ -62,7 +61,7 @@ export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?
       className="relative flex h-full min-w-0 flex-col overflow-hidden rounded-[26px] bg-surface"
     >
       {/* Same colour-of-the-game header as every pass; the sweep is the live heartbeat */}
-      <div className="on-dark relative flex items-center justify-between gap-2 overflow-hidden px-5 py-3 text-white" style={{ background: matchGradient(ev) }}>
+      <div className="on-dark relative flex items-center justify-between gap-2 overflow-hidden px-5 py-3 text-white" style={{ background: LIVE_GRADIENT }}>
         <motion.span
           aria-hidden="true"
           className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/25 to-transparent"
@@ -100,8 +99,8 @@ export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?
         <div className="mt-5">
           <MarketView
             prices={prices}
-            labels={m.selections.length === 3 ? [ev.home.short, 'Draw', ev.away.short] : [ev.home.name.split(' ').pop()!, ev.away.name.split(' ').pop()!]}
-            colors={m.selections.length === 3 ? [hc, 'var(--color-chip-hover)', ac] : [hc, ac]}
+            labels={m.selections.length === 3 ? [ev.home.short, 'Draw', ev.away.short] : [shortName(ev.home.name), shortName(ev.away.name)]}
+            colors={m.selections.length === 3 ? ['#2948ff', 'var(--color-chip-hover)', '#111318'] : ['#2948ff', '#111318']}
           />
         </div>
 
@@ -113,7 +112,7 @@ export function LiveCard({ ev, i, reason }: { ev: SportEvent; i: number; reason?
               market={m}
               sel={sel}
               odds={prices[k]}
-              label={m.selections.length === 3 ? (k === 0 ? '1' : k === 1 ? 'X' : '2') : (k === 0 ? ev.home : ev.away).name.split(' ').pop()}
+              label={m.selections.length === 3 ? (k === 0 ? '1' : k === 1 ? 'X' : '2') : shortName((k === 0 ? ev.home : ev.away).name)}
             />
           ))}
         </div>

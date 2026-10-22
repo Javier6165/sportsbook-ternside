@@ -1,10 +1,10 @@
 import clsx from 'clsx'
-import { Clock, Coffee, HeartHandshake, Lock, ShieldCheck } from 'lucide-react'
+import { Bell, ChevronRight, Clock, Coffee, HeartHandshake, Lock, ShieldCheck } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, Link } from 'react-router'
 import { LIMIT_LABEL, used, type LimitKey } from '../../domain/limits'
-import { D, fmtMoney } from '../../domain/money'
+import { D, EDITABLE_AMOUNT, fmtMoney, parseAmount } from '../../domain/money'
 import { useAccountNow, useStore } from '../../state/store'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -64,7 +64,7 @@ function LimitCard({ k }: { k: LimitKey }) {
           <div className="font-semibold">Increase to {fmtMoney(pending.value)} requested</div>
           <div className="mt-0.5">{ready ? 'The waiting time is over. Confirm if you still want it.' : `Available to confirm from ${fmtTime(pending.availableAt)}. Increases always wait 24 hours.`}</div>
           <div className="mt-2.5 flex gap-2">
-            <button onClick={() => d({ type: 'confirmIncrease' })} aria-disabled={!ready} className={clsx('h-9 rounded-full px-3.5 text-[12.5px] font-semibold', ready ? 'bg-warn-ink text-white' : 'bg-warn-ink/20 text-warn-ink/60')}>
+            <button onClick={() => ready && d({ type: 'confirmIncrease', at: now })} disabled={!ready} className={clsx('h-9 rounded-full px-3.5 text-[12.5px] font-semibold', ready ? 'bg-warn-ink text-white' : 'cursor-not-allowed bg-warn-ink/20 text-warn-ink/70')}>
               Confirm increase
             </button>
             <button onClick={() => d({ type: 'cancelIncrease' })} className="h-9 rounded-full px-3 text-[12.5px] font-semibold hover:bg-warn-ink/10">
@@ -79,14 +79,15 @@ function LimitCard({ k }: { k: LimitKey }) {
             <div className="mt-4 flex gap-2">
               <label className="flex h-12 flex-1 items-center rounded-[14px] bg-chip px-3 focus-within:shadow-[0_0_0_2px_var(--color-action)]">
                 <span className="font-semibold text-secondary">£</span>
-                <input aria-label={`New ${LIMIT_LABEL[k]} limit`} inputMode="decimal" value={v} onChange={(e) => /^\d*(\.\d{0,2})?$/.test(e.target.value) && setV(e.target.value)} className="w-full bg-transparent pl-1 font-semibold outline-none tnum" />
+                <input aria-label={`New ${LIMIT_LABEL[k]} limit`} inputMode="decimal" value={v} onChange={(e) => EDITABLE_AMOUNT.test(e.target.value) && setV(e.target.value)} className="w-full bg-transparent pl-1 font-semibold outline-none tnum" />
               </label>
               <button
                 onClick={() => {
-                  if (!v) return
+                  if (!parseAmount(v)) return
                   d({ type: 'setLimit', key: k, value: v, at: now })
                   setEdit(false)
                 }}
+                disabled={!parseAmount(v)}
                 className="h-12 rounded-[14px] bg-ink px-4 text-[14px] font-semibold text-white"
               >
                 Save
@@ -119,7 +120,7 @@ export function SaferGambling() {
         <h1 className="mt-1 font-display text-[40px] leading-[.95] font-[800] tracking-[-0.05em] @tab:text-[56px]">
           Your limits, your call<span className="text-action">.</span>
         </h1>
-        <p className="mt-2 max-w-[620px] text-[15.5px] text-secondary">Tools you set for yourself. These limits were chosen by Sam — Ternside never suggests a budget, and you can lower them any time.</p>
+        <p className="mt-2 max-w-[620px] text-[15.5px] text-secondary">Set limits, take a break or step away. Lower limits apply straight away.</p>
       </motion.header>
 
       {s.restriction === 'paused' && s.pausedUntil && (
@@ -139,6 +140,15 @@ export function SaferGambling() {
         ))}
       </ul>
       <p className="mt-2 text-[12px] text-muted">24 hours and 7 days roll with time — midnight doesn’t reset them. The month follows UK time.</p>
+
+      <Link to="/account" className="mt-6 flex items-center gap-3 rounded-[22px] bg-surface px-5 py-4 hover:bg-chip">
+        <Bell size={18} className="text-secondary" />
+        <span className="flex-1">
+          <span className="block text-[15px] font-semibold">Reality check</span>
+          <span className="block text-[13px] text-secondary">{s.realityCheckMin ? `A reminder every ${s.realityCheckMin} minutes` : 'Off · get a reminder of time and stakes while you play'}</span>
+        </span>
+        <ChevronRight size={17} className="text-muted" />
+      </Link>
 
       <div className="mt-10 grid gap-3 @desk:grid-cols-2">
         <section className="rounded-[26px] bg-surface p-6">
@@ -218,10 +228,14 @@ export function SaferGambling() {
         <HeartHandshake size={22} className="mt-0.5 shrink-0 text-brand-dark" />
         <div>
           <h2 className="font-display text-[20px] font-[760] tracking-[-0.03em]">Want to talk to someone?</h2>
-          <p className="mt-1 text-[14px] text-white/70">In the UK, free and confidential support is available 24/7 from national gambling helplines. In this demo, contact details are placeholders.</p>
+          <p className="mt-1 text-[14px] text-white/70">Free, confidential support, 24 hours a day in Great Britain.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <a href="tel:08088020133" className="inline-flex min-h-10 flex-col justify-center rounded-[18px] bg-white px-4 py-2 text-[13.5px] leading-tight font-semibold text-ink"><span>National Gambling Helpline</span><span className="text-[12.5px] font-medium text-secondary tnum">0808 8020 133 · free, 24/7</span></a>
+            <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center rounded-[18px] bg-white/15 px-4 text-[13.5px] font-semibold text-white hover:bg-white/25">BeGambleAware.org</a>
+          </div>
         </div>
       </section>
-      {s.pendingIncrease && (
+      {(s.pendingIncrease || s.restriction === 'paused') && (
         <div className="on-dark mt-3 inline-flex items-center gap-2 rounded-full bg-[#0b1120] p-1 pl-3 text-[11.5px] font-semibold text-[#f5c04a]">
           DEMO
           <button onClick={() => d({ type: 'advanceAccount', hours: 24 })} className="h-8 rounded-full bg-white/10 px-3 text-white hover:bg-white/20">

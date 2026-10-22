@@ -4,7 +4,8 @@ import { QUOTES_QV1 } from '../data/quotes'
 import { INITIAL_BETS, INITIAL_LEDGER, type AcceptedBet, type LedgerEntry } from '../domain/bets'
 import { evaluate, type Scenario } from '../domain/builder'
 import { grossReturn } from '../domain/money'
-import type { State } from '../state/store'
+import { issueFreeBet } from '../domain/promos'
+import type { Action, State } from '../state/store'
 
 const BUILDER_ID = 'TS-NB34X0'
 const PLACED = '2026-10-20T17:42:00Z'
@@ -68,7 +69,7 @@ export interface Scene {
   build: () => Partial<State>
   route: string
   /** extra transitions available inside this scene */
-  steps?: { label: string; patch: Partial<State>; on: (s: State) => boolean }[]
+  steps?: { label: string; patch?: Partial<State>; action?: Action; on: (s: State) => boolean }[]
 }
 
 export const SCENES: Scene[] = [
@@ -231,9 +232,67 @@ SCENES.push(
       available: '0.00',
       bets: [builderBet(), ...INITIAL_BETS],
       ledger: [{ id: 'excl-01', type: 'withdrawal', delta: '-90.00', at: '2026-10-20T18:00:00Z', label: 'Balance reserved for return · self-exclusion' }, stakeEntry, ...INITIAL_LEDGER],
-      withdrawals: [{ id: 'excl-ret', amount: '90.00', at: '2026-10-20T18:00:00Z', status: 'pending' }],
+      withdrawals: [{ id: 'excl-ret-balance', amount: '90.00', at: '2026-10-20T18:00:00Z', status: 'pending' }],
       restriction: 'excluded',
     }),
     route: '/account-closed',
+    steps: [
+      {
+        label: 'Open bet settles: won £34',
+        action: { type: 'settle', betId: BUILDER_ID, status: 'won', settlement: { odds: '3.40', gross: '34.00', reason: 'All three conditions won. Because the account is self-excluded, the return was set aside for refund.', at: '2026-10-20T20:55:00Z', legResults: { HOME: 'won', OVER_2_5: 'won', PLAYER_2_SOT: 'won' } } },
+        on: (s) => s.bets.some((b) => b.id === BUILDER_ID && b.status === 'won'),
+      },
+    ],
   },
 )
+
+// —— Promotions ——————————————————————————————————————————————————————————————
+
+const TWO_UP_ID = 'TS-2UP4NB'
+const twoUpBet: AcceptedBet = {
+  id: TWO_UP_ID,
+  type: 'single',
+  legs: [{ eventId: 'football-01', eventLabel: 'Northbridge FC v Southport Athletic', marketName: 'Match result', selectionId: 'HOME', label: 'Northbridge FC', period: '90 min + stoppage', odds: '2.10' }],
+  odds: '2.10',
+  stake: '10.00',
+  potentialReturn: '21.00',
+  placedAt: '2026-10-20T17:30:00Z',
+  status: 'open',
+  rules: 'RULES-GB-01 · rev 0.4',
+}
+
+SCENES.push(
+  {
+    id: 'free-bet',
+    title: 'Free bet ready',
+    detail: 'Sam earned a £5 free bet from the Matchday promotion. Use it on Eastford at 1.80: returns £4.00, because the free bet stake isn’t returned.',
+    build: () => ({
+      promos: { 'matchday-free-bet': { joinedAt: '2026-10-19T12:00:00Z', completedAt: '2026-10-19T21:00:00Z', note: 'Qualified with TS-C0RR3C' } },
+      freeBets: [issueFreeBet('matchday-free-bet', '5', '2026-10-19T21:00:00Z')],
+      groups: [{ id: 'draft-scene-fb', eventId: 'football-02', type: 'single', legs: [{ marketId: 'RESULT_90', marketName: 'Match result', selectionId: 'HOME', label: 'Eastford Rovers', odds: '1.80', period: '90 min + stoppage' }], odds: '1.80', stake: '' }],
+      slipOpen: true,
+    }),
+    route: '/promotions',
+  },
+  {
+    id: 'two-up',
+    title: '2 Goals Ahead paid out',
+    detail: 'Sam opted in and backed Northbridge at 2.10 for £10. When they go 2–0 up, the bet is paid as a winner straight away: £21.',
+    build: () => ({
+      available: '90.00',
+      promos: { 'two-up': { joinedAt: '2026-10-20T17:00:00Z' } },
+      bets: [twoUpBet, ...INITIAL_BETS],
+      ledger: [{ id: `stake-${TWO_UP_ID}`, type: 'stake', delta: '-10.00', betId: TWO_UP_ID, at: twoUpBet.placedAt, label: 'Stake · Northbridge FC v Southport Athletic' }, ...INITIAL_LEDGER],
+    }),
+    route: `/bets/${TWO_UP_ID}`,
+    steps: [
+      {
+        label: '58’ · Northbridge go 2–0',
+        patch: { f01: 'live-2up' },
+        action: { type: 'earlyPayout', betId: TWO_UP_ID, at: '2026-10-20T19:58:00Z' },
+        on: (s) => s.bets.some((b) => b.id === TWO_UP_ID && b.status === 'won'),
+      },
+    ],
+  },
+)
+

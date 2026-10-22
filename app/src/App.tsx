@@ -1,5 +1,5 @@
 import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { Home } from './features/home/Home'
 import { NotFound } from './features/NotFound'
 import { SportPage } from './features/sport/SportPage'
@@ -12,9 +12,11 @@ import { Wallet } from './features/account/Wallet'
 import { SaferGambling } from './features/account/SaferGambling'
 import { Account } from './features/account/Account'
 import { AccountClosed } from './features/account/AccountClosed'
+import { Predictor, Promotions } from './features/promotions/Promotions'
 import { DemoFrame } from './presentation/DemoFrame'
 import { AppShell } from './shell/AppShell'
 import { StoreProvider } from './state/store'
+import './data/standings'
 
 /** Route changes fade up softly; the store keeps state, so nothing is lost. */
 function AnimatedRoutes() {
@@ -41,6 +43,8 @@ function AnimatedRoutes() {
               <Route path="/wallet" element={<Wallet />} />
               <Route path="/search" element={<div className="mx-auto mt-6 max-w-[640px] overflow-hidden rounded-[28px] bg-surface"><SearchPanel /></div>} />
               <Route path="/safer-gambling" element={<SaferGambling />} />
+              <Route path="/promotions" element={<Promotions />} />
+              <Route path="/promotions/predictor" element={<Predictor />} />
               <Route path="/event/:eventId" element={<EventPage />} />
               <Route path="*" element={<NotFound />} />
         </Routes>
@@ -51,6 +55,7 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
+    <MotionConfig reducedMotion="user">
     <StoreProvider>
       <HashRouter>
         <DemoFrame>
@@ -60,5 +65,6 @@ export default function App() {
         </DemoFrame>
       </HashRouter>
     </StoreProvider>
+    </MotionConfig>
   )
 }

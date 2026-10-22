@@ -7,6 +7,7 @@ import { COMPETITIONS, SPORTS, TEAMS } from '../../data/catalog'
 import { SAM_PREFS, useStore, type Prefs } from '../../state/store'
 import { Crest } from '../../ui/Crest'
 import { SportIcon } from '../../ui/SportIcon'
+import { useModal } from '../../ui/useModal'
 
 function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
@@ -30,13 +31,8 @@ export function TuneSheet({ open, onClose }: { open: boolean; onClose: () => voi
   const set = (next: Prefs) => d({ type: 'prefs', prefs: next })
   const [more, setMore] = useState(false)
   const [target, setTarget] = useState<HTMLElement | null>(null)
+  const modalRef = useModal<HTMLDivElement>(open, onClose)
   useEffect(() => setTarget(document.getElementById('overlay-root')), [])
-  useEffect(() => {
-    if (!open) return
-    const f = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', f)
-    return () => window.removeEventListener('keydown', f)
-  }, [open, onClose])
 
   const core = COMPETITIONS.slice(0, 5)
   const extra = COMPETITIONS.slice(5)
@@ -46,7 +42,7 @@ export function TuneSheet({ open, onClose }: { open: boolean; onClose: () => voi
   return createPortal(
     <AnimatePresence>
       {open && (
-        <motion.div key="tune" className="pointer-events-auto absolute inset-0 z-50 flex items-end justify-center @tab:items-center" role="dialog" aria-modal="true" aria-labelledby="tune-title">
+        <motion.div ref={modalRef} key="tune" className="pointer-events-auto absolute inset-0 z-50 flex items-end justify-center @tab:items-center" role="dialog" aria-modal="true" aria-labelledby="tune-title">
           <motion.div className="absolute inset-0 bg-[#0b0f1a]/45 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
           <motion.div
             initial={{ y: 40, opacity: 0, scale: 0.98 }}
@@ -62,7 +58,7 @@ export function TuneSheet({ open, onClose }: { open: boolean; onClose: () => voi
               Tune your feed
             </h2>
             <p className="mt-2 max-w-[440px] text-[14.5px] text-secondary">
-              Ternside shows what you follow and keeps the rest one tap away. It never uses how much you bet to decide what to show.
+              Choose what you see first. Your betting activity isn’t used to change this.
             </p>
 
             <h3 className="mt-7 mb-3 text-[12px] font-bold tracking-[.1em] text-muted uppercase">Sports</h3>

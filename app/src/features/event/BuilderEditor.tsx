@@ -1,3 +1,4 @@
+import { shortName } from '../../data/catalog'
 import clsx from 'clsx'
 import { Check, Info, Layers, Plus, Undo2 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -109,7 +110,7 @@ export function BuilderEditor({ ev, explain }: { ev: SportEvent; explain: boolea
                       on ? 'bg-action text-white shadow-[0_10px_24px_-12px_rgba(41,72,255,.95)]' : 'bg-chip text-ink hover:bg-chip-hover',
                     )}
                   >
-                    <span className="max-w-full min-w-0 truncate">{id === 'HOME' ? ev.home.name.split(' ')[0] : id === 'AWAY' ? ev.away.name.split(' ')[0] : labels[id].replace(' goals', '')}</span>
+                    <span className="max-w-full min-w-0 truncate">{id === 'HOME' ? shortName(ev.home.name) : id === 'AWAY' ? shortName(ev.away.name) : labels[id].replace(' goals', '')}</span>
                     {on ? <Check size={17} strokeWidth={2.6} className="shrink-0" /> : <span className={clsx('shrink-0 text-[12.5px] tnum', 'text-secondary')}>{o.sel.odds}</span>}
                   </motion.button>
                 )

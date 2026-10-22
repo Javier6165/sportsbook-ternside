@@ -1,10 +1,10 @@
 import clsx from 'clsx'
-import { ArrowDownLeft, ArrowUpRight, Check, CreditCard, Gauge, HandCoins, RotateCcw, Ticket } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, Check, CreditCard, Gauge, Gift, HandCoins, RotateCcw, Ticket } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { LIMIT_LABEL, remaining } from '../../domain/limits'
-import { D, fmtMoney } from '../../domain/money'
+import { D, EDITABLE_AMOUNT, fmtMoney, parseAmount } from '../../domain/money'
 import { useAccountNow, useStore } from '../../state/store'
 import { CountUp } from '../../ui/CountUp'
 
@@ -13,7 +13,9 @@ const money = (n: number) => fmtMoney(n.toFixed(2))
 const fmtTime = (iso: string) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(iso))
 
 function AmountInput({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
+  const [bad, setBad] = useState(false)
   return (
+    <>
     <label className="flex h-14 items-center rounded-[16px] bg-chip px-4 focus-within:bg-surface focus-within:shadow-[0_0_0_2px_var(--color-action)]">
       <span className="font-display text-[22px] font-[720] text-secondary">£</span>
       <input
@@ -22,12 +24,17 @@ function AmountInput({ value, onChange, label }: { value: string; onChange: (v: 
         placeholder="0.00"
         value={value}
         onChange={(e) => {
-          const v = e.target.value.replace(/[^\d.]/g, '')
-          if (/^\d*(\.\d{0,2})?$/.test(v)) onChange(v)
+          // Keep only text that could become an amount; never rewrite what was typed or pasted.
+          if (EDITABLE_AMOUNT.test(e.target.value)) {
+            setBad(false)
+            onChange(e.target.value)
+          } else setBad(true)
         }}
         className="w-full bg-transparent pl-1 font-display text-[24px] font-[760] tracking-[-0.02em] outline-none placeholder:text-[#b9bec8] tnum"
       />
     </label>
+    {bad && <p className="mt-2 text-[12.5px] font-medium text-lost-ink" role="alert">Use numbers only, with up to two decimals — for example 12.50.</p>}
+    </>
   )
 }
 
@@ -38,9 +45,10 @@ function Deposit() {
   const [done, setDone] = useState<string | null>(null)
   const r = remaining(s.deposits, s.limits, now)
   const blocked = s.restriction !== 'none'
-  const amount = v ? D(v) : D(0)
+  const parsed = parseAmount(v)
+  const amount = parsed ?? D(0)
   const over = amount.gt(r.left)
-  const valid = amount.gte(5) && !over && !blocked && !s.pendingOp
+  const valid = !!parsed && amount.gte(5) && !over && !blocked && !s.pendingOp
   return (
     <section className="rounded-[26px] bg-surface p-5 @tab:p-6">
       <div className="flex items-center gap-2">
@@ -68,7 +76,8 @@ function Deposit() {
       </div>
       {blocked && <p className="mt-3 text-[13px] font-medium text-warn-ink">Deposits are off while your break is active.</p>}
       {over && !blocked && <p className="mt-3 text-[13px] font-medium text-lost-ink">That’s more than your limit allows now. You can deposit up to {fmtMoney(r.left)}.</p>}
-      {v && amount.lt(5) && <p className="mt-3 text-[13px] font-medium text-secondary">The minimum deposit is £5.00.</p>}
+      {v && !parsed && <p className="mt-3 text-[13px] font-medium text-secondary">Finish the amount, for example 10 or 10.50.</p>}
+      {parsed && amount.lt(5) && <p className="mt-3 text-[13px] font-medium text-secondary">The minimum deposit is £5.00.</p>}
       <motion.button
         whileTap={valid ? { scale: 0.98 } : undefined}
         aria-disabled={!valid}
@@ -97,8 +106,9 @@ function Withdraw() {
   const { s, d } = useStore()
   const now = useAccountNow()
   const [v, setV] = useState('')
-  const amount = v ? D(v) : D(0)
-  const valid = amount.gte(1) && amount.lte(s.available) && s.restriction !== 'excluded' && !s.pendingOp
+  const parsed = parseAmount(v)
+  const amount = parsed ?? D(0)
+  const valid = !!parsed && amount.gte(1) && amount.lte(s.available) && s.restriction !== 'excluded' && !s.pendingOp
   return (
     <section className="rounded-[26px] bg-surface p-5 @tab:p-6">
       <div className="flex items-center gap-2">
@@ -130,7 +140,7 @@ function Withdraw() {
   )
 }
 
-const ICON = { opening_balance: HandCoins, stake: Ticket, return: Ticket, void_return: RotateCcw, cash_out: HandCoins, deposit: ArrowDownLeft, withdrawal: ArrowUpRight } as const
+const ICON = { opening_balance: HandCoins, stake: Ticket, return: Ticket, void_return: RotateCcw, cash_out: HandCoins, deposit: ArrowDownLeft, withdrawal: ArrowUpRight, free_bet: Gift } as const
 
 export function Wallet() {
   const { s, d } = useStore()

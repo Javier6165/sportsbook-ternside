@@ -9,7 +9,7 @@ export function CountUp({ value, format, duration = 0.6 }: { value: number; form
     const from = prev.current
     prev.current = value
     if (!ref.current) return
-    if (from === value) {
+    if (from === value || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       ref.current.textContent = format(value)
       return
     }

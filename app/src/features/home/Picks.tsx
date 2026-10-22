@@ -1,3 +1,4 @@
+import { shortName } from '../../data/catalog'
 import clsx from 'clsx'
 import { ChevronDown, ChevronRight, Star } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -78,7 +79,7 @@ export function PickCard({ ev, reason, i }: { ev: SportEvent; reason: Reason; i:
       </Link>
       <div className={clsx('mt-4 grid gap-2', three ? 'grid-cols-3' : 'grid-cols-2')}>
         {m.selections.map((sel, k) => (
-          <OddsButton key={sel.id} ev={ev} market={m} sel={sel} odds={sel.odds} label={three ? (k === 0 ? '1' : k === 1 ? 'X' : '2') : (k === 0 ? ev.home : ev.away).name.split(' ').pop()} />
+          <OddsButton key={sel.id} ev={ev} market={m} sel={sel} odds={sel.odds} label={three ? (k === 0 ? '1' : k === 1 ? 'X' : '2') : shortName((k === 0 ? ev.home : ev.away).name)} />
         ))}
       </div>
     </motion.article>
@@ -93,7 +94,6 @@ export function Picks({ picks }: { picks: { e: SportEvent; r: Reason }[] }) {
         <motion.h2 initial={{ opacity: 0, y: 22, clipPath: "inset(0 0 100% 0)" }} whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)" }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} id="picks-title" className="font-display text-[34px] leading-none font-[780] tracking-[-0.045em] @tab:text-[40px]">
           Coming up for you
         </motion.h2>
-        <p className="mt-2 text-[15px] text-secondary">Your teams and competitions first, then the few matches worth knowing about.</p>
       </div>
       <div className="grid gap-3 @tab:grid-cols-2">
         {picks.map((x, i) => (
@@ -196,7 +196,7 @@ export function EverythingElse({ rest, hidden }: { rest: ReturnType<typeof build
         Everything else
       </motion.h2>
       <p className="mt-2 max-w-[560px] text-[15px] text-secondary">
-        {hidden} more matches in {comps} competitions, tucked away so the rest of the page stays calm. Open what you need.
+        {hidden} matches · {comps} competitions
       </p>
       <div className="mt-5 grid gap-3">
         {rest.map((g) => (

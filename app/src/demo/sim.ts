@@ -2,9 +2,10 @@
 // The match clock, offer and observations move together; no interpolation.
 import { eventById, type Market } from '../data/catalog'
 
-export type F01Phase = 'pre' | 'live-68' | 'live-72' | 'live-72c' | 'live-delayed' | 'ft' | 'abandoned'
+export type F01Phase = 'pre' | 'live-2up' | 'live-68' | 'live-72' | 'live-72c' | 'live-delayed' | 'ft' | 'abandoned'
 
 export const SNAPSHOTS = {
+  'live-2up': { minute: 58, score: [2, 0] as [number, number], sot: 1, prices: ['1.12', '8.50', '21.00'], version: 'live-qv1', corrected: false },
   'live-68': { minute: 68, score: [2, 1] as [number, number], sot: 1, prices: ['1.30', '5.00', '13.00'], version: 'live-qv1', corrected: false },
   'live-72': { minute: 72, score: [2, 1] as [number, number], sot: 2, prices: ['1.24', '5.80', '15.00'], version: 'live-qv2', corrected: false },
   'live-72c': { minute: 72, score: [2, 1] as [number, number], sot: 1, prices: ['1.24', '5.80', '15.00'], version: 'live-qv2', corrected: true },
@@ -45,7 +46,7 @@ export function applySim(phase: F01Phase) {
     sot: snap.sot,
     corrected: snap.corrected,
     quoteVersion: snap.version,
-    detail: phase === 'live-delayed' ? 'Stats are delayed — showing the last update from 72’' : snap.corrected ? 'A Costa shot was reclassified by the data provider' : 'Northbridge lead 2–1',
+    detail: phase === 'live-delayed' ? 'Stats are delayed — showing the last update from 72’' : snap.corrected ? 'A Costa shot was reclassified by the data provider' : `Northbridge lead ${snap.score[0]}–${snap.score[1]}`,
     delayed: phase === 'live-delayed',
   }
   // Only the 90-minute result is offered live; pre-match lines are shown as closed.

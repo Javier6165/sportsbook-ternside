@@ -8,6 +8,8 @@ Fictional European fixed-odds sportsbook built as a portfolio case study by Javi
 | `app/` | Claude | The interactive demo (React + TypeScript + Vite) |
 | `HANDOFF-TO-ASTRA.md` | Claude → Astra | What is built, what changed from HANDOFF-01, requests (images, research, real user test) |
 | `TEST-PLAN.md` | Claude | Lightweight real usability test for the case study |
+| `PLAN-AMPLIACION.md` | Claude | Expansion plan: Popular hub, promotions, depth |
+| `IMAGE-HANDOFF-TO-CLAUDE.md` | Astra → Claude | Image delivery notes |
 
 Claude is project lead and has the final say on product/UI decisions; changes to Astra's handoff are logged in `HANDOFF-TO-ASTRA.md`.
 

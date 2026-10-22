@@ -2,7 +2,7 @@ import { shortName } from '../../data/catalog'
 import clsx from 'clsx'
 import { motion } from 'motion/react'
 import { Link, useParams, useSearchParams } from 'react-router'
-import { COMPETITIONS, EVENTS, SPORTS, TEAMS, type SportEvent } from '../../data/catalog'
+import { COMPETITIONS, EVENTS, SPORTS, type SportEvent } from '../../data/catalog'
 import { reasonFor } from '../../lib/feed'
 import { useStore } from '../../state/store'
 import { SportsBar } from '../../shell/SportsBar'
@@ -15,12 +15,14 @@ import { NotFound } from '../NotFound'
 import { Hero } from '../home/Hero'
 import { HeroCarousel, type Slide } from '../home/HeroCarousel'
 import { FeatureSlide } from '../home/FeatureSlide'
+import { CompetitionMark } from '../../ui/CompetitionMark'
+import { Outrights, Standings } from './CompetitionViews'
 
 const byTime = (a: SportEvent, b: SportEvent) => a.startsAt.localeCompare(b.startsAt)
 
 export function SportPage() {
   const { sportId } = useParams()
-  const [q] = useSearchParams()
+  const [q, setQ] = useSearchParams()
   const { s } = useStore()
   const sport = SPORTS.find((x) => x.id === sportId)
   if (!sport) return <NotFound what="sport" />
@@ -28,7 +30,8 @@ export function SportPage() {
   const compId = q.get('competition')
   const teamId = q.get('team')
   const comp = compId ? COMPETITIONS.find((c) => c.id === compId && c.sport === sport.id) : undefined
-  const team = teamId ? Object.values(TEAMS).find((t) => t.id === teamId) : undefined
+  // Any participant in the catalogue (core teams, the long tail and tennis players) has a page.
+  const team = teamId ? EVENTS.flatMap((e) => [e.home, e.away]).find((t) => t.id === teamId) : undefined
   if (compId && !comp) return <NotFound what="competition" />
 
   const pool = EVENTS.filter((e) => e.sport === sport.id).filter((e) => (comp ? e.competitionId === comp.id : true)).filter((e) => (team ? e.home.id === team.id || e.away.id === team.id : true))
@@ -45,10 +48,13 @@ export function SportPage() {
   const groups = comps.map((c) => ({ c, evs: scheduled.filter((e) => e.competitionId === c.id && !shown.has(e.id)) })).filter((g) => g.evs.length && (!comp || g.c.id === comp.id))
 
   const title = team ? team.name : comp ? comp.name : sport.name
+  const view = comp ? ((q.get('view') as 'matches' | 'standings' | 'outrights' | null) ?? 'matches') : 'matches'
+  const setView = (v: string) => setQ(v === 'matches' ? { competition: comp!.id } : { competition: comp!.id, view: v }, { replace: true })
   const bannerEvents = [...live.slice(0, 1), ...highlights.slice(0, 2).map((h) => h.e)]
   const slides: Slide[] = [
     ...bannerEvents.map((e) => ({ id: e.id, label: `${e.status === 'live' ? 'Live · ' : ''}${shortName(e.home.name)} v ${shortName(e.away.name)}`, node: <Hero ev={e} reason={reasonFor(e, s.prefs)} compact /> })),
     ...(sport.id === 'football' && !comp && !team ? [{ id: 'f-explore', label: 'Explore outcomes', node: <FeatureSlide kind="explore" /> }] : []),
+    ...(!comp && !team ? [{ id: 'f-limits', label: 'Your limits', node: <FeatureSlide kind="limits" /> }] : []),
   ]
 
   return (
@@ -64,6 +70,7 @@ export function SportPage() {
           </div>
           <h1 className="mt-1 flex items-center gap-3 font-display text-[40px] leading-[.95] font-[800] tracking-[-0.05em] @tab:text-[56px]">
             {team && <Crest team={team} size={44} />}
+            {comp && <CompetitionMark id={comp.id} sport={comp.sport} size={44} />}
             <span>
               {title}
               <span className="text-action">.</span>
@@ -93,11 +100,25 @@ export function SportPage() {
           </div>
         )}
 
+        {comp && (
+          <div role="tablist" aria-label={`${comp.name} sections`} className="mt-5 inline-flex rounded-full bg-chip p-1">
+            {(['matches', 'standings', 'outrights'] as const).map((v) => (
+              <button key={v} role="tab" aria-selected={view === v} onClick={() => setView(v)} className={clsx('relative z-10 h-10 rounded-full px-5 text-[14px] font-semibold', view === v ? 'text-ink' : 'text-secondary hover:text-ink')}>
+                {view === v && <motion.span layoutId="comp-tab" className="absolute inset-0 -z-10 rounded-full bg-surface shadow-[0_1px_3px_rgba(16,24,43,.14)]" />}
+                {v === 'matches' ? 'Matches' : v === 'standings' ? (comp.sport === 'tennis' ? 'Draw' : 'Standings') : 'Outrights'}
+              </button>
+            ))}
+          </div>
+        )}
+        {comp && view === 'standings' && <Standings comp={comp} />}
+        {comp && view === 'outrights' && <Outrights comp={comp} />}
       </div>
 
+      {view === 'matches' && (
+      <>
       {slides.length > 0 && (
         <div className="mt-6 @tab:px-8">
-          <div className="mx-auto max-w-[1600px] overflow-hidden @tab:rounded-[32px]">
+          <div className="mx-auto max-w-[1156px] overflow-hidden @tab:rounded-[32px]">
             <HeroCarousel key={`${sport.id}-${comp?.id}-${team?.id}`} slides={slides} label={`${title} featured`} />
           </div>
         </div>
@@ -154,6 +175,13 @@ export function SportPage() {
         )}
         <Footer />
       </div>
+      </>
+      )}
+      {view !== 'matches' && (
+        <div className="mx-auto max-w-[1220px] px-4 @tab:px-8">
+          <Footer />
+        </div>
+      )}
     </>
   )
 }

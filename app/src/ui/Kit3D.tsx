@@ -1,6 +1,6 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Environment, Lightformer } from '@react-three/drei'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import type { Crest, Participant } from '../data/catalog'
 
@@ -43,17 +43,19 @@ function shirtShape(kind: Garment) {
 }
 
 function makeGeometry(kind: Garment) {
-  const g = new THREE.ExtrudeGeometry(shirtShape(kind), { depth: 0.22, bevelEnabled: true, bevelThickness: 0.16, bevelSize: 0.1, bevelSegments: 8, curveSegments: 28, steps: 1 })
-  g.translate(0, 0, -0.11)
-  // Bulge the front and back so it reads as fabric over a torso, not a flat cookie.
+  // A thin fabric shell, not a block: tiny depth, soft rounded edge.
+  const g = new THREE.ExtrudeGeometry(shirtShape(kind), { depth: 0.03, bevelEnabled: true, bevelThickness: 0.035, bevelSize: 0.03, bevelSegments: 5, curveSegments: 36, steps: 1 })
+  g.translate(0, 0, -0.015)
   const p = g.attributes.position as THREE.BufferAttribute
   for (let i = 0; i < p.count; i++) {
     const x = p.getX(i)
     const y = p.getY(i)
     const z = p.getZ(i)
-    const chest = Math.max(0, 1 - (x / 1.05) ** 2) * (0.75 + 0.25 * Math.cos(y * 1.2))
-    const sign = z >= 0 ? 1 : -1
-    p.setZ(i, z + sign * chest * 0.26)
+    // gentle torso curve + a few soft folds; front and back move together so it stays thin
+    const torso = Math.max(0, 1 - (x / 1.1) ** 2) * 0.16
+    const folds = 0.022 * Math.sin(y * 7.5 + x * 2.2) * Math.max(0, 1 - Math.abs(x)) + 0.014 * Math.sin(x * 11 - y * 3)
+    const hem = y < -0.9 ? (y + 0.9) * -0.08 : 0
+    p.setZ(i, z + torso + folds + hem)
   }
   g.computeVertexNormals()
   return g
@@ -124,6 +126,26 @@ function kitTexture(c: Crest, kind: Garment, mark: string) {
   x.textAlign = 'center'
   x.textBaseline = 'middle'
   x.fillText(mark, cx, cy + 3)
+  // side seams and a sleeve cuff band in the secondary colour
+  x.strokeStyle = 'rgba(0,0,0,0.18)'
+  x.lineWidth = 3
+  for (const u of [0.18, 0.82]) {
+    x.beginPath()
+    x.moveTo(u * W, W * 0.42)
+    x.lineTo(u * W, W)
+    x.stroke()
+  }
+  // fine knitted mesh, like a match shirt
+  x.globalAlpha = 0.06
+  x.strokeStyle = '#000'
+  x.lineWidth = 1
+  for (let i = -W; i < W; i += 6) {
+    x.beginPath()
+    x.moveTo(i, 0)
+    x.lineTo(i + W, W)
+    x.stroke()
+  }
+  x.globalAlpha = 1
   // soft fabric shading + weave
   const g = x.createRadialGradient(W / 2, W * 0.42, 60, W / 2, W / 2, W * 0.75)
   g.addColorStop(0, 'rgba(255,255,255,0.10)')
@@ -156,10 +178,36 @@ if (typeof window !== 'undefined') {
   })
 }
 
-function Kit({ team, kind, side, delay }: { team: Participant; kind: Garment; side: -1 | 1; delay: number }) {
+function useKitTexture(team: Participant, kind: Garment) {
+  // Prefer a real front-view kit image (./images/kits/<team>.png, from Astra); fall back to a drawn kit.
+  const fallback = useMemo(() => kitTexture(team.crest!, kind, team.crest!.mark ?? team.name[0]), [team, kind])
+  const [tex, setTex] = useState<THREE.Texture>(fallback)
+  useEffect(() => {
+    let alive = true
+    new THREE.TextureLoader().load(
+      `./images/kits/${team.id}.png`,
+      (t) => {
+        if (!alive) return t.dispose()
+        t.colorSpace = THREE.SRGBColorSpace
+        t.anisotropy = 8
+        t.repeat.copy(fallback.repeat)
+        t.offset.copy(fallback.offset)
+        setTex(t)
+      },
+      undefined,
+      () => {},
+    )
+    return () => {
+      alive = false
+    }
+  }, [team.id, fallback])
+  return tex
+}
+
+function Kit({ team, kind, side, delay, still, hover }: { team: Participant; kind: Garment; side: -1 | 1; delay: number; still: boolean; hover: { current: boolean } }) {
   const ref = useRef<THREE.Group>(null)
   const geo = useMemo(() => makeGeometry(kind), [kind])
-  const tex = useMemo(() => kitTexture(team.crest!, kind, team.crest!.mark ?? team.name[0]), [team, kind])
+  const tex = useKitTexture(team, kind)
   const born = useRef<number | null>(null)
   useEffect(() => () => (geo.dispose(), tex.dispose()), [geo, tex])
 
@@ -168,50 +216,70 @@ function Kit({ team, kind, side, delay }: { team: Participant; kind: Garment; si
     if (!g) return
     const t = state.clock.elapsedTime
     if (born.current === null) born.current = t
-    const age = Math.max(0, t - born.current - delay)
-    // entrance: spring-ish ease from off-stage, spinning
-    const k = 1 - Math.exp(-age * 3.2) * Math.cos(age * 5.5) * 0.85
-    const p = Math.min(1, age / 1.6)
-    const e = 1 - (1 - p) ** 4
-    const baseX = side * 0.95
-    const baseZ = side === -1 ? 0.35 : -0.35
-    g.position.x = THREE.MathUtils.lerp(side * 6, baseX, e) + pointer.x * 0.18 * (side === -1 ? 1 : 0.6)
-    g.position.y = THREE.MathUtils.lerp(-1.2, 0, e) + Math.sin(t * 1.1 + side) * 0.06 - pointer.y * 0.1
-    g.position.z = baseZ
-    const spin = (1 - e) * Math.PI * 2.5 * -side
-    const idle = Math.sin(t * 0.55 + side * 1.3) * 0.28
-    const target = -side * 0.42 + idle + pointer.x * 0.35 + spin
-    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, target, 6, dt)
-    g.rotation.x = THREE.MathUtils.damp(g.rotation.x, 0.06 + pointer.y * 0.12, 4, dt)
-    g.rotation.z = THREE.MathUtils.damp(g.rotation.z, side * 0.06 + Math.sin(t * 0.7) * 0.02, 4, dt)
-    const sc = Math.max(0.001, Math.min(1, k)) * (side === -1 ? 1 : 0.92)
-    g.scale.setScalar(sc)
+    const age = still ? 99 : Math.max(0, t - born.current - delay)
+    // entrance: rise in with a quarter turn, ease-out, no bounce
+    const e = 1 - (1 - Math.min(1, age / 1.1)) ** 3
+    const restY = -side * 0.32
+    // Hover reaction off for now (it jumped); `hover` stays wired for the textured revisit.
+    void hover
+    const h = 0
+    g.position.x = side * 0.95 + (1 - e) * side * 0.6 + (still ? 0 : pointer.x * 0.06 * h)
+    g.position.y = (1 - e) * -0.7 + (still ? 0 : Math.sin(t * 0.8 + side) * 0.012)
+    g.position.z = side === -1 ? 0.3 : -0.3
+    const turn = (1 - e) * -side * 0.9
+    const target = restY + turn + (still ? 0 : Math.sin(t * 0.45 + side) * 0.035 + pointer.x * 0.28 * h)
+    g.rotation.y = THREE.MathUtils.damp(g.rotation.y, target, 5, dt)
+    g.rotation.x = THREE.MathUtils.damp(g.rotation.x, 0.04 + (still ? 0 : pointer.y * 0.1 * h), 4, dt)
+    g.rotation.z = side * 0.04
+    g.scale.setScalar((0.86 + 0.14 * e) * (side === -1 ? 1 : 0.92) * (1 + 0.03 * h))
+    const m = (g.children[0] as THREE.Mesh).material as THREE.Material[]
+    for (const mat of m) mat.opacity = e
   })
 
   return (
-    <group ref={ref} scale={0.001}>
+    <group ref={ref} scale={0.86}>
       <mesh geometry={geo} castShadow>
-        <meshPhysicalMaterial attach="material-0" map={tex} roughness={0.72} sheen={0.8} sheenRoughness={0.5} sheenColor="#ffffff" clearcoat={0.12} envMapIntensity={0.7} />
-        <meshPhysicalMaterial attach="material-1" color={team.crest!.c1} roughness={0.8} sheen={0.6} sheenColor="#ffffff" envMapIntensity={0.5} />
+        <meshPhysicalMaterial attach="material-0" map={tex} transparent roughness={0.82} sheen={0.9} sheenRoughness={0.45} sheenColor="#ffffff" envMapIntensity={0.6} side={THREE.DoubleSide} />
+        <meshPhysicalMaterial attach="material-1" transparent color={team.crest!.c1} roughness={0.85} sheen={0.6} sheenColor="#ffffff" envMapIntensity={0.5} />
       </mesh>
     </group>
   )
 }
 
 export default function Kits3D({ home, away, kind = 'shirt' }: { home: Participant; away: Participant; kind?: Garment }) {
+  const wrap = useRef<HTMLDivElement>(null)
+  const hover = useRef(false)
+  const [visible, setVisible] = useState(true)
+  const still = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  useEffect(() => {
+    const el = wrap.current
+    if (!el) return
+    // Render only while on screen.
+    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.05 })
+    io.observe(el)
+    // React to the cursor only while it is over the banner that holds the kits.
+    const host = el.closest('section') ?? el
+    const on = () => (hover.current = true)
+    const off = () => (hover.current = false)
+    host.addEventListener('pointerenter', on)
+    host.addEventListener('pointerleave', off)
+    return () => (io.disconnect(), host.removeEventListener('pointerenter', on), host.removeEventListener('pointerleave', off))
+  }, [])
   if (!home.crest || !away.crest) return null
   return (
-    <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 7.6], fov: 32 }} gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }} style={{ pointerEvents: 'none' }}>
-      <ambientLight intensity={0.15} />
-      <directionalLight position={[3, 4, 5]} intensity={2.6} />
-      <directionalLight position={[-4, 1, -3]} intensity={1.4} color="#86a8ff" />
-      <Environment resolution={256} frames={1} environmentIntensity={0.6}>
-        <Lightformer form="rect" intensity={3} position={[0, 3, 4]} scale={[6, 2, 1]} />
-        <Lightformer form="rect" intensity={1.5} position={[-5, 0, 2]} scale={[2, 6, 1]} color="#c8d4ff" />
-        <Lightformer form="ring" intensity={2} position={[5, 1, -2]} scale={2} color="#ffd9c2" />
-      </Environment>
-      <Kit team={away} kind={kind} side={1} delay={0.25} />
-      <Kit team={home} kind={kind} side={-1} delay={0} />
-    </Canvas>
+    <div ref={wrap} className="h-full w-full">
+      <Canvas frameloop={visible ? (still ? 'demand' : 'always') : 'never'} dpr={[1, 1.5]} camera={{ position: [0, 0, 7.6], fov: 32 }} gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }} style={{ pointerEvents: 'none' }}>
+        <ambientLight intensity={0.2} />
+        <directionalLight position={[3, 4, 5]} intensity={2.4} />
+        <directionalLight position={[-4, 1, -3]} intensity={1.2} color="#86a8ff" />
+        <Environment resolution={256} frames={1} environmentIntensity={0.6}>
+          <Lightformer form="rect" intensity={3} position={[0, 3, 4]} scale={[6, 2, 1]} />
+          <Lightformer form="rect" intensity={1.5} position={[-5, 0, 2]} scale={[2, 6, 1]} color="#c8d4ff" />
+          <Lightformer form="ring" intensity={2} position={[5, 1, -2]} scale={2} color="#ffd9c2" />
+        </Environment>
+        <Kit team={away} kind={kind} side={1} delay={0.15} still={still} hover={hover} />
+        <Kit team={home} kind={kind} side={-1} delay={0} still={still} hover={hover} />
+      </Canvas>
+    </div>
   )
 }

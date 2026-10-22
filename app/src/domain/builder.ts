@@ -19,13 +19,14 @@ export type Outcome =
   | { kind: 'won'; subset: string[]; odds: string; reduced: boolean }
   | { kind: 'conditional'; subset: string[]; odds: string; pending: string[]; reduced: boolean }
 
-export function evaluate(sels: string[], sc: Scenario): { legs: { id: string; status: LegStatus; why?: string }[]; outcome: Outcome } {
+/** `quotes`: the draft's current table, or — for an accepted bet — the subset prices archived at acceptance. */
+export function evaluate(sels: string[], sc: Scenario, quotes?: Record<string, string>): { legs: { id: string; status: LegStatus; why?: string }[]; outcome: Outcome } {
   const legs = sels.map((id) => ({ id, status: sc.status[id] ?? 'open', why: sc.why[id] }))
   const lost = legs.filter((l) => l.status === 'lost').map((l) => l.id)
   if (lost.length) return { legs, outcome: { kind: 'lost', by: lost } }
   const remaining = legs.filter((l) => l.status !== 'void').map((l) => l.id)
   if (!remaining.length) return { legs, outcome: { kind: 'refund' } }
-  const odds = quoteFor(remaining)!
+  const odds = quoteFor(remaining, quotes)!
   const reduced = remaining.length < sels.length
   const pending = legs.filter((l) => l.status === 'open').map((l) => l.id)
   if (!pending.length) return { legs, outcome: { kind: 'won', subset: remaining, odds, reduced } }

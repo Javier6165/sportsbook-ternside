@@ -129,6 +129,42 @@ export function buildExtraEvents(): SportEvent[] {
       }
       out.push(ev)
     }
+    if (LIVE_IN.includes(c.id)) out.push(liveOf(c, teams[0], teams[3], r))
   })
   return out
+}
+
+// A few long-tail matches are in play, so Live has the breadth a real book shows on a Tuesday evening.
+const LIVE_IN = ['highland-premiership', 'rheinland-liga', 'lowlands-league', 'nordic-premier', 'riviera-ladies', 'iberian-basket']
+
+function liveOf(c: Competition, home: Participant, away: Participant, r: () => number): SportEvent {
+  const base = prices(r, c.sport === 'football')
+  const wob = (k: number) => base.map((o, i) => fmt(Number(o) * (1 + (i === 0 ? -1 : 1) * 0.04 * k)))
+  const path = [base, wob(1), wob(-1), wob(2), wob(0.5)]
+  const period = c.sport === 'football' ? '90 min + stoppage' : c.sport === 'tennis' ? 'Match must complete' : 'Includes overtime'
+  const sel = (id: string, label: string, odds: string) => ({ id, label, odds })
+  const market =
+    c.sport === 'football'
+      ? { id: 'RESULT_90', name: 'Match result', period, selections: [sel('HOME', home.name, base[0]), sel('DRAW', 'Draw', base[1]), sel('AWAY', away.name, base[2])] }
+      : { id: 'WINNER', name: c.sport === 'tennis' ? 'Match winner' : 'Winner', period, selections: [sel('HOME', home.name, base[0]), sel('AWAY', away.name, base[1])] }
+  const minute = 12 + Math.floor(r() * 70)
+  const g = () => Math.floor(r() * 3)
+  const live =
+    c.sport === 'football'
+      ? { minute, period: minute > 45 ? '2nd half' : '1st half', score: [g(), g()] as [number, number], path }
+      : c.sport === 'tennis'
+        ? { period: 'Set 1', score: [0, 0] as [number, number], sets: [0, 0] as [number, number], games: [Math.floor(r() * 5), Math.floor(r() * 5)] as [number, number], points: ['15', '30'] as [string, string], serving: 0 as const, path }
+        : { period: `Q${2 + Math.floor(r() * 2)}`, clock: `${1 + Math.floor(r() * 9)}:${String(Math.floor(r() * 60)).padStart(2, '0')}`, score: [38 + Math.floor(r() * 30), 36 + Math.floor(r() * 30)] as [number, number], path }
+  return {
+    id: `live-${c.id}`,
+    sport: c.sport,
+    competitionId: c.id,
+    home,
+    away,
+    startsAt: c.sport === 'tennis' ? '2026-10-20T17:20:00Z' : c.sport === 'football' ? new Date(Date.parse('2026-10-20T18:00:00Z') - minute * 60_000 - (minute > 45 ? 15 : 0) * 60_000).toISOString() : '2026-10-20T17:30:00Z',
+    status: 'live',
+    stage: c.sport === 'tennis' ? 'Round of 32' : 'Regular season',
+    live,
+    markets: [market],
+  }
 }

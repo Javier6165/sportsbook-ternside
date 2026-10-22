@@ -74,8 +74,12 @@ export function DemoControls({ onClose, inline }: { onClose?: () => void; inline
                   {sc.steps.map((st) => (
                     <button
                       key={st.label}
-                      onClick={() => (st.patch.f01 ? d({ type: 'f01', phase: st.patch.f01 }) : d({ type: 'patch', patch: st.patch }))}
-                      disabled={!!s.pendingOp && !st.patch.f01}
+                      onClick={() => {
+                        if (st.patch?.f01) d({ type: 'f01', phase: st.patch.f01 })
+                        else if (st.patch) d({ type: 'patch', patch: st.patch })
+                        if (st.action) d(st.action)
+                      }}
+                      disabled={(!!s.pendingOp && !st.patch?.f01) || (!!st.action && st.on(s))}
                       className={clsx('h-8 rounded-full px-3 text-[12px] font-semibold disabled:opacity-60', st.on(s) ? 'bg-[#f5c04a] text-nav' : 'bg-white/10 text-white/80 hover:bg-white/20')}
                     >
                       {st.label}

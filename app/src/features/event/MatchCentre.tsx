@@ -1,4 +1,6 @@
 import clsx from 'clsx'
+import { Score } from '../../ui/Score'
+import { shortName } from '../../data/catalog'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { teamColor, type SportEvent } from '../../data/catalog'
@@ -8,7 +10,6 @@ import { LiveBadge } from '../../ui/LiveBadge'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const lighten = (c: string, p = 70) => `color-mix(in oklab, ${c} ${p}%, white)`
-const shortName = (n: string) => { const w = n.split(' '); return w[0].endsWith('.') ? w[w.length - 1] : w[0] }
 
 // Fictional live feed: a gentle, deterministic stream of match moments.
 const FOOTBALL_EVENTS = [
@@ -174,11 +175,11 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
           </motion.div>
         ))}
         <div className="col-start-2 row-start-1 text-center">
-          <div className="font-display text-[48px] leading-none font-[800] tracking-[-0.05em] tnum @tab:text-[84px]">
-            {sport === 'tennis' ? `${L.sets![0]}–${L.sets![1]}` : (
+          <div className="font-display text-[48px] leading-none font-[800] tracking-[-0.03em] tnum @tab:text-[84px]">
+            {sport === 'tennis' ? <Score a={L.sets![0]} b={L.sets![1]} /> : (
               <>
                 <motion.span key={`h${L.score[0]}`} initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="inline-block">{L.score[0]}</motion.span>
-                <span className="text-white/40">–</span>
+                <span className="mx-[0.14em] text-white/40">–</span>
                 <motion.span key={`a${L.score[1]}`} initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="inline-block">{L.score[1]}</motion.span>
               </>
             )}
@@ -271,8 +272,8 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
       {/* Win probability + moments */}
       <div className="relative z-10">
         <div className="mb-2 flex items-baseline justify-between text-[12px] font-semibold text-white/60">
-          <span className="text-[14px] text-white">Win probability</span>
-          <span>from current odds</span>
+          <span className="text-[14px] text-white">Implied probability</span>
+          <span>from live odds</span>
         </div>
         <div className="relative flex h-4 gap-1 overflow-hidden rounded-full">
           {pct.map((p, i) => (
@@ -305,7 +306,7 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
             {shortName(ev.away.name)}
           </span>
         </div>
-        <p className="mt-2 text-[11.5px] text-white/50">What the prices imply right now — not a prediction.</p>
+        <p className="mt-2 text-[11.5px] text-white/50">Live odds as percentages, margin removed. Not a forecast.</p>
 
         <div className="mt-5 @desk:mt-6">
           <div className="mb-2 text-[12px] font-bold tracking-[.1em] text-white/50 uppercase">Latest</div>

@@ -1,6 +1,7 @@
 import { eventById } from '../data/catalog'
-import { QUOTES_QV1 } from '../data/quotes'
+import { QUOTES_QV1, quoteKey } from '../data/quotes'
 import { D, accaOdds, grossReturn, isValidStake } from './money'
+import { freeBetReturn, type FreeBet } from './promos'
 import type { DraftGroup } from '../state/store'
 
 export interface BetLeg {
@@ -40,11 +41,15 @@ export interface AcceptedBet {
   subsetQuotes?: Record<string, string>
   settlement?: Settlement
   rules: string
+  /** Placed with a free bet: no cash stake, and the stake isn’t part of the return. */
+  freeBet?: { id: string; amount: string }
+  /** Promotion that settled this bet early (2 Goals Ahead). */
+  promo?: string
 }
 
 export interface LedgerEntry {
   id: string
-  type: 'opening_balance' | 'stake' | 'return' | 'void_return' | 'cash_out' | 'deposit' | 'withdrawal'
+  type: 'opening_balance' | 'stake' | 'return' | 'void_return' | 'cash_out' | 'deposit' | 'withdrawal' | 'free_bet'
   delta: string
   betId?: string
   at: string
@@ -55,6 +60,7 @@ const RULES = 'RULES-GB-01 · rev 0.4'
 const short = (n: string) => n
 export const eventLabel = (eventId: string) => {
   const ev = eventById(eventId)
+  if (ev?.outright) return `${ev.home.name} · Outright`
   return ev ? `${short(ev.home.name)} v ${short(ev.away.name)}` : 'Unknown match'
 }
 
@@ -86,7 +92,32 @@ export interface PlannedBet {
 }
 
 /** Turns the shared slip into the bets that would be placed (no money moves here). */
-export function planBets(groups: DraftGroup[], mode: 'singles' | 'acca', accaStake: string, placedAt: string): PlannedBet[] {
+export const ACCA_MAX = 4
+
+/** Accumulator from the picks that qualify; every other pick stays separate with a stated reason — never dropped silently. */
+export function splitAcca(groups: DraftGroup[], isClosed: (g: DraftGroup) => boolean) {
+  const legs: DraftGroup[] = []
+  const out: { g: DraftGroup; why: string }[] = []
+  for (const g of groups) {
+    const why =
+      g.type === 'builder'
+        ? 'Bet Builder — placed on its own'
+        : isClosed(g)
+          ? 'Match has started'
+          : g.live
+            ? 'Live price — accumulators are pre-match'
+            : legs.some((x) => x.eventId === g.eventId)
+              ? 'Same match as another pick — use Bet Builder'
+              : legs.length >= ACCA_MAX
+                ? `Up to ${ACCA_MAX} selections per accumulator`
+                : null
+    if (why) out.push({ g, why })
+    else legs.push(g)
+  }
+  return { legs, out }
+}
+
+export function planBets(groups: DraftGroup[], mode: 'singles' | 'acca', accaStake: string, placedAt: string, freeBets: FreeBet[] = []): PlannedBet[] {
   if (mode === 'acca') {
     if (!isValidStake(accaStake) || groups.length < 2) return []
     const odds = accaOdds(groups.map((g) => g.odds))
@@ -107,24 +138,31 @@ export function planBets(groups: DraftGroup[], mode: 'singles' | 'acca', accaSta
       },
     ]
   }
+  const fbOf = (g: DraftGroup) => (g.freeBetId ? freeBets.find((f) => f.id === g.freeBetId && f.status === 'available' && D(g.odds).gte(f.minOdds)) : undefined)
   return groups
-    .filter((g) => isValidStake(g.stake))
-    .map((g) => ({
+    .filter((g) => fbOf(g) || isValidStake(g.stake))
+    .map((g) => {
+      const fb = fbOf(g)
+      const stake = fb ? fb.amount : D(g.stake).toFixed(2)
+      return {
       consumes: [g.id],
       bet: {
         id: receiptId(),
         type: g.type,
         legs: g.legs.map((l) => legOf(g, l)),
         odds: g.odds,
-        stake: D(g.stake).toFixed(2),
-        potentialReturn: grossReturn(g.stake, g.odds).toFixed(2),
+        stake,
+        potentialReturn: (fb ? freeBetReturn(stake, g.odds) : grossReturn(stake, g.odds)).toFixed(2),
+        freeBet: fb ? { id: fb.id, amount: fb.amount } : undefined,
         placedAt,
         status: 'open' as const,
         live: g.live,
-        subsetQuotes: g.type === 'builder' ? { ...QUOTES_QV1 } : undefined,
+        // Archive the subset table with the accepted joint price for the full set (e.g. 3.20 after a price change).
+        subsetQuotes: g.type === 'builder' ? { ...QUOTES_QV1, [quoteKey(g.legs.map((l) => l.selectionId))]: g.odds } : undefined,
         rules: RULES,
       },
-    }))
+    }
+    })
 }
 
 export const INITIAL_BETS: AcceptedBet[] = [

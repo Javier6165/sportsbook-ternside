@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router'
 import { eventById } from '../../data/catalog'
 import type { AcceptedBet } from '../../domain/bets'
 import { D, fmtMoney, fmtOdds } from '../../domain/money'
-import { matchGradient } from '../../ui/MatchField'
+import { BRAND_GRADIENT, matchGradient } from '../../ui/MatchField'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -19,7 +19,7 @@ export function BetMiniPass({ bet, stamped, i = 0 }: { bet: AcceptedBet; stamped
       transition={{ delay: i * 0.08, duration: 0.5, ease }}
       className="relative overflow-hidden rounded-[22px] bg-surface"
     >
-      <div className="h-2" style={{ background: ev && bet.type !== 'acca' ? matchGradient(ev) : 'linear-gradient(90deg,#2948ff,#86a8ff)' }} />
+      <div className="h-2" style={{ background: ev && bet.type !== 'acca' ? matchGradient(ev) : BRAND_GRADIENT }} />
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -43,7 +43,7 @@ export function BetMiniPass({ bet, stamped, i = 0 }: { bet: AcceptedBet; stamped
         </div>
         <div className="mt-3 flex items-end justify-between border-t border-dashed border-line-strong pt-3 text-[12px] text-secondary">
           <span>
-            Stake <b className="ml-1 text-[14px] font-semibold text-ink tnum">{fmtMoney(bet.stake)}</b>
+            {bet.freeBet ? 'Free bet' : 'Stake'} <b className="ml-1 text-[14px] font-semibold text-ink tnum">{fmtMoney(bet.stake)}</b>
           </span>
           <span className="text-right">
             Potential return <b className="ml-1 text-[14px] font-semibold text-ink tnum">{fmtMoney(bet.potentialReturn)}</b>
@@ -78,7 +78,8 @@ export function ReviewStep({
   onBack: () => void
   onPlace: () => void
 }) {
-  const total = planned.reduce((t, b) => t.plus(b.stake), D(0))
+  // Free-bet stakes don’t come out of the balance.
+  const total = planned.reduce((t, b) => (b.freeBet ? t : t.plus(b.stake)), D(0))
   const ret = planned.reduce((t, b) => t.plus(b.potentialReturn), D(0))
   const after = D(available).minus(total)
   const short = after.lt(0)
@@ -101,8 +102,7 @@ export function ReviewStep({
           ))}
         </ul>
         <p className="mt-4 px-1 text-[12px] leading-relaxed text-secondary">
-          Prices are fixed when we accept your bet. If a price moves before then, we’ll ask you again — we never accept a different price on your behalf. Rules: RULES-GB-01 rev 0.4.
-        </p>
+          Prices are fixed when your bet is accepted. If one changes first, you’ll be asked to confirm. Rules: RULES-GB-01 rev 0.4.</p>
       </div>
       <div className="border-t border-line bg-surface px-5 pt-4 pb-5">
         <dl className="grid grid-cols-3 gap-2 text-[12px] text-secondary">
@@ -136,7 +136,7 @@ export function ReviewStep({
           aria-disabled={short || !!blocked}
           className={clsx('mt-3 flex h-14 w-full items-center justify-center gap-2 rounded-[18px] text-[16px] font-semibold', short || blocked ? 'bg-chip text-muted' : 'bg-action text-white shadow-[0_14px_30px_-14px_rgba(41,72,255,1)] hover:bg-action-hover')}
         >
-          <Check size={18} strokeWidth={2.6} /> Place {planned.length === 1 ? 'bet' : `${planned.length} bets`} · <span className="tnum">{fmtMoney(total)}</span>
+          <Check size={18} strokeWidth={2.6} /> Place {planned.length === 1 ? 'bet' : `${planned.length} bets`} · <span className="tnum">{total.gt(0) ? fmtMoney(total) : 'free bet'}</span>
         </motion.button>
       </div>
     </div>
@@ -156,7 +156,7 @@ export function PlacingStep({ planned }: { planned: AcceptedBet[] }) {
             transition={{ y: { duration: 1.2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }, opacity: { duration: 0.3 } }}
             style={{ zIndex: 3 - i }}
           >
-            <div className="h-7 rounded-t-[20px]" style={{ background: 'linear-gradient(90deg,#13204A,#C8102E)' }} />
+            <div className="h-7 rounded-t-[20px]" style={{ background: BRAND_GRADIENT }} />
           </motion.div>
         ))}
       </div>
@@ -177,7 +177,7 @@ export function DoneStep({ placed, onClose }: { placed: AcceptedBet[]; onClose: 
           <Check size={28} strokeWidth={3} />
         </motion.span>
         <h2 className="mt-3 font-display text-[28px] leading-none font-[800] tracking-[-0.045em]">{placed.length === 1 ? 'Bet placed' : `${placed.length} bets placed`}</h2>
-        <p className="mt-1.5 text-[13.5px] text-secondary">The same tickets now live in My Bets, where you can follow every condition.</p>
+        <p className="mt-1.5 text-[13.5px] text-secondary">Find them in My Bets.</p>
       </div>
       <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-4">
         <ul className="space-y-3">
@@ -232,7 +232,7 @@ export function PriceChangedStep({ bet, newOdds, onAccept, onBack }: { bet: Acce
               <div className="text-[12.5px] font-semibold tnum">returns {fmtMoney(newRet)}</div>
             </div>
           </div>
-          <p className="mt-4 text-[12px] text-secondary">Stake {fmtMoney(bet.stake)}. We never accept a different price for you — not even a better one.</p>
+          <p className="mt-4 text-[12px] text-secondary">Stake {fmtMoney(bet.stake)}.</p>
         </div>
       </div>
       <div className="mt-auto grid gap-2 border-t border-line bg-surface px-5 pt-4 pb-5">

@@ -1,0 +1,26 @@
+{
+  "purpose": "Read-only documentary snapshot; not a code audit",
+  "inputs": [
+    {
+      "source": "HANDOFF-TO-ASTRA.md",
+      "snapshot": "inputs/HANDOFF-TO-ASTRA.md",
+      "sha256": "f09d1b5d21feeb3f985173ba48ab17edbf83dfe66ee2303cd73dcf5cc1d93441",
+      "bytes": 31407,
+      "captured_at_utc": "2026-10-22T10:15:28.446665+00:00"
+    },
+    {
+      "source": "PLAN-AMPLIACION.md",
+      "snapshot": "inputs/PLAN-AMPLIACION.md",
+      "sha256": "ca58b09ce113b9731e69ef5b0c9e0ca2fa3d4946cb060349d1aae1c502e9950f",
+      "bytes": 6977,
+      "captured_at_utc": "2026-10-22T10:15:28.446966+00:00"
+    },
+    {
+      "source": "TEST-PLAN.md",
+      "snapshot": "inputs/TEST-PLAN.md",
+      "sha256": "5916ab3e5e445291db0165c2dd92c93835945aa0003b3013923b9f536e8e669e",
+      "bytes": 4098,
+      "captured_at_utc": "2026-10-22T10:15:28.447132+00:00"
+    }
+  ]
+}

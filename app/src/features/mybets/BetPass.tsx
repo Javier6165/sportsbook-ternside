@@ -7,7 +7,7 @@ import type { AcceptedBet, BetStatus } from '../../domain/bets'
 import { D, fmtMoney, fmtOdds } from '../../domain/money'
 import { dayLabel, kickoffTime } from '../../lib/time'
 import { useLiveEvent } from '../../state/store'
-import { matchGradient } from '../../ui/MatchField'
+import { BRAND_GRADIENT, matchGradient } from '../../ui/MatchField'
 import { LiveBadge } from '../../ui/LiveBadge'
 
 export const STATUS_CHIP: Record<BetStatus, { label: string; cls: string }> = {
@@ -22,6 +22,7 @@ function WhenChip({ eventId }: { eventId: string }) {
   const ev = eventById(eventId)
   const live = useLiveEvent(ev ?? ({ id: '', status: 'scheduled', markets: [{ selections: [] }] } as never))
   if (!ev) return null
+  if (ev.outright) return <span className="text-[12.5px] font-semibold text-white/80">Outright</span>
   if (ev.status === 'live')
     return (
       <LiveBadge tone="solid" clock={ev.sport === 'football' ? `${live.minute}'` : ev.live?.period} />
@@ -51,9 +52,10 @@ export function BetPass({ bet, i = 0, compact }: { bet: AcceptedBet; i?: number;
   const title = bet.type === 'acca' ? `${bet.legs.length}-fold accumulator` : bet.type === 'builder' ? 'Bet Builder' : bet.legs[0].label
   const settled = bet.status !== 'open'
   const gross = bet.settlement ? D(bet.settlement.gross) : D(0)
-  const net = gross.minus(bet.stake)
+  // A free-bet stake was never the customer’s money, so the net is the whole return.
+  const net = bet.freeBet ? gross : gross.minus(bet.stake)
   const chip = STATUS_CHIP[bet.status]
-  const bg = ev && bet.type !== 'acca' ? matchGradient(ev) : bet.type === 'acca' ? 'linear-gradient(105deg,#1a2a6b,#2948ff 60%,#86a8ff)' : 'linear-gradient(105deg,#3a4256,#596579)'
+  const bg = ev && bet.type !== 'acca' ? matchGradient(ev) : bet.type === 'acca' ? BRAND_GRADIENT : 'linear-gradient(105deg,#3a4256,#596579)'
 
   return (
     <motion.article
@@ -89,8 +91,9 @@ export function BetPass({ bet, i = 0, compact }: { bet: AcceptedBet; i?: number;
         </div>
         <div className="mt-4 flex items-end justify-between gap-3 border-t border-dashed border-line-strong px-5 py-4 text-[12px] text-secondary">
           <span>
-            Stake
+            {bet.freeBet ? 'Free bet' : 'Stake'}
             <b className="block font-display text-[18px] font-[760] text-ink tnum">{fmtMoney(bet.stake)}</b>
+            {bet.promo === 'two-up' && <span className="mt-1 inline-block rounded-full bg-won px-2 py-0.5 text-[11px] font-bold text-won-ink">Paid early · 2 Goals Ahead</span>}
           </span>
           {settled ? (
             <span className="text-right">

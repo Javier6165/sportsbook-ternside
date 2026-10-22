@@ -1,3 +1,4 @@
+import { shortName } from '../../data/catalog'
 import clsx from 'clsx'
 import { ChevronDown, GraduationCap } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -6,10 +7,7 @@ import { H2H, MATCH_STATS, PLAYER_FORM, teamColor, type SportEvent } from '../..
 import { useLiveClock } from '../../state/store'
 
 const ease = [0.16, 1, 0.3, 1] as const
-const short = (n: string) => {
-  const w = n.split(' ')
-  return w[0].endsWith('.') ? w[w.length - 1] : w[0]
-}
+const short = shortName
 
 /** One plain-English insight with its own small visual. */
 function Insight({ title, children, visual, dark }: { title: string; children: ReactNode; visual: ReactNode; dark?: boolean }) {
@@ -166,7 +164,7 @@ export function LiveStory({ ev }: { ev: SportEvent }) {
           Out of every 100 shots, {H} are making 48 and {A} 44.
         </Insight>
         <Insight title={`${H} on a 9–2 run`} visual={<OutOfTen n={8} color={hc} />}>
-          They’ve scored most of the recent points, which is why their price has shortened.
+          They’ve scored most of the recent points.
         </Insight>
         <Insight title={`${A} are giving the ball away`} visual={<Versus a={9} b={12} ca={hc} cb={ac} la="Turnovers" lb="Turnovers" />}>
           Losing the ball without a shot — {A} have done it 12 times.
@@ -243,11 +241,11 @@ export function PreMatchStats({ ev, brief }: { ev: SportEvent; brief: ReactNode 
         >
           Last five games, newest on the right. {H} have lost once; {A} have lost once too.
         </Insight>
-        <Insight title="Expect goals" visual={<Versus a={4} b={4} ca={hc} cb={ac} la={`${H} · games with 3+ goals`} lb={`${A} · of last 6`} />}>
-          Four of each team’s last six games had three goals or more. That’s why Over 2.5 is the favourite.
+        <Insight title="Goals in recent games" visual={<Versus a={4} b={4} ca={hc} cb={ac} la={`${H} · games with 3+ goals`} lb={`${A} · of last 6`} />}>
+          Four of each team’s last six games had three goals or more.
         </Insight>
         <Insight
-          title="Costa keeps shooting"
+          title="Costa’s shots on target"
           visual={
             <div className="flex h-16 items-end gap-2">
               {PLAYER_FORM.lastSix.map((v, i) => (

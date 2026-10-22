@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ChevronDown, PanelLeftClose, PanelLeftOpen, Radio, ShieldCheck, Sparkles } from 'lucide-react'
+import { ChevronDown, Flame, Gift, PanelLeftClose, PanelLeftOpen, Radio, ShieldCheck, Sparkles } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState, type ReactNode } from 'react'
 import { NavLink, useLocation, useSearchParams } from 'react-router'
@@ -7,6 +7,7 @@ import { COMPETITIONS, EVENTS, SPORTS, TEAMS } from '../data/catalog'
 import { useStore } from '../state/store'
 import { Crest } from '../ui/Crest'
 import { SportIcon } from '../ui/SportIcon'
+import { CompetitionMark } from '../ui/CompetitionMark'
 
 const W_CLOSED = 76
 const W_OPEN = 268
@@ -43,18 +44,6 @@ function Item({ to, icon, label, meta, open, active }: { to: string; icon: React
   )
 }
 
-const COMP_COLOURS = ['#2948FF', '#C8102E', '#0F5E4A', '#5B21B6', '#0E7490', '#9A3412', '#BE185D']
-function CompBadge({ id, name }: { id: string; name: string }) {
-  let h = 0
-  for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) | 0
-  const c = COMP_COLOURS[Math.abs(h) % COMP_COLOURS.length]
-  return (
-    <span className="grid size-6 place-items-center rounded-[8px] font-display text-[10px] font-[800] text-white shadow-[inset_0_1px_0_rgba(255,255,255,.25)]" style={{ background: `linear-gradient(140deg, ${c}, color-mix(in oklab, ${c} 60%, #000))` }}>
-      {name.split(' ').map((w) => w[0]).join('').slice(0, 2)}
-    </span>
-  )
-}
-
 function Section({ open, children }: { open: boolean; children: ReactNode }) {
   return open ? <div className="px-[14px] pt-5 pb-1.5 text-[11px] font-bold tracking-[.12em] whitespace-nowrap text-muted uppercase">{children}</div> : <div className="mx-auto my-3 h-px w-8 bg-line-strong" />
 }
@@ -70,6 +59,8 @@ export function SideNav() {
   const followed = COMPETITIONS.filter((c) => s.prefs.competitions.includes(c.id))
   const teams = Object.values(TEAMS).filter((t) => s.prefs.teams.includes(t.id))
   const others = COMPETITIONS.filter((c) => !s.prefs.competitions.includes(c.id))
+  const hub = (q.get('hub') as 'for-you' | 'popular' | null) ?? s.hub
+  const activePromos = s.restriction === 'none' ? Object.values(s.promos).filter((e) => e && !e.completedAt).length + s.freeBets.filter((f) => f.status === 'available').length : 0
 
   return (
     <motion.nav
@@ -90,8 +81,10 @@ export function SideNav() {
           {open && <span className="text-[13px] font-semibold whitespace-nowrap">Collapse</span>}
         </button>
 
-        <Item to="/sports" icon={<Sparkles size={18} />} label="For you" open={open} active={loc.pathname === '/sports'} />
+        <Item to="/sports?hub=for-you" icon={<Sparkles size={18} />} label="For you" open={open} active={loc.pathname === '/sports' && hub === 'for-you'} />
+        <Item to="/sports?hub=popular" icon={<Flame size={18} />} label="Popular" open={open} active={loc.pathname === '/sports' && hub === 'popular'} />
         <Item to="/live" icon={<Radio size={18} />} label="Live now" meta={<span className="text-live">{live}</span>} open={open} />
+        <Item to="/promotions" icon={<Gift size={18} />} label="Promotions" meta={activePromos || undefined} open={open} active={loc.pathname.startsWith('/promotions')} />
 
         <Section open={open}>Sports</Section>
         {SPORTS.map((sp) => (
@@ -114,7 +107,7 @@ export function SideNav() {
           <Item
             key={c.id}
             to={`/sports/${c.sport}?competition=${c.id}`}
-            icon={<CompBadge id={c.id} name={c.name} />}
+            icon={<CompetitionMark id={c.id} sport={c.sport} />}
             label={c.name}
             open={open}
             active={comp === c.id}
@@ -138,7 +131,7 @@ export function SideNav() {
                         to={`/sports/${c.sport}?competition=${c.id}`}
                         className={clsx('flex h-9 items-center gap-2.5 rounded-[12px] px-[14px] text-[13px] whitespace-nowrap hover:bg-chip', comp === c.id ? 'font-semibold text-ink' : 'text-secondary')}
                       >
-                        <SportIcon sport={c.sport} size={13} />
+                        <CompetitionMark id={c.id} sport={c.sport} size={16} />
                         <span className="truncate">{c.name}</span>
                       </NavLink>
                     </li>

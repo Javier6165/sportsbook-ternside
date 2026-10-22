@@ -11,7 +11,7 @@ import { dayLabel, kickoffTime } from '../../lib/time'
 import { mainPrices, useLiveClock, useLiveEvent, useStore } from '../../state/store'
 import { Crest } from '../../ui/Crest'
 import { LiveBadge } from '../../ui/LiveBadge'
-import { matchGradient } from '../../ui/MatchField'
+import { BRAND_GRADIENT, matchGradient } from '../../ui/MatchField'
 import { Perforation } from '../../ui/Perforation'
 import { Inspector } from '../event/Inspector'
 import { NotFound } from '../NotFound'
@@ -24,7 +24,7 @@ const fmtTime = (iso: string) => new Intl.DateTimeFormat('en-GB', { timeZone: 'E
 function liveReading(ev: SportEvent | undefined, selectionId: string): { text: string; tone: 'good' | 'bad' | 'neutral' | 'warn' } | null {
   if (!ev || ev.status !== 'live' || !ev.live) return null
   const [h, a] = ev.live.score
-  if (ev.sport !== 'football') return { text: 'In play', tone: 'neutral' }
+  if (ev.sport !== 'football') return { text: 'In play · settles at the end', tone: 'neutral' }
   const goals = h + a
   if (selectionId === 'OVER_2_5') return goals >= 3 ? { text: `${goals} goals · line reached, provisional`, tone: 'good' } : { text: `${goals} of 3 goals`, tone: 'neutral' }
   if (selectionId === 'UNDER_2_5') return goals >= 3 ? { text: `${goals} goals · can no longer win`, tone: 'bad' } : { text: `${goals} goals so far`, tone: 'good' }
@@ -34,6 +34,7 @@ function liveReading(ev: SportEvent | undefined, selectionId: string): { text: s
     if (ev.live.corrected) return { text: `Corrected 2 → ${sot} · ${sot} of 2 shots`, tone: 'warn' }
     return sot >= 2 ? { text: `${sot} of 2 shots · reached, provisional`, tone: 'good' } : { text: `${sot} of 2 shots on target`, tone: 'neutral' }
   }
+  if (!['HOME', 'DRAW', 'AWAY'].includes(selectionId)) return { text: 'In play · settles at full time', tone: 'neutral' }
   const lead = h > a ? 'HOME' : a > h ? 'AWAY' : 'DRAW'
   if (selectionId === lead) return { text: selectionId === 'DRAW' ? 'Level now' : 'Ahead now', tone: 'good' }
   return { text: lead === 'DRAW' ? 'Level now' : 'Behind now', tone: 'bad' }
@@ -61,6 +62,7 @@ function CashOut({ bet }: { bet: AcceptedBet }) {
   const [changed, setChanged] = useState(false)
   const { s } = useStore()
   if (!offer) return null
+  if (bet.freeBet) return <section className="rounded-[24px] bg-surface p-5 text-[13.5px] text-secondary"><b className="font-semibold text-ink">Cash Out isn’t available on free bets.</b> This bet settles at the end as normal.</section>
   const net = offer.minus(bet.stake)
   if (s.pendingOp) return <section className="rounded-[24px] bg-surface p-5 text-[13.5px] text-secondary"><b className="font-semibold text-ink">Cash Out is paused</b> while we check another bet.</section>
   return (
@@ -130,7 +132,7 @@ function Receipt({ bet }: { bet: AcceptedBet }) {
     ['Receipt', bet.id],
     ['Placed', fmtTime(bet.placedAt)],
     ['Accepted odds', fmtOdds(bet.odds)],
-    ['Stake', fmtMoney(bet.stake)],
+    [bet.freeBet ? 'Free bet' : 'Stake', fmtMoney(bet.stake)],
     ['Rules', bet.rules],
   ]
   return (
@@ -173,7 +175,7 @@ export function BetDetail() {
 
   const title = bet.type === 'acca' ? `${bet.legs.length}-fold accumulator` : bet.type === 'builder' ? 'Bet Builder' : bet.legs[0].label
   const gross = bet.settlement ? D(bet.settlement.gross) : null
-  const net = gross ? gross.minus(bet.stake) : null
+  const net = gross ? (bet.freeBet ? gross : gross.minus(bet.stake)) : null
   const chip = STATUS_CHIP[bet.status]
   const live = ev?.status === 'live'
   const labels = Object.fromEntries(bet.legs.map((l) => [l.selectionId, l.label]))
@@ -186,7 +188,7 @@ export function BetDetail() {
       </button>
       <div className="grid gap-4 @desk:grid-cols-[minmax(0,1fr)_380px]">
         <motion.article initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="overflow-hidden rounded-[30px] bg-surface shadow-[0_24px_60px_-34px_rgba(16,24,43,.4)]">
-          <div className={clsx('on-dark relative px-6 pt-6 pb-7 text-white', bet.status === 'lost' && 'saturate-[.35]')} style={{ background: ev && bet.type !== 'acca' ? matchGradient(ev) : 'linear-gradient(105deg,#1a2a6b,#2948ff 60%,#86a8ff)' }}>
+          <div className={clsx('on-dark relative px-6 pt-6 pb-7 text-white', bet.status === 'lost' && 'saturate-[.35]')} style={{ background: ev && bet.type !== 'acca' ? matchGradient(ev) : BRAND_GRADIENT }}>
             <div className="flex items-center gap-2 text-[13px] font-semibold text-white/80">
               {bet.type !== 'single' && <Layers size={14} />}
               {bet.type === 'acca' ? 'Accumulator · every selection must win' : bet.legs[0].eventLabel}
@@ -194,12 +196,14 @@ export function BetDetail() {
             </div>
             {ev && bet.type !== 'acca' && (
               <div className="mt-5 flex items-center gap-4">
-                <Crest team={ev.home} size={40} />
+                {!ev.outright && <Crest team={ev.home} size={40} />}
                 <div className="min-w-0 flex-1">
                   <div className="font-display text-[30px] leading-none font-[800] tracking-[-0.045em] @tab:text-[40px]">{title}</div>
                   <div className="mt-1.5 text-[13px] text-white/75">
-                    {live ? (
-                      <span className="flex items-center gap-2"><LiveBadge tone="solid" clock={ev.sport === 'football' ? `${minute}'` : ev.live!.period} /><span className="font-display text-[18px] font-[800] text-white tnum">{ev.live!.score[0]}–{ev.live!.score[1]}</span></span>
+                    {ev.outright ? (
+                      'Outright · settles when the competition is decided'
+                    ) : live ? (
+                      <span className="flex items-center gap-2"><LiveBadge tone="solid" clock={ev.sport === 'football' ? `${minute}'` : ev.live!.period} /><span className="font-display text-[18px] font-[800] text-white tnum">{ev.live!.score[0]}<span className="mx-[0.14em] opacity-60">–</span>{ev.live!.score[1]}</span></span>
                     ) : bet.status === 'open' ? (
                       `${dayLabel(ev.startsAt)} · ${kickoffTime(ev.startsAt)} · not started`
                     ) : (
@@ -207,7 +211,7 @@ export function BetDetail() {
                     )}
                   </div>
                 </div>
-                <Crest team={ev.away} size={40} />
+                {!ev.outright && <Crest team={ev.away} size={40} />}
               </div>
             )}
             {bet.type === 'acca' && <div className="mt-5 font-display text-[34px] leading-none font-[800] tracking-[-0.045em]">{title}</div>}
@@ -216,7 +220,7 @@ export function BetDetail() {
           <ol className="px-6 pt-5">
             {bet.legs.map((l, i) => {
               const res = bet.settlement?.legResults?.[l.selectionId]
-              const reading = !res ? liveReading(eventById(l.eventId), l.selectionId) : null
+              const reading = !res && bet.status === 'open' ? liveReading(eventById(l.eventId), l.selectionId) : null
               return (
                 <li key={l.eventId + l.selectionId} className="relative flex gap-3 pb-5 last:pb-2">
                   {i < bet.legs.length - 1 && <span className="absolute top-6 bottom-0 left-[9px] w-[2px] rounded bg-sel" />}
@@ -245,7 +249,7 @@ export function BetDetail() {
 
           {live && bet.status === 'open' && (
             <div className="mx-6 mb-3 rounded-[14px] bg-chip px-4 py-3 text-[12.5px] leading-snug text-secondary">
-              <b className="font-semibold text-ink">Nothing is paid from the live score.</b> Green means it’s going your way right now; the bet settles on the official result.
+              Live readings are provisional. Your bet settles on the official result.
               {ev?.live?.corrected && !ev.live.delayed && <span className="mt-1 block text-warn-ink">The data provider reclassified one of Costa’s shots. Your bet hasn’t changed — only the live count.</span>}
               {ev?.live?.delayed && <span className="mt-1 block text-warn-ink">Live stats are delayed. We’re showing the last update and won’t treat missing data as zero.</span>}
             </div>
@@ -273,11 +277,11 @@ export function BetDetail() {
 
           <div className="grid grid-cols-2 gap-4 px-6 pb-6 text-[12.5px] text-secondary">
             <div>
-              Stake
+              {bet.freeBet ? 'Free bet · not returned' : 'Stake'}
               <div className="font-display text-[26px] font-[780] tracking-[-0.03em] text-ink tnum">{fmtMoney(bet.stake)}</div>
             </div>
             <div className="text-right">
-              {bet.status === 'open' ? 'Potential return · includes stake' : bet.status === 'cashed_out' ? 'Cashed out for' : 'Returned'}
+              {bet.status === 'open' ? (bet.freeBet ? 'Potential return' : 'Potential return · includes stake') : bet.status === 'cashed_out' ? 'Cashed out for' : 'Returned'}
               <div className={clsx('font-display text-[26px] font-[780] tracking-[-0.03em] tnum', bet.status === 'won' ? 'text-won-ink' : 'text-ink')}>{fmtMoney(gross ?? bet.potentialReturn)}</div>
               {net && <div className="font-semibold">{net.isZero() ? 'Net £0.00' : net.gt(0) ? `+${fmtMoney(net)} net profit` : `${fmtMoney(net.abs())} net loss`}</div>}
             </div>
@@ -319,7 +323,7 @@ export function BetDetail() {
       </div>
       {canExplore && (
         <div className="mt-4">
-          <Inspector sels={bet.legs.map((l) => l.selectionId)} labels={labels} stake={bet.stake} />
+          <Inspector sels={bet.legs.map((l) => l.selectionId)} labels={labels} stake={bet.stake} quotes={bet.subsetQuotes} accepted />
         </div>
       )}
     </div>

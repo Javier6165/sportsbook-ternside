@@ -198,7 +198,7 @@ export function DemoFrame({ children }: { children: ReactNode }) {
         <>
           <button
             onClick={() => setScenes(true)}
-            className="on-dark absolute top-[46%] left-0 z-[100] rounded-r-[10px] bg-[#0b1120]/75 px-1 py-2.5 text-[9px] font-bold tracking-[.14em] text-[#f5c04a] uppercase shadow-lg [writing-mode:vertical-rl]"
+            className="on-dark absolute top-[46%] left-0 z-[100] rounded-r-[8px] bg-[#0b1120]/75 px-2.5 py-[3px] text-[8px] leading-none font-bold tracking-[.14em] text-[#f5c04a] uppercase shadow-lg [writing-mode:vertical-rl]"
             aria-label="Open demo controls"
           >
             Demo

@@ -3,15 +3,15 @@ import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useSpring,
 import type { ReactNode } from 'react'
 
 /**
- * Card wrapper: a few degrees of 3D tilt towards the cursor and a soft
- * spotlight that follows it. Springs keep it calm; reduced motion disables it.
+ * Card wrapper: subtle tilt towards the cursor (≈2°), a 1px lift and a
+ * faint spotlight. Slow, well-damped springs; reduced motion disables it.
  */
-export function Tilt({ children, className, max = 4, glow = 'rgba(255,255,255,.55)', dark = false }: { children: ReactNode; className?: string; max?: number; glow?: string; dark?: boolean }) {
+export function Tilt({ children, className, max = 2, glow = 'rgba(255,255,255,.28)', dark = false }: { children: ReactNode; className?: string; max?: number; glow?: string; dark?: boolean }) {
   const reduce = useReducedMotion()
   const px = useMotionValue(0.5)
   const py = useMotionValue(0.5)
-  const sx = useSpring(px, { stiffness: 220, damping: 22 })
-  const sy = useSpring(py, { stiffness: 220, damping: 22 })
+  const sx = useSpring(px, { stiffness: 120, damping: 26 })
+  const sy = useSpring(py, { stiffness: 120, damping: 26 })
   const rx = useTransform(sy, [0, 1], [max, -max])
   const ry = useTransform(sx, [0, 1], [-max, max])
   const gx = useTransform(sx, (v) => `${v * 100}%`)
@@ -23,7 +23,7 @@ export function Tilt({ children, className, max = 4, glow = 'rgba(255,255,255,.5
   return (
     <motion.div
       className={clsx('relative [transform-style:preserve-3d]', className)}
-      style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
+      style={{ rotateX: rx, rotateY: ry, transformPerspective: 1400 }}
       onPointerMove={(e) => {
         const r = e.currentTarget.getBoundingClientRect()
         px.set((e.clientX - r.left) / r.width)
@@ -35,8 +35,8 @@ export function Tilt({ children, className, max = 4, glow = 'rgba(255,255,255,.5
         py.set(0.5)
         hover.set(0)
       }}
-      whileHover={{ y: -3 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+      whileHover={{ y: -1 }}
+      transition={{ type: 'spring', stiffness: 220, damping: 30 }}
     >
       {children}
       <motion.span aria-hidden="true" className={clsx('pointer-events-none absolute inset-0 rounded-[inherit]', dark ? 'mix-blend-screen' : 'mix-blend-soft-light')} style={{ background: bg, opacity: ho }} />

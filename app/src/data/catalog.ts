@@ -75,6 +75,8 @@ export interface SportEvent {
   venue?: string
   stage?: string
   popular?: boolean
+  /** Outright (competition-winner) market, not a match */
+  outright?: boolean
   /** Plain-language read of why the prices sit where they do (AI-style summary, authored for the demo). */
   brief?: string[]
 }
@@ -132,6 +134,8 @@ export const TEAMS = {
   ironvale: t('ironvale', 'Ironvale Steel', 'IRV', { shape: 'diamond', pattern: 'half', c1: '#374151', c2: '#F97316', mark: 'I' }),
   marisol: t('marisol', 'Marisol Basket', 'MAR', { shape: 'round', pattern: 'sash', c1: '#BE185D', c2: '#FBCFE8', mark: 'M' }),
   kestrel: t('kestrel', 'Kestrel Bay', 'KBY', { shape: 'shield', pattern: 'band', c1: '#065F46', c2: '#A7F3D0', mark: 'K' }),
+  lindholm: t('lindholm', 'Lindholm IF', 'LIF', { shape: 'round', pattern: 'hoops', c1: '#0B3D2E', c2: '#E9E4D0', mark: 'L' }),
+  castelbruno: t('castelbruno', 'Castelbruno', 'CAS', { shape: 'shield', pattern: 'stripes', c1: '#7C2D12', c2: '#1C1917', mark: 'C' }),
 }
 
 const FLAG: Record<string, string> = { ESP: '#C8102E', ARG: '#4F9BDB', SWE: '#0B5FA5', GBR: '#1E2F6E', IRL: '#169B62', JPN: '#BC002D', FRA: '#0055A4', GER: '#2B2B2B' }
@@ -243,10 +247,10 @@ const CORE_EVENTS: SportEvent[] = [
     venue: 'Riverside Park',
     form: ['WWDWL', 'LWWDW'],
     brief: [
-      'Northbridge are favourites mostly on home form: four wins and a draw in their last five at Riverside Park.',
-      'Southport aren’t in bad shape either — three wins in five — which is why the away price is 3.60 and not much longer.',
-      'Both teams’ recent games have been high-scoring, so Over 2.5 goals is the shorter side of that line at 1.80.',
-      'Daniel Costa has had two or more shots on target in four of his last six starts, so his 2+ line sits just under 2.00.',
+      'Northbridge are unbeaten in their last five home games: four wins and a draw at Riverside Park.',
+      'Southport have won three of their last five, including two away from home.',
+      'Four of each side’s last six games had three goals or more.',
+      'Daniel Costa had two or more shots on target in four of his last six starts.',
     ],
     markets: [
       result('2.10', '3.40', '3.60', T.northbridge, T.southport),
@@ -311,6 +315,7 @@ const CORE_EVENTS: SportEvent[] = [
   },
   football('football-cc-02', 'continental-cup', T.alcazar, T.kervin, '2026-10-20T19:00:00Z', ['1.95', '3.50', '3.90'], { tot: ['1.85', '1.95'], bt: ['1.75', '2.05'], dc: ['1.25', '1.30', '1.85'] }, { stage: 'Group C · Matchday 3' }),
   football('football-cc-03', 'continental-cup', T.sauveterre, T.brenna, '2026-10-20T19:00:00Z', ['2.45', '3.30', '2.90'], { tot: ['2.05', '1.75'], bt: ['1.90', '1.90'], dc: ['1.40', '1.33', '1.55'] }, { stage: 'Group D · Matchday 3' }),
+  football('football-cc-04', 'continental-cup', T.lindholm, T.castelbruno, '2026-10-20T19:00:00Z', ['2.20', '3.25', '3.30'], { tot: ['2.00', '1.80'], bt: ['1.85', '1.95'], dc: ['1.33', '1.36', '1.62'] }, { stage: 'Group D · Matchday 3' }),
 
   // ——— Primera Ibérica · live ———
   {
@@ -479,7 +484,127 @@ const CORE_EVENTS: SportEvent[] = [
   },
 ]
 
-export const EVENTS: SportEvent[] = [...CORE_EVENTS, ...buildExtraEvents()]
+// —— Football depth: secondary markets derived from each match’s own prices, so they stay coherent ——
+const px = (p: number, margin = 1.065) => {
+  const o = 1 / (Math.min(0.97, Math.max(0.02, p)) * margin)
+  const step = o < 2 ? 0.01 : o < 5 ? 0.05 : o < 10 ? 0.25 : 0.5
+  return Math.max(1.01, Math.round(o / step) * step).toFixed(2)
+}
+const two = (id: string, name: string, period: string, a: [string, string, number], b: [string, string]): Market => ({
+  id,
+  name,
+  period,
+  selections: [
+    { id: a[0], label: a[1], odds: px(a[2]) },
+    { id: b[0], label: b[1], odds: px(1 - a[2]) },
+  ],
+})
+
+function footballDepth(ev: SportEvent): SportEvent {
+  if (ev.sport !== 'football' || ev.status !== 'scheduled') return ev
+  const r = ev.markets.find((m) => m.id === 'RESULT_90')
+  if (!r) return ev
+  const inv = r.selections.map((x) => 1 / Number(x.odds))
+  const sum = inv.reduce((a, b) => a + b, 0)
+  const [ph, pd, pa] = inv.map((v) => v / sum)
+  const t = ev.markets.find((m) => m.id === 'TOTAL_2_5_90')
+  const po25 = t ? (1 / Number(t.selections[0].odds)) / (1 / Number(t.selections[0].odds) + 1 / Number(t.selections[1].odds)) : 0.52
+  let h = 0
+  for (const c of ev.id) h = (h * 31 + c.charCodeAt(0)) | 0
+  const wobble = ((Math.abs(h) % 9) - 4) / 100
+  const home = ev.home.name
+  const away = ev.away.name
+  const htH = ph * 0.58
+  const htA = pa * 0.58
+  const add: Market[] = [
+    two('TOTAL_1_5_90', 'Total goals 1.5', REG, ['OVER_1_5', 'Over 1.5', Math.min(0.9, po25 + 0.24)], ['UNDER_1_5', 'Under 1.5']),
+    two('TOTAL_3_5_90', 'Total goals 3.5', REG, ['OVER_3_5', 'Over 3.5', Math.max(0.12, po25 - 0.25)], ['UNDER_3_5', 'Under 3.5']),
+    {
+      id: 'FIRST_GOAL_90',
+      name: 'Team to score first',
+      period: REG,
+      selections: [
+        { id: 'FG_HOME', label: home, odds: px(0.92 * (ph + pd / 2)) },
+        { id: 'FG_NONE', label: 'No goal', odds: px(0.08) },
+        { id: 'FG_AWAY', label: away, odds: px(0.92 * (pa + pd / 2)) },
+      ],
+    },
+    {
+      id: 'HT_RESULT',
+      name: 'Half-time result',
+      period: 'First half + stoppage',
+      selections: [
+        { id: 'HT_HOME', label: home, odds: px(htH) },
+        { id: 'HT_DRAW', label: 'Draw', odds: px(1 - htH - htA) },
+        { id: 'HT_AWAY', label: away, odds: px(htA) },
+      ],
+    },
+    two('FH_GOALS_0_5', 'First-half goals 0.5', 'First half + stoppage', ['FH_OVER_0_5', 'Over 0.5', Math.min(0.85, po25 + 0.2)], ['FH_UNDER_0_5', 'Under 0.5']),
+    {
+      id: 'EH_HOME_1',
+      name: `Handicap ${shortName(home)} −1`,
+      period: REG,
+      selections: [
+        { id: 'EH_HOME', label: `${shortName(home)} −1`, odds: px(ph * 0.47) },
+        { id: 'EH_DRAW', label: 'Draw −1', odds: px(ph * 0.53) },
+        { id: 'EH_AWAY', label: `${shortName(away)} +1`, odds: px(pd + pa) },
+      ],
+    },
+    two('CORNERS_9_5', 'Total corners 9.5', REG, ['CORNERS_O', 'Over 9.5', 0.5 + wobble], ['CORNERS_U', 'Under 9.5']),
+    two('CARDS_3_5', 'Total cards 3.5', REG, ['CARDS_O', 'Over 3.5', 0.47 - wobble], ['CARDS_U', 'Under 3.5']),
+  ]
+  const have = new Set(ev.markets.map((m) => m.id))
+  return { ...ev, markets: [...ev.markets, ...add.filter((m) => !have.has(m.id))] }
+}
+
+/** Market groups on the match page. A market can sit in Popular and in its own category. */
+export const MARKET_GROUPS: { id: string; label: string; ids: string[] }[] = [
+  { id: 'result', label: 'Result', ids: ['RESULT_90', 'DOUBLE_CHANCE_90', 'WINNER'] },
+  { id: 'goals', label: 'Goals', ids: ['TOTAL_2_5_90', 'TOTAL_1_5_90', 'TOTAL_3_5_90', 'BTTS_90', 'FIRST_GOAL_90', 'CORRECT_SCORE_90'] },
+  { id: 'halves', label: 'Halves', ids: ['HT_RESULT', 'FH_GOALS_0_5'] },
+  { id: 'handicap', label: 'Handicap', ids: ['EH_HOME_1', 'HANDICAP'] },
+  { id: 'corners', label: 'Corners & cards', ids: ['CORNERS_9_5', 'CARDS_3_5'] },
+  { id: 'players', label: 'Players', ids: ['PLAYER_SOT_90', 'ANYTIME_SCORER_90'] },
+  { id: 'sets', label: 'Sets & games', ids: ['SET_BETTING', 'TOTAL_GAMES'] },
+  { id: 'points', label: 'Points', ids: ['TOTAL_POINTS'] },
+]
+
+/** In-play markets beyond the result, built from the live score and current price. */
+function liveDepth(ev: SportEvent): SportEvent {
+  if (ev.status !== 'live' || !ev.live || ev.id === 'football-01') return ev
+  const sel = ev.markets[0].selections
+  const inv = sel.map((x) => 1 / Number(x.odds))
+  const sum = inv.reduce((a, b) => a + b, 0)
+  const p = inv.map((v) => v / sum)
+  const add: Market[] = []
+  if (ev.sport === 'football') {
+    const goals = ev.live.score[0] + ev.live.score[1]
+    const left = Math.max(0.05, (90 - (ev.live.minute ?? 45)) / 90)
+    const more = Math.min(0.9, 1 - Math.exp(-2.6 * left))
+    const share = p[0] / (p[0] + p[2])
+    add.push({
+      id: 'LIVE_NEXT_GOAL',
+      name: `Goal ${goals + 1} scored by`,
+      period: 'Rest of 90 min + stoppage',
+      selections: [
+        { id: 'NG_HOME', label: ev.home.name, odds: px(more * share) },
+        { id: 'NG_NONE', label: 'No more goals', odds: px(1 - more) },
+        { id: 'NG_AWAY', label: ev.away.name, odds: px(more * (1 - share)) },
+      ],
+    })
+    const line = goals + 1.5
+    add.push(two('LIVE_TOTAL', `Total goals ${line}`, '90 min + stoppage', ['LT_O', `Over ${line}`, Math.max(0.08, more * 0.42)], ['LT_U', `Under ${line}`]))
+  }
+  if (ev.sport === 'tennis' && ev.live.sets) {
+    const n = ev.live.sets[0] + ev.live.sets[1] + 1
+    const g = ev.live.games ?? [0, 0]
+    const tilt = Math.max(0.1, Math.min(0.9, p[0] + (g[0] - g[1]) * 0.06))
+    add.push(two('LIVE_SET', `Set ${n} winner`, `Set ${n} must complete`, ['LS_HOME', ev.home.name, tilt], ['LS_AWAY', ev.away.name]))
+  }
+  return add.length ? { ...ev, markets: [...ev.markets, ...add] } : ev
+}
+
+export const EVENTS: SportEvent[] = [...CORE_EVENTS, ...buildExtraEvents()].map(footballDepth).map(liveDepth)
 
 // Secondary-sport depth: a few well-understood markets per match, each with its own rule.
 const tennisExtras = (a: number): Market[] => {
@@ -534,17 +659,19 @@ export const BUILDER_SHOWCASE = {
   odds: '3.40',
 }
 
-export const eventById = (id: string) => EVENTS.find((e) => e.id === id)
+const OUTRIGHT_CACHE = new Map<string, SportEvent | null>()
+/** Outright markets register here lazily (see data/standings.ts) so the slip and bets can resolve them. */
+export const registerOutright = (ev: SportEvent) => OUTRIGHT_CACHE.set(ev.id, ev)
+export const eventById = (id: string) => EVENTS.find((e) => e.id === id) ?? OUTRIGHT_CACHE.get(id) ?? undefined
 export const competitionById = (id: string) => COMPETITIONS.find((c) => c.id === id)!
 
-/** Placeholder imagery (Unsplash, hotlinked) until Astra's art lands. */
-const U = (id: string) => `https://images.unsplash.com/photo-${id}?w=2400&q=80&auto=format&fit=crop`
 export const IMAGES = {
-  heroNight: U('1706675780107-7c43cc487928'),
-  stadiumCrowd: U('1762013315117-1c8005ad2b41'),
-  pitchLights: U('1676746424139-77f8bd8922a8'),
-  tennisNight: U('1641576733595-34f6488653fa'),
-  basketArena: U('1771882856158-c8e083134ee3'),
+  // Astra · image_gen, 22-10-2026 (synthetic scenes; see Astra Research/branding/image-production-2026-10-22)
+  heroNight: './images/hero-football-01.jpg',
+  stadiumCrowd: './images/hero-football-live.jpg',
+  pitchLights: './images/hero-football-generic.jpg',
+  tennisNight: './images/hero-tennis.jpg',
+  basketArena: './images/hero-basketball.jpg',
 }
 
 /** Placeholder imagery per event until Astra's art lands. */
@@ -569,10 +696,10 @@ export function shortName(n: string) {
  * authored qv1 subset table — never multiplied legs.
  */
 export const POPULAR_BUILDERS: { id: string; eventId: string; title: string; story: string; legs: string[]; odds: string; popularity: string }[] = [
-  { id: 'nb-top', eventId: 'football-01', title: 'Northbridge on top', story: 'A home win in a lively game, with Costa leading the line.', legs: ['HOME', 'OVER_2_5', 'PLAYER_2_SOT'], odds: '3.40', popularity: 'Most built' },
-  { id: 'nb-costa', eventId: 'football-01', title: 'Costa does the damage', story: 'Northbridge win and their striker is busy in front of goal.', legs: ['HOME', 'PLAYER_2_SOT'], odds: '2.80', popularity: 'Popular' },
-  { id: 'nb-open', eventId: 'football-01', title: 'An open game', story: 'Plenty of goals and Costa getting his shots away.', legs: ['OVER_2_5', 'PLAYER_2_SOT'], odds: '2.50', popularity: 'Popular' },
-  { id: 'nb-tight', eventId: 'football-01', title: 'A tight home win', story: 'Northbridge edge it in a low-scoring match.', legs: ['HOME', 'UNDER_2_5'], odds: '6.60', popularity: 'Less common' },
+  { id: 'nb-top', eventId: 'football-01', title: 'Northbridge on top', story: 'A home win in a lively game, with Costa leading the line.', legs: ['HOME', 'OVER_2_5', 'PLAYER_2_SOT'], odds: '3.40', popularity: '' },
+  { id: 'nb-costa', eventId: 'football-01', title: 'Costa does the damage', story: 'Northbridge win and their striker is busy in front of goal.', legs: ['HOME', 'PLAYER_2_SOT'], odds: '2.80', popularity: '' },
+  { id: 'nb-open', eventId: 'football-01', title: 'An open game', story: 'Plenty of goals and Costa getting his shots away.', legs: ['OVER_2_5', 'PLAYER_2_SOT'], odds: '2.50', popularity: '' },
+  { id: 'nb-tight', eventId: 'football-01', title: 'A tight home win', story: 'Northbridge edge it in a low-scoring match.', legs: ['HOME', 'UNDER_2_5'], odds: '6.60', popularity: '' },
 ]
 
 /** Fictional stats behind "Full stats" (collapsed by default on the match page). */
@@ -595,26 +722,28 @@ export const H2H: Record<string, { date: string; score: string; comp: string }[]
 }
 export const PLAYER_FORM = { name: 'Daniel Costa', team: 'Northbridge FC', role: 'Striker', lastSix: [3, 2, 1, 2, 2, 0], note: '2+ shots on target in 4 of his last 6 starts' }
 
-/** Neutral, plain-English read of the prices for events without an authored brief. */
-export function briefFor(ev: SportEvent): string[] | undefined {
+/** Match context: descriptive facts only (never "this is why the price is…"). */
+export function contextFor(ev: SportEvent): string[] {
   if (ev.brief) return ev.brief
-  const m = ev.markets[0]
-  if (!m || ev.status !== 'scheduled') return undefined
-  const inv = m.selections.map((x) => 1 / Number(x.odds))
-  const sum = inv.reduce((a, b) => a + b, 0)
-  const pct = inv.map((v) => Math.round((v / sum) * 100))
-  const order = m.selections.map((x, i) => ({ x, p: pct[i] })).sort((a, b) => b.p - a.p)
-  const fav = order[0]
-  const close = order[0].p - order[1].p < 10
-  const are = ev.sport === 'tennis' ? 'is' : 'are'
-  const out = [
-    close
-      ? `This one is tight: ${fav.x.label} ${are} only a slight favourite, with the price implying about ${fav.p}%.`
-      : `${fav.x.label} ${are} the favourite — ${fav.x.odds} implies roughly a ${fav.p}% chance.`,
-  ]
-  const draw = m.selections.find((x) => x.id === 'DRAW')
-  if (draw) out.push(`The draw at ${draw.odds} suggests about a ${pct[m.selections.indexOf(draw)]}% chance of a level game after 90 minutes.`)
-  if (ev.sport === 'tennis') out.push('Tennis prices move quickly once the match starts, especially after a break of serve.')
-  if (ev.sport === 'basketball') out.push('There are no draws here: overtime is played until there’s a winner, and it counts.')
+  const comp = competitionById(ev.competitionId)
+  const out = [`${comp.name}${ev.stage ? ` · ${ev.stage}` : ''}.`]
+  if (ev.sport === 'tennis') out.push('Best of three sets. The match has to be completed for bets to stand.')
+  else if (ev.sport === 'basketball') out.push('Overtime is played until there’s a winner, and it counts for every market here.')
+  else out.push('All markets here are settled on 90 minutes plus stoppage time.')
   return out
 }
+
+/** Odds → percentages with the bookmaker margin removed. A conversion, not a forecast. */
+export function impliedFor(ev: SportEvent, prices?: string[]) {
+  const m = ev.markets[0]
+  const odds = prices ?? m.selections.map((x) => x.odds)
+  const inv = odds.map((o) => 1 / Number(o))
+  const sum = inv.reduce((a, b) => a + b, 0)
+  return {
+    margin: Math.round((sum - 1) * 1000) / 10,
+    rows: m.selections.map((x, i) => ({ id: x.id, label: x.id === 'DRAW' ? 'Draw' : shortName(x.label), odds: odds[i], pct: Math.round((inv[i] / sum) * 100) })),
+  }
+}
+
+/** @deprecated kept for older callers */
+export const briefFor = (ev: SportEvent) => (ev.status === 'scheduled' ? contextFor(ev) : undefined)

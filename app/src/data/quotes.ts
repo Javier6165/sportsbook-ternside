@@ -42,7 +42,7 @@ export const QUOTES_QV1: Record<string, string> = {
   'AWAY+UNDER_2_5+PLAYER_2_SOT': '26.00',
 }
 
-export const quoteFor = (sels: string[]) => (sels.length ? QUOTES_QV1[quoteKey(sels)] : undefined)
+export const quoteFor = (sels: string[], table: Record<string, string> = QUOTES_QV1) => (sels.length ? table[quoteKey(sels)] : undefined)
 
 /** Plain-English rules shown next to each market (RULES-GB-01 rev 0.4). */
 export const MARKET_RULES: Record<string, string> = {
@@ -58,6 +58,18 @@ export const MARKET_RULES: Record<string, string> = {
   TOTAL_GAMES: 'Games won by both players across the whole match. A tie-break counts as one game. The match must be completed.',
   HANDICAP: 'Add or subtract the handicap from the final score, including overtime. Home −4.5 needs a win by 5 or more.',
   TOTAL_POINTS: 'Points scored by both teams, including overtime. Over needs 163 or more.',
+  TOTAL_1_5_90: 'Goals by both teams in 90 minutes plus stoppage time. Over needs two or more.',
+  TOTAL_3_5_90: 'Goals by both teams in 90 minutes plus stoppage time. Over needs four or more.',
+  FIRST_GOAL_90: 'The team that scores the first goal in 90 minutes plus stoppage time. Own goals count for the team credited. No goal wins if it ends 0–0.',
+  HT_RESULT: 'The score at the end of the first half, including first-half stoppage time.',
+  FH_GOALS_0_5: 'Goals in the first half, including stoppage time. Over needs at least one.',
+  EH_HOME_1: 'The home team starts one goal behind. Home −1 needs a win by two or more; Draw −1 is a home win by exactly one; Away +1 is a draw or away win. 90 minutes plus stoppage.',
+  CORNERS_9_5: 'Corners taken by both teams in 90 minutes plus stoppage time, as recorded by the official data provider. Over needs ten or more.',
+  CARDS_3_5: 'Yellow and red cards shown to players on the pitch in 90 minutes plus stoppage time. A second yellow and the red that follows count as two. Cards to bench staff don’t count.',
+  OUTRIGHT: 'Your pick has to win the whole competition. Dead heats divide the stake. If your pick withdraws before it starts, the bet is void and your stake comes back.',
+  LIVE_NEXT_GOAL: 'The team that scores the next goal from now until the end of 90 minutes plus stoppage. No more goals wins if the score doesn’t change. Own goals count for the team credited.',
+  LIVE_TOTAL: 'Goals by both teams in the whole 90 minutes plus stoppage, including those already scored.',
+  LIVE_SET: 'The player who wins the set in progress. If the match isn’t completed, bets on an unfinished set are void.',
   WINNER_TENNIS: 'The match must be completed. A retirement, disqualification or walkover makes it void and your stake comes back.',
   WINNER_BASKETBALL: 'Includes overtime. If the game is cancelled for good, it’s void.',
 }

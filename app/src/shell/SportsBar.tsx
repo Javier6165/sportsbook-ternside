@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ChevronDown, Sparkles, X } from 'lucide-react'
+import { ChevronDown, Flame, Gift, Sparkles, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -7,6 +7,7 @@ import { Link, useLocation, useParams, useSearchParams } from 'react-router'
 import { COMPETITIONS, EVENTS, SPORTS } from '../data/catalog'
 import { useStore } from '../state/store'
 import { SportIcon } from '../ui/SportIcon'
+import { useModal } from '../ui/useModal'
 
 /** Mobile/tablet: sports + followed competitions as a calm chip row; everything else in a sheet. */
 export function SportsBar() {
@@ -18,6 +19,7 @@ export function SportsBar() {
   const [all, setAll] = useState(false)
   const followed = COMPETITIONS.filter((c) => s.prefs.competitions.includes(c.id))
   const isHome = loc.pathname === '/sports'
+  const hub = (q.get('hub') as 'for-you' | 'popular' | null) ?? s.hub
 
   const chip = (active: boolean) =>
     clsx('flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[13.5px] font-semibold transition-colors', active ? 'bg-ink text-white' : 'bg-surface text-ink hover:bg-chip')
@@ -25,8 +27,11 @@ export function SportsBar() {
   return (
     <div className="sticky top-0 z-20 border-b border-black/[.04] bg-canvas/85 backdrop-blur-xl @desk:hidden">
       <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 py-2.5 @tab:px-8">
-        <Link to="/sports" className={chip(isHome)}>
+        <Link to="/sports?hub=for-you" className={chip(isHome && hub === 'for-you')}>
           <Sparkles size={14} /> For you
+        </Link>
+        <Link to="/sports?hub=popular" className={chip(isHome && hub === 'popular')}>
+          <Flame size={14} /> Popular
         </Link>
         {SPORTS.map((sp) => (
           <Link key={sp.id} to={`/sports/${sp.id}`} className={chip(sportId === sp.id && !comp)}>
@@ -39,6 +44,9 @@ export function SportsBar() {
             {c.name}
           </Link>
         ))}
+        <Link to="/promotions" className={chip(loc.pathname.startsWith('/promotions'))}>
+          <Gift size={14} /> Promotions
+        </Link>
         <button onClick={() => setAll(true)} className={clsx(chip(false), 'text-sel-ink')}>
           All <ChevronDown size={15} />
         </button>
@@ -50,12 +58,13 @@ export function SportsBar() {
 
 export function AllCompetitionsSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [target, setTarget] = useState<HTMLElement | null>(null)
+  const modalRef = useModal<HTMLDivElement>(open, onClose)
   useEffect(() => setTarget(document.getElementById('overlay-root')), [])
   if (!target) return null
   return createPortal(
     <AnimatePresence>
       {open && (
-        <motion.div key="all" className="pointer-events-auto absolute inset-0 z-50 flex items-end" role="dialog" aria-modal="true" aria-label="All sports and competitions">
+        <motion.div ref={modalRef} key="all" className="pointer-events-auto absolute inset-0 z-50 flex items-end" role="dialog" aria-modal="true" aria-label="All sports and competitions">
           <motion.div className="absolute inset-0 bg-[#0b0f1a]/45 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
           <motion.div
             initial={{ y: '100%' }}

@@ -1,17 +1,20 @@
 import clsx from 'clsx'
-import { ArrowRight, Clock, Search, X } from 'lucide-react'
+import { ArrowRight, Clock, Gift, Search, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { COMPETITIONS, EVENTS, competitionById, type SportEvent } from '../../data/catalog'
+import { COMPETITIONS, EVENTS, competitionById, type Participant, type SportEvent } from '../../data/catalog'
+import { PROMOS } from '../../domain/promos'
+import { CompetitionMark } from '../../ui/CompetitionMark'
 import { dayLabel, kickoffTime } from '../../lib/time'
 import { Crest } from '../../ui/Crest'
-import { SportIcon } from '../../ui/SportIcon'
 import { LiveBadge } from '../../ui/LiveBadge'
 
 interface Hit {
   id: string
-  group: 'Matches' | 'Competitions' | 'Markets'
+  group: 'Matches' | 'Teams and players' | 'Competitions' | 'Markets' | 'Promotions'
+  team?: Participant
+  compId?: string
   title: string
   sub: string
   to: string
@@ -55,9 +58,21 @@ export function useSearch(q: string): Hit[] {
         }
       }
     }
+    const seen = new Set<string>()
+    for (const e of EVENTS)
+      for (const t of [e.home, e.away])
+        if (!seen.has(t.id) && words.every((w) => norm(t.name).includes(w))) {
+          seen.add(t.id)
+          const n = EVENTS.filter((x) => x.home.id === t.id || x.away.id === t.id).length
+          hits.push({ id: `t-${t.id}`, group: 'Teams and players', title: t.name, sub: `${competitionById(e.competitionId).name} · ${n} ${n === 1 ? 'match' : 'matches'}`, to: `/sports/${e.sport}?team=${t.id}`, team: t })
+        }
     for (const c of COMPETITIONS)
-      if (words.every((w) => norm(`${c.name} ${c.region}`).includes(w))) hits.push({ id: c.id, group: 'Competitions', title: c.name, sub: c.region, to: `/sports/${c.sport}?competition=${c.id}` })
-    return hits.slice(0, 14)
+      if (words.every((w) => norm(`${c.name} ${c.region}`).includes(w))) hits.push({ id: c.id, group: 'Competitions', title: c.name, sub: c.region, to: `/sports/${c.sport}?competition=${c.id}`, compId: c.id })
+    for (const p of PROMOS)
+      if (words.every((w) => norm(`${p.title} ${p.headline} free bet promotion offer`).includes(w))) hits.push({ id: `p-${p.id}`, group: 'Promotions', title: p.title, sub: p.headline, to: p.route ?? '/promotions' })
+    // A few per group, so one long list never buries the rest.
+    const per: Record<string, number> = {}
+    return hits.filter((h) => (per[h.group] = (per[h.group] ?? 0) + 1) <= (h.group === 'Markets' ? 4 : 5))
   }, [q])
 }
 
@@ -84,7 +99,7 @@ export function SearchPanel({ onClose, autoFocus = true }: { onClose?: () => voi
     onClose?.()
     nav(h.to)
   }
-  const groups = (['Matches', 'Markets', 'Competitions'] as const).map((g) => ({ g, items: hits.filter((h) => h.group === g) })).filter((x) => x.items.length)
+  const groups = (['Matches', 'Teams and players', 'Competitions', 'Markets', 'Promotions'] as const).map((g) => ({ g, items: hits.filter((h) => h.group === g) })).filter((x) => x.items.length)
   const flat = groups.flatMap((g) => g.items)
   const ambiguous = groups.find((g) => g.g === 'Matches')?.items.length ?? 0
 
@@ -147,6 +162,25 @@ export function SearchPanel({ onClose, autoFocus = true }: { onClose?: () => voi
                 </div>
               </>
             )}
+            <div className="mb-2 text-[12px] font-bold tracking-[.1em] text-muted uppercase">Popular right now</div>
+            <ul className="mb-5">
+              {EVENTS.filter((e) => e.popular)
+                .slice(0, 5)
+                .map((e) => (
+                  <li key={e.id}>
+                    <button onClick={() => (onClose?.(), nav(`/event/${e.id}`))} className="flex w-full items-center gap-3 rounded-[14px] px-2 py-2 text-left hover:bg-chip">
+                      <span className="flex -space-x-2">
+                        <Crest team={e.home} size={22} />
+                        <Crest team={e.away} size={22} />
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-[14px] font-semibold">
+                        {e.home.name} v {e.away.name}
+                      </span>
+                      {e.status === 'live' ? <LiveBadge /> : <span className="text-[12.5px] text-secondary tnum">{kickoffTime(e.startsAt)}</span>}
+                    </button>
+                  </li>
+                ))}
+            </ul>
             <div className="mb-2 text-[12px] font-bold tracking-[.1em] text-muted uppercase">Try</div>
             <div className="flex flex-wrap gap-2">
               {['Northbridge', 'Costa shots', 'Lindqvist', 'Premier Division'].map((t) => (
@@ -185,9 +219,13 @@ export function SearchPanel({ onClose, autoFocus = true }: { onClose?: () => voi
                             <Crest team={h.ev.home} size={24} />
                             <Crest team={h.ev.away} size={24} />
                           </span>
+                        ) : h.team ? (
+                          <Crest team={h.team} size={28} />
+                        ) : h.compId ? (
+                          <CompetitionMark id={h.compId} sport={COMPETITIONS.find((c) => c.id === h.compId)!.sport} size={28} />
                         ) : (
-                          <span className="grid size-8 place-items-center rounded-full bg-surface ring-1 ring-line">
-                            <SportIcon sport={COMPETITIONS.find((c) => c.id === h.id)?.sport ?? 'football'} size={15} />
+                          <span className="grid size-8 place-items-center rounded-full bg-sel text-sel-ink">
+                            <Gift size={15} />
                           </span>
                         )}
                         <span className="min-w-0 flex-1">

@@ -19,13 +19,13 @@ const STATUS: Record<LegStatus, { label: string; cls: string; icon: typeof Check
  * "Explore outcomes" — a read-only what-if. It applies RULES-GB-01 to a
  * hypothetical and never touches the real match, price, bet or balance.
  */
-export function Inspector({ sels, labels, stake }: { sels: string[]; labels: Record<string, string>; stake?: string }) {
+export function Inspector({ sels, labels, stake, quotes, accepted }: { sels: string[]; labels: Record<string, string>; stake?: string; quotes?: Record<string, string>; accepted?: boolean }) {
   const [id, setId] = useState(SCENARIOS[0].id)
   const sc = SCENARIOS.find((x) => x.id === id)!
-  const { legs, outcome } = evaluate(sels, sc)
+  const { legs, outcome } = evaluate(sels, sc, quotes)
   const usesOwn = !!stake && isValidStake(stake)
   const st = usesOwn ? stake! : '10.00'
-  const full = quoteFor(sels)
+  const full = quoteFor(sels, quotes)
 
   return (
     <section aria-labelledby="explore-title" className="rounded-[26px] bg-surface p-5 @tab:p-6">
@@ -99,7 +99,7 @@ export function Inspector({ sels, labels, stake }: { sels: string[]; labels: Rec
                   Would return {fmtMoney(grossReturn(st, outcome.odds))} <span className="text-[14px] font-semibold">at {outcome.odds}</span>
                 </div>
                 <p className="mt-1 text-[13px] text-won-ink/85">
-                  {outcome.reduced ? `A void condition drops out. The rest settle at their archived price of ${outcome.odds}, not ${full}.` : 'All conditions won at the joint price you took.'}
+                  {outcome.reduced ? `A void condition drops out. The rest settle at their archived price of ${outcome.odds}, not ${full}.` : accepted ? 'All conditions won at the joint price you took.' : 'All conditions would win at the current joint price.'}
                 </p>
               </>
             )}
@@ -113,7 +113,10 @@ export function Inspector({ sels, labels, stake }: { sels: string[]; labels: Rec
                 </p>
               </>
             )}
-            <p className="mt-2 text-[11.5px] font-medium opacity-60">{usesOwn ? `Based on your ${fmtMoney(st)} stake.` : 'Shown for a £10 stake.'}</p>
+            <p className="mt-2 text-[11.5px] font-medium opacity-60">
+              {usesOwn ? `Based on your ${fmtMoney(st)} stake` : 'Shown for a £10 stake'}
+              {accepted ? ` and the prices archived when your bet was accepted (${full}).` : ` and current prices (${full}).`}
+            </p>
           </div>
         </motion.div>
       </AnimatePresence>

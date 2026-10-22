@@ -1,25 +1,27 @@
+import { shortName } from '../../data/catalog'
 import clsx from 'clsx'
-import { AlertTriangle, ArrowRight, Info, Trash2, X } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Gift, Info, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { eventById } from '../../data/catalog'
-import { accaOdds, D, fmtMoney, fmtOdds, grossReturn, isValidStake } from '../../domain/money'
+import { accaOdds, D, EDITABLE_AMOUNT, fmtMoney, fmtOdds, grossReturn, isValidStake } from '../../domain/money'
 import { kickoffTime } from '../../lib/time'
-import { currentOdds, isClosedDraft, useLiveClock, useStore, type DraftGroup } from '../../state/store'
+import { currentOdds, isClosedDraft, useAccountNow, useLiveClock, useStore, type DraftGroup } from '../../state/store'
+import { freeBetReturn, usableFreeBets } from '../../domain/promos'
 import { CountUp } from '../../ui/CountUp'
-import { matchGradient } from '../../ui/MatchField'
+import { BRAND_GRADIENT, matchGradient } from '../../ui/MatchField'
 import { Perforation } from '../../ui/Perforation'
-import { planBets, type AcceptedBet } from '../../domain/bets'
+import { planBets, splitAcca, type AcceptedBet } from '../../domain/bets'
 import { EVENT_NOW } from '../../data/catalog'
 import { CheckingStep, DoneStep, NotPlacedStep, PlacingStep, PriceChangedStep, ReviewStep } from './Review'
 import { receiptId } from '../../domain/bets'
-import { groupOf, quoteFor } from '../../data/quotes'
+import { groupOf, quoteFor, quoteKey } from '../../data/quotes'
 import { Layers as LayersIcon } from 'lucide-react'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const money = (n: number) => fmtMoney(n.toFixed(2))
-const first = (n: string) => n.split(' ')[0]
+const first = shortName
 
 function StakeInput({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
   const invalid = value !== '' && !isValidStake(value)
@@ -39,8 +41,7 @@ function StakeInput({ value, onChange, label }: { value: string; onChange: (v: s
           value={value}
           aria-label={label}
           onChange={(e) => {
-            const v = e.target.value.replace(/[^\d.]/g, '')
-            if (/^\d*(\.\d{0,2})?$/.test(v)) onChange(v)
+            if (EDITABLE_AMOUNT.test(e.target.value)) onChange(e.target.value)
           }}
           className="w-full min-w-0 bg-transparent pl-1 font-display text-[20px] font-[720] tracking-[-0.02em] text-ink outline-none placeholder:text-[#b9bec8] tnum"
           aria-invalid={invalid}
@@ -62,6 +63,54 @@ function ReturnBox({ stake, odds }: { stake: string; odds: string }) {
   )
 }
 
+/** A free bet replaces the cash stake; its stake isn’t part of the return. */
+function FreeBetToggle({ g, odds }: { g: DraftGroup; odds: string }) {
+  const { s, d } = useStore()
+  const now = useAccountNow()
+  const chosen = s.freeBets.find((f) => f.id === g.freeBetId)
+  const free = usableFreeBets(s.freeBets, now).filter((f) => !s.groups.some((o) => o.id !== g.id && o.freeBetId === f.id))
+  if (!chosen && !free.length) return null
+  const fb = chosen ?? free[0]
+  const tooLow = D(odds).lt(fb.minOdds)
+  if (chosen)
+    return (
+      <div className="mx-4 mb-3 flex items-center gap-2 rounded-[14px] bg-sel px-3 py-2 text-[12.5px] text-sel-ink">
+        <Gift size={15} className="shrink-0" />
+        <span className="flex-1">
+          <b className="font-semibold">{fmtMoney(fb.amount)} free bet</b> · stake not returned
+        </span>
+        <button onClick={() => d({ type: 'useFreeBet', groupId: g.id, freeBetId: null })} className="rounded-full px-2 py-1 font-semibold hover:bg-white/60">
+          Use cash
+        </button>
+      </div>
+    )
+  return (
+    <button
+      onClick={() => !tooLow && d({ type: 'useFreeBet', groupId: g.id, freeBetId: fb.id })}
+      aria-disabled={tooLow}
+      className={clsx('mx-4 mb-3 flex w-[calc(100%-2rem)] items-center gap-2 rounded-[14px] border border-dashed px-3 py-2 text-left text-[12.5px] font-semibold', tooLow ? 'border-line-strong text-muted' : 'border-sel-ink/40 text-sel-ink hover:bg-sel')}
+    >
+      <Gift size={15} className="shrink-0" />
+      {tooLow ? `Your ${fmtMoney(fb.amount)} free bet needs odds of ${fb.minOdds} or more` : `Use your ${fmtMoney(fb.amount)} free bet`}
+    </button>
+  )
+}
+
+function FreeStake({ amount, odds }: { amount: string; odds: string }) {
+  return (
+    <>
+      <div className="min-w-0 flex-1">
+        <span className="mb-1 block text-[11.5px] font-semibold text-secondary">Free bet</span>
+        <span className="flex h-12 items-center rounded-[14px] bg-sel px-3.5 font-display text-[20px] font-[720] tracking-[-0.02em] text-sel-ink tnum">{fmtMoney(amount)}</span>
+      </div>
+      <div className="min-w-0 flex-1 text-right">
+        <span className="mb-1 block text-[11.5px] font-semibold text-secondary">Potential return</span>
+        <span className="flex h-12 items-center justify-end font-display text-[20px] font-[720] tracking-[-0.02em] tnum">{fmtMoney(freeBetReturn(amount, odds))}</span>
+      </div>
+    </>
+  )
+}
+
 function SlipPass({ g }: { g: DraftGroup }) {
   const { d } = useStore()
   const { tick } = useLiveClock()
@@ -72,6 +121,7 @@ function SlipPass({ g }: { g: DraftGroup }) {
   const overlap = g.legs.some((l) => s.groups.some((o) => o.id !== g.id && o.eventId === g.eventId && o.type !== g.type && o.legs.some((x) => x.selectionId === l.selectionId)))
   const changed = !closed && now !== g.odds
   const isBuilder = g.type === 'builder'
+  const fb = s.mode === 'singles' ? s.freeBets.find((f) => f.id === g.freeBetId && f.status === 'available') : undefined
 
   return (
     <motion.li
@@ -85,7 +135,7 @@ function SlipPass({ g }: { g: DraftGroup }) {
       <div className="on-dark flex items-center gap-2 px-4 py-3 text-white" style={{ background: matchGradient(ev) }}>
         <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold">
           {isBuilder ? 'Bet Builder · ' : ''}
-          {first(ev.home.name)} v {first(ev.away.name)} · {g.live ? 'Live' : kickoffTime(ev.startsAt)}
+          {ev.outright ? `${ev.home.name} · Outright` : `${first(ev.home.name)} v ${first(ev.away.name)} · ${g.live ? 'Live' : kickoffTime(ev.startsAt)}`}
         </span>
         <button onClick={() => d({ type: 'remove', groupId: g.id })} aria-label={`Remove ${isBuilder ? 'Bet Builder' : g.legs[0].label}`} className="-mr-1.5 grid size-7 place-items-center rounded-full bg-black/15 hover:bg-black/30">
           <X size={14} />
@@ -147,10 +197,17 @@ function SlipPass({ g }: { g: DraftGroup }) {
       <>
       <Perforation notch="bg-canvas" />
 
-      <div className="flex gap-3 px-4 pb-4">
-        <StakeInput value={g.stake} onChange={(v) => d({ type: 'stake', groupId: g.id, value: v })} label={`Stake for ${isBuilder ? 'Bet Builder' : g.legs[0].label}`} />
-        <ReturnBox stake={g.stake} odds={changed ? now : g.odds} />
+      <div className="flex gap-3 px-4 pb-3">
+        {fb ? (
+          <FreeStake amount={fb.amount} odds={changed ? now : g.odds} />
+        ) : (
+          <>
+            <StakeInput value={g.stake} onChange={(v) => d({ type: 'stake', groupId: g.id, value: v })} label={`Stake for ${isBuilder ? 'Bet Builder' : g.legs[0].label}`} />
+            <ReturnBox stake={g.stake} odds={changed ? now : g.odds} />
+          </>
+        )}
       </div>
+      {s.mode === 'singles' && <FreeBetToggle g={g} odds={changed ? now : g.odds} />}
       </>
       )}
       {isBuilder && (
@@ -187,7 +244,7 @@ function ConvertOffer({ groups }: { groups: DraftGroup[] }) {
       <div className="flex items-start gap-2.5">
         <LayersIcon size={17} className="mt-0.5 shrink-0 text-sel-ink" />
         <div className="min-w-0 flex-1">
-          <div className="font-semibold text-sel-ink">{pick.length} picks from {ev.home.name.split(' ')[0]} v {ev.away.name.split(' ')[0]}</div>
+          <div className="font-semibold text-sel-ink">{pick.length} picks from {shortName(ev.home.name)} v {shortName(ev.away.name)}</div>
           <p className="mt-0.5 text-secondary">
             {price ? 'You can combine them into one Bet Builder, priced together.' : 'Two of these are from the same market, so they can’t share a Bet Builder. They stay as separate singles.'}
           </p>
@@ -231,7 +288,7 @@ function EmptySlip() {
       <div className="relative mb-6 h-[120px] w-[170px]" aria-hidden="true">
         <motion.div animate={{ rotate: [-7, -5, -7] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="absolute inset-0 rounded-[20px] bg-chip" />
         <motion.div animate={{ rotate: [4, 6, 4], y: [0, -3, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="absolute inset-0 overflow-hidden rounded-[20px] bg-surface shadow-[0_16px_34px_-18px_rgba(16,24,43,.4)]">
-          <div className="h-7 bg-gradient-to-r from-[#13204A] to-[#C8102E]" />
+          <div className="h-7" style={{ background: BRAND_GRADIENT }} />
           <div className="p-3">
             {[70, 54, 62].map((w, i) => (
               <div key={i} className="mb-2 flex items-center gap-2">
@@ -243,7 +300,7 @@ function EmptySlip() {
         </motion.div>
       </div>
       <div className="font-display text-[20px] font-[760] tracking-[-0.03em]">Your betslip is empty</div>
-      <p className="mt-1.5 max-w-[250px] text-[14px] leading-snug text-secondary">Tap a price to add it here. Every bet keeps the same ticket from now until it settles.</p>
+      <p className="mt-1.5 max-w-[250px] text-[14px] leading-snug text-secondary">Tap a price to add a selection.</p>
     </motion.div>
   )
 }
@@ -258,36 +315,28 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
   const [consumes, setConsumes] = useState<string[]>([])
   const n = s.groups.length
   const open = s.groups.filter((g) => !isClosedDraft(g))
-  const singles = open.filter((g) => g.type === 'single')
-  const distinctEvents = new Set(singles.map((g) => g.eventId)).size
-  const accaReason =
-    n < 2
-      ? 'Add two or three selections from different matches.'
-      : open.some((g) => g.type === 'builder')
-        ? 'Bet Builders are placed on their own. Review it in Singles or remove it.'
-        : open.some((g) => g.live) || open.length !== n
-          ? 'Accumulators use pre-match selections from matches that haven’t started.'
-          : distinctEvents !== singles.length
-            ? 'Two selections are from the same match. Use Bet Builder for same-match picks.'
-            : n > 3
-              ? 'Accumulators take up to three selections, to keep them readable.'
-              : null
+  // Accumulator: built from the selections that qualify; anything else is shown as staying separate — never dropped silently.
+  const { legs: accaLegs, out: accaOut } = splitAcca(s.groups, isClosedDraft)
+  const singles = accaLegs
+  const accaReason = accaLegs.length < 2 ? (n < 2 ? 'Add selections from at least two different matches.' : 'You need at least two pre-match selections from different matches.') : null
   const accaPrice = accaOdds(singles.map((g) => g.odds))
 
-  const totalStake = s.mode === 'singles' ? open.reduce((a, g) => (isValidStake(g.stake) ? a.plus(g.stake) : a), D(0)) : isValidStake(s.accaStake) && !accaReason ? D(s.accaStake) : D(0)
+  const fbOf = (g: DraftGroup) => s.freeBets.find((f) => f.id === g.freeBetId && f.status === 'available' && D(g.odds).gte(f.minOdds))
+  const freeUsed = s.mode === 'singles' ? open.filter(fbOf) : []
+  const totalStake = s.mode === 'singles' ? open.reduce((a, g) => (!fbOf(g) && isValidStake(g.stake) ? a.plus(g.stake) : a), D(0)) : isValidStake(s.accaStake) && !accaReason ? D(s.accaStake) : D(0)
   const totalReturn =
     s.mode === 'singles'
-      ? open.reduce((a, g) => (isValidStake(g.stake) ? a.plus(grossReturn(g.stake, g.odds)) : a), D(0))
+      ? open.reduce((a, g) => (fbOf(g) ? a.plus(freeBetReturn(fbOf(g)!.amount, g.odds)) : isValidStake(g.stake) ? a.plus(grossReturn(g.stake, g.odds)) : a), D(0))
       : isValidStake(s.accaStake) && !accaReason
         ? grossReturn(s.accaStake, accaPrice)
         : D(0)
-  const ready = totalStake.gt(0)
+  const ready = totalStake.gt(0) || freeUsed.length > 0
   const priceMoved = open.some((g) => currentOdds(g, tick) !== g.odds)
 
   const startReview = () => {
     const at = new Date(Date.parse(EVENT_NOW) + elapsed * 1000).toISOString()
-    const groups = open
-    const plan = planBets(groups, s.mode, s.accaStake, at)
+    const groups = s.mode === 'acca' ? accaLegs : open
+    const plan = planBets(groups, s.mode, s.accaStake, at, s.freeBets)
     setPlanned(plan.map((p) => p.bet))
     setConsumes(plan.flatMap((p) => p.consumes))
     setStep('review')
@@ -348,7 +397,7 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
         onBack={() => setStep('edit')}
         onAccept={() => {
           d({ type: 'acceptPrice', groupId: consumes[0], odds: moved })
-          const updated = planned.map((b, i) => (i === 0 ? { ...b, odds: moved, potentialReturn: grossReturn(b.stake, moved).toFixed(2) } : b))
+          const updated = planned.map((b, i) => (i === 0 ? { ...b, odds: moved, potentialReturn: grossReturn(b.stake, moved).toFixed(2), subsetQuotes: b.subsetQuotes ? { ...b.subsetQuotes, [quoteKey(b.legs.map((l) => l.selectionId))]: moved } : undefined } : b))
           setPlanned(updated)
           setStep('placing')
           setTimeout(() => finish(updated), 1200)
@@ -429,16 +478,23 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
           <div className="rounded-[24px] bg-surface p-5 text-[14px] text-secondary">
             <div className="mb-1 font-display text-[18px] font-[720] tracking-[-0.03em] text-ink">Accumulator not available</div>
             {accaReason}
-            {s.groups.some((g) => g.type === 'builder') && (
-              <button onClick={() => d({ type: 'mode', mode: 'singles' })} className="mt-3 flex items-center gap-1 text-[13px] font-semibold text-sel-ink">
-                Back to Singles <ArrowRight size={14} />
-              </button>
+            {accaOut.length > 0 && (
+              <ul className="mt-3 space-y-1 text-[12.5px]">
+                {accaOut.map(({ g, why }) => (
+                  <li key={g.id}>
+                    <b className="font-semibold text-ink">{g.type === 'builder' ? 'Bet Builder' : g.legs[0].label}</b> · {why}
+                  </li>
+                ))}
+              </ul>
             )}
+            <button onClick={() => d({ type: 'mode', mode: 'singles' })} className="mt-3 flex items-center gap-1 text-[13px] font-semibold text-sel-ink">
+              Back to Singles <ArrowRight size={14} />
+            </button>
           </div>
         ) : (
           <div className="overflow-hidden rounded-[24px] bg-surface">
             <div className="flex items-baseline justify-between px-4 pt-4">
-              <span className="font-display text-[19px] font-[740] tracking-[-0.03em]">{n}-fold accumulator</span>
+              <span className="font-display text-[19px] font-[740] tracking-[-0.03em]">{singles.length}-fold accumulator</span>
               <span className="font-display text-[22px] font-[760] tracking-[-0.03em] tnum">{fmtOdds(accaPrice)}</span>
             </div>
             <ol className="mt-3 space-y-2.5 px-4">
@@ -450,7 +506,7 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[14px] font-semibold">{g.legs[0].label}</span>
                       <span className="block truncate text-[12px] text-secondary">
-                        {ev.home.name} v {ev.away.name}
+                        {ev.outright ? `${ev.home.name} · Outright` : `${ev.home.name} v ${ev.away.name}`}
                       </span>
                     </span>
                     <span className="font-semibold tnum">{fmtOdds(g.odds)}</span>
@@ -458,7 +514,17 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
                 )
               })}
             </ol>
-            <p className="mt-3 px-4 text-[12px] text-secondary">Every selection must win. Odds multiply exactly; the return is rounded once.</p>
+            <p className="mt-3 px-4 text-[12px] text-secondary">Every selection must win.</p>
+            {accaOut.length > 0 && (
+              <div className="mx-4 mt-3 rounded-[14px] bg-chip px-3.5 py-2.5 text-[12px] text-secondary">
+                <div className="font-semibold text-ink">Not in this accumulator</div>
+                {accaOut.map(({ g, why }) => (
+                  <div key={g.id} className="mt-0.5">
+                    {g.type === 'builder' ? 'Bet Builder' : g.legs[0].label} · {why}. It stays in your slip.
+                  </div>
+                ))}
+              </div>
+            )}
             <Perforation />
             <div className="flex gap-3 px-4 pb-4">
               <StakeInput value={s.accaStake} onChange={(v) => d({ type: 'accaStake', value: v })} label="Accumulator stake" />
@@ -486,7 +552,7 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
           >
             {ready ? (
               <>
-                Review {s.mode === 'acca' ? 'accumulator' : n > 1 ? 'bets' : 'bet'} · <span className="tnum">{fmtMoney(totalStake)}</span>
+                Review {s.mode === 'acca' ? 'accumulator' : n > 1 ? 'bets' : 'bet'} · <span className="tnum">{totalStake.gt(0) ? fmtMoney(totalStake) : 'free bet'}</span>{totalStake.gt(0) && freeUsed.length > 0 && <span className="font-medium opacity-70"> + free bet</span>}
               </>
             ) : (
               'Add a stake to continue'

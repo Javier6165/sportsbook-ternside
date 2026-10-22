@@ -1,0 +1,173 @@
+{
+  "date": "2026-10-22",
+  "tool": "built-in image_gen",
+  "integration_status": "Assets only; catalog.ts and index.html unchanged. Not committed, pushed or deployed.",
+  "assets": [
+    {
+      "id": "hero-football-01",
+      "path": "app/public/images/hero-football-01.jpg",
+      "format": "jpg",
+      "bytes": 444158,
+      "sha256": "3e48af2b8a00854ce0029f3fb45a26bc953ba7cf529d110d8ae852387ae2fdda",
+      "source_generation": "exec-05f1f135-6f8b-4a0c-9049-0329ffffbf14.png",
+      "native_dimensions": [
+        1852,
+        849
+      ],
+      "export_dimensions": [
+        2400,
+        1100
+      ],
+      "export_tool": "macOS sips",
+      "jpeg_quality": 68,
+      "resampled": true,
+      "upscaled": true,
+      "transparent": false,
+      "visual_review": "Original and final export visually inspected; composition, text where applicable, dimensions and file weight checked.",
+      "prompt_reference": "prompts.json assets[id=hero-football-01]"
+    },
+    {
+      "id": "hero-tennis",
+      "path": "app/public/images/hero-tennis.jpg",
+      "format": "jpg",
+      "bytes": 314227,
+      "sha256": "58aefcd8cd86af634be6a887ba31c04026164995cf8255bcc642d768cdb3de53",
+      "source_generation": "exec-f90286d4-c1a6-4da6-a252-606058cd0215.png",
+      "native_dimensions": [
+        1851,
+        849
+      ],
+      "export_dimensions": [
+        2400,
+        1100
+      ],
+      "export_tool": "macOS sips",
+      "jpeg_quality": 68,
+      "resampled": true,
+      "upscaled": true,
+      "transparent": false,
+      "visual_review": "Original and final export visually inspected; composition, text where applicable, dimensions and file weight checked.",
+      "prompt_reference": "prompts.json assets[id=hero-tennis]"
+    },
+    {
+      "id": "hero-basketball",
+      "path": "app/public/images/hero-basketball.jpg",
+      "format": "jpg",
+      "bytes": 322132,
+      "sha256": "b11752246624e6ffef420e16eb570fe7610665046c615dd6b8ec1de8053feaec",
+      "source_generation": "exec-12813b0f-5c70-40b5-9a88-de521768c49d.png",
+      "native_dimensions": [
+        1852,
+        849
+      ],
+      "export_dimensions": [
+        2400,
+        1100
+      ],
+      "export_tool": "macOS sips",
+      "jpeg_quality": 68,
+      "resampled": true,
+      "upscaled": true,
+      "transparent": false,
+      "visual_review": "Original and final export visually inspected; composition, text where applicable, dimensions and file weight checked.",
+      "prompt_reference": "prompts.json assets[id=hero-basketball]"
+    },
+    {
+      "id": "hero-football-live",
+      "path": "app/public/images/hero-football-live.jpg",
+      "format": "jpg",
+      "bytes": 354532,
+      "sha256": "991909d81378e780703853d4ca2e2d391117797948679347eec47c698dd03f84",
+      "source_generation": "exec-d935efd5-34a4-40c5-9621-ac28ef67c950.png",
+      "native_dimensions": [
+        1852,
+        849
+      ],
+      "export_dimensions": [
+        2400,
+        1100
+      ],
+      "export_tool": "macOS sips",
+      "jpeg_quality": 68,
+      "resampled": true,
+      "upscaled": true,
+      "transparent": false,
+      "visual_review": "Original and final export visually inspected; composition, text where applicable, dimensions and file weight checked.",
+      "prompt_reference": "prompts.json assets[id=hero-football-live]"
+    },
+    {
+      "id": "hero-football-generic",
+      "path": "app/public/images/hero-football-generic.jpg",
+      "format": "jpg",
+      "bytes": 390402,
+      "sha256": "ae3400dd7f43f39d0bad818cf5e29bf0e6b6b009cc9aa78aa8ce0e5685e5de3d",
+      "source_generation": "exec-5e19f703-2e42-4484-8fbb-526f0ebfda47.png",
+      "native_dimensions": [
+        1851,
+        849
+      ],
+      "export_dimensions": [
+        2400,
+        1100
+      ],
+      "export_tool": "macOS sips",
+      "jpeg_quality": 68,
+      "resampled": true,
+      "upscaled": true,
+      "transparent": false,
+      "visual_review": "Original and final export visually inspected; composition, text where applicable, dimensions and file weight checked.",
+      "prompt_reference": "prompts.json assets[id=hero-football-generic]"
+    },
+    {
+      "id": "player-costa",
+      "path": "app/public/images/player-costa.png",
+      "format": "png",
+      "bytes": 2053639,
+      "sha256": "a1db8e1e75bbf3e52d45d5b3fc0ad3d386045bd5b1f4d5c06ca3813acbeed591",
+      "source_generation": "exec-127db8a4-c1bb-458a-bd7e-8346708c1a5c.png",
+      "native_dimensions": [
+        1122,
+        1402
+      ],
+      "export_dimensions": [
+        1200,
+        1500
+      ],
+      "export_tool": "macOS sips",
+      "jpeg_quality": null,
+      "resampled": true,
+      "upscaled": true,
+      "transparent": true,
+      "visual_review": "Original and final export visually inspected; composition, text where applicable, dimensions and file weight checked.",
+      "prompt_reference": "prompts.json assets[id=player-costa]",
+      "alpha_verification": {
+        "fully_transparent_pixels": 857116,
+        "partially_transparent_pixels": 942650,
+        "opaque_pixels": 234
+      }
+    },
+    {
+      "id": "og-share",
+      "path": "app/public/images/og-share.png",
+      "format": "png",
+      "bytes": 1110089,
+      "sha256": "ad03ee8715ddb3c419def10015fdafb677593f8a270eabadf6359744d82199f9",
+      "source_generation": "exec-ae8cf222-a85e-499f-8c29-2913d9a579a5.png",
+      "native_dimensions": [
+        1729,
+        910
+      ],
+      "export_dimensions": [
+        1200,
+        630
+      ],
+      "export_tool": "macOS sips",
+      "jpeg_quality": null,
+      "resampled": true,
+      "upscaled": false,
+      "transparent": false,
+      "visual_review": "Original and final export visually inspected; composition, text where applicable, dimensions and file weight checked.",
+      "prompt_reference": "prompts.json assets[id=og-share]"
+    }
+  ]
+}

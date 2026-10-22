@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "@fontsource-variable/inter-tight/wght.css";
-@import "@fontsource-variable/doto/wght.css";
 
 @font-face {
   font-family: "Inter";
@@ -20,7 +19,6 @@
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Inter Tight Variable", "Inter", system-ui, sans-serif;
-  --font-led: "Doto Variable", ui-monospace, monospace;
 
   /* BRAND-01 roles */
   --color-canvas: #f3f4f6;
@@ -46,7 +44,7 @@
   /* Derived neutrals (Claude) */
   --color-line: #e2e5ea;
   --color-line-strong: #cfd4dc;
-  --color-muted: #8a94a6;
+  --color-muted: #636c7e; /* ≥4.5:1 on canvas and surface */
   --color-nav-2: #161f35;
   --color-nav-3: #1d2944;
   --color-nav-line: #26324d;
@@ -103,11 +101,6 @@
   font-family: var(--font-display);
   font-weight: 750;
   letter-spacing: -0.04em;
-}
-@utility led {
-  font-family: var(--font-led);
-  font-weight: 800;
-  letter-spacing: 0.02em;
 }
 @utility no-scrollbar {
   scrollbar-width: none;

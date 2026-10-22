@@ -46,7 +46,7 @@ export function AccountClosed() {
         </section>
         <section className="flex items-start gap-4 rounded-[24px] bg-ink p-5 text-white">
           <HeartHandshake size={22} className="mt-0.5 shrink-0 text-brand-dark" />
-          <p className="text-[14px] text-white/75">Free, confidential support is available 24/7 from national gambling helplines. In this demo, contact details are placeholders.</p>
+          <div><p className="text-[14px] text-white/75">Free, confidential support, 24 hours a day in Great Britain.</p><div className="mt-3 flex flex-wrap gap-2"><a href="tel:08088020133" className="inline-flex min-h-10 flex-col justify-center rounded-[18px] bg-white px-4 py-2 text-[13.5px] leading-tight font-semibold text-ink"><span>National Gambling Helpline</span><span className="text-[12.5px] font-medium text-secondary tnum">0808 8020 133 · free, 24/7</span></a><a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center rounded-[18px] bg-white/15 px-4 text-[13.5px] font-semibold text-white">BeGambleAware.org</a></div></div>
         </section>
         <p className="pt-2 text-[12px] text-muted">To explore the demo again, use Reset in Demo controls. That restores the fictional session — it isn’t how a real account reopens.</p>
       </div>

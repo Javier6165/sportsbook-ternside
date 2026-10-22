@@ -6,13 +6,15 @@ import { Link, NavLink, useLocation } from 'react-router'
 import { EVENTS } from '../data/catalog'
 import { D, fmtMoney, fmtOdds, grossReturn, isValidStake } from '../domain/money'
 import { Betslip } from '../features/betslip/Betslip'
-import { useStore } from '../state/store'
+import { useAccountNow, useStore } from '../state/store'
 import { CountUp } from '../ui/CountUp'
 import { FlyLayer, LAND_EVENT } from '../ui/fly'
 import { Wordmark } from '../ui/Wordmark'
 import { SideNav } from './SideNav'
+import { useModal } from '../ui/useModal'
 import { SearchPanel } from '../features/search/SearchPanel'
 import { AccountClosed } from '../features/account/AccountClosed'
+import { RealityCheck } from '../features/account/RealityCheck'
 
 const NAV = [
   { to: '/sports', label: 'Sports', icon: Trophy },
@@ -28,11 +30,13 @@ function Header({ onSearch, closed }: { onSearch: () => void; closed: boolean })
   const liveCount = EVENTS.filter((e) => e.status === 'live').length
   return (
     <header className="relative z-30 shrink-0 border-b border-black/[.04] bg-canvas/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-[1220px] items-center gap-3 px-4 @tab:px-8 @desk:h-[72px] @desk:gap-5">
-        <Link to="/sports" className="shrink-0 rounded-md">
+      {/* Desktop: the logo sits over the rail; everything else spans exactly the content column of <main>. */}
+      <div className="relative flex h-16 items-center px-4 @tab:px-8 @desk:h-[72px] @desk:px-0" style={{ '--rail': `${closed ? 0 : s.navOpen ? 268 : 76}px` } as React.CSSProperties}>
+        <Link to="/sports" className="shrink-0 rounded-md @desk:absolute @desk:left-6">
           <Wordmark size={26} />
         </Link>
-
+        <div className="flex min-w-0 flex-1 transition-[margin] duration-300 @desk:ml-[var(--rail)]">
+        <div className="mx-auto flex w-full max-w-[1220px] items-center gap-3 @desk:gap-3 @desk:pr-8 @desk:pl-[max(2rem,calc(156px-var(--rail)-max(0px,(100cqw-var(--rail)-1220px)/2)))]">
         <nav aria-label="Primary" className={clsx('relative hidden rounded-full bg-chip p-1', !closed && '@desk:flex')}>
           {NAV.map((n) => (
             <NavLink key={n.to} to={n.to} className="relative z-10 flex h-9 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold text-secondary transition-colors hover:text-ink aria-[current=page]:text-ink">
@@ -51,7 +55,7 @@ function Header({ onSearch, closed }: { onSearch: () => void; closed: boolean })
           type="button"
           onClick={onSearch}
           hidden={closed}
-          className="ml-auto flex h-11 items-center gap-2.5 rounded-full bg-chip px-3.5 text-[14px] text-secondary transition-colors hover:bg-chip-hover @desk:ml-0 @desk:max-w-[300px] @desk:flex-1 @desk:px-4"
+          className="ml-auto flex h-11 items-center gap-2.5 rounded-full bg-chip px-3.5 text-[14px] text-secondary transition-colors hover:bg-chip-hover @desk:ml-0 @desk:max-w-[280px] @desk:min-w-[180px] @desk:flex-1 @desk:px-4"
           aria-label="Search teams, players or markets"
         >
           <Search size={18} className="text-ink" />
@@ -61,7 +65,7 @@ function Header({ onSearch, closed }: { onSearch: () => void; closed: boolean })
           </span>
         </button>
 
-        <div className="flex items-center gap-2 @desk:ml-auto @desk:gap-3">
+        <div className="flex items-center gap-2 @desk:ml-auto @desk:gap-3 @desk:pl-10">
           <Link to="/wallet" className="flex flex-col items-end rounded-lg px-1 leading-tight" aria-label={`Available balance ${fmtMoney(s.available)}, demo money`}>
             <span className="text-[11px] font-semibold text-secondary">Demo funds</span>
             <span className="font-display text-[17px] font-[760] tracking-[-0.02em] tnum">
@@ -75,6 +79,8 @@ function Header({ onSearch, closed }: { onSearch: () => void; closed: boolean })
           <Link to="/account" aria-label="Account" className="grid size-11 place-items-center rounded-full bg-ink text-white">
             <span className="font-display text-[14px] font-[760]">SE</span>
           </Link>
+        </div>
+        </div>
         </div>
       </div>
     </header>
@@ -229,13 +235,33 @@ function SlipBar() {
   )
 }
 
+function SearchModal({ onClose }: { onClose: () => void }) {
+  const ref = useModal<HTMLDivElement>(true, onClose)
+  return (
+    <motion.div ref={ref} key="search" className="absolute inset-0 z-[60] flex items-start justify-center @tab:pt-[10vh]" role="dialog" aria-modal="true" aria-label="Search">
+      <motion.div className="absolute inset-0 bg-[#0b0f1a]/45 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
+      <motion.div
+        initial={{ opacity: 0, y: -16, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -16, scale: 0.98 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+        className="relative flex h-full w-full flex-col overflow-hidden bg-surface shadow-2xl @tab:h-auto @tab:max-h-[70vh] @tab:max-w-[640px] @tab:rounded-[28px]"
+      >
+        <SearchPanel onClose={onClose} />
+      </motion.div>
+    </motion.div>
+  )
+}
+
 function MobileSlipSheet() {
   const { s, d } = useStore()
   const close = () => d({ type: 'slip', open: false })
+  const mobile = typeof window !== 'undefined' && !!document.querySelector('nav[aria-label="Primary"].grid') && (document.querySelector('nav[aria-label="Primary"].grid') as HTMLElement).getClientRects().length > 0
+  const ref = useModal<HTMLDivElement>(s.slipOpen && mobile, close)
   return (
     <AnimatePresence>
       {s.slipOpen && (
-        <motion.div key="sheet" className="absolute inset-0 z-50 flex flex-col @desk:hidden" role="dialog" aria-modal="true" aria-label="Betslip">
+        <motion.div ref={ref} key="sheet" className="absolute inset-0 z-50 flex flex-col @desk:hidden" role="dialog" aria-modal="true" aria-label="Betslip">
           <motion.div className="absolute inset-0 bg-[#0b0f1a]/45 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={close} />
           <motion.div
             className="relative mt-auto flex h-[calc(100%-24px)] flex-col overflow-hidden rounded-t-[30px] bg-canvas shadow-2xl"
@@ -260,6 +286,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const mainRef = useRef<HTMLDivElement>(null)
   const loc = useLocation()
   const [search, setSearch] = useState(false)
+  // A break ends on the account clock (also after reload). Self-exclusion never ends on its own.
+  const accountNow = useAccountNow()
+  useEffect(() => {
+    if (s.restriction === 'paused') d({ type: 'pauseCheck', at: accountNow })
+  }, [accountNow, s.restriction, d])
   // Return focus to whatever opened the betslip; Escape closes it.
   const opener = useRef<HTMLElement | null>(null)
   useEffect(() => {
@@ -267,7 +298,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       opener.current = document.activeElement as HTMLElement
       const f = (e: KeyboardEvent) => e.key === 'Escape' && d({ type: 'slip', open: false })
       window.addEventListener('keydown', f)
-      setTimeout(() => rootRef.current?.querySelector<HTMLElement>('[role="dialog"][aria-label="Betslip"] button, [role="dialog"][aria-label="Betslip"] input')?.focus(), 350)
+      // Focus the visible betslip (desktop panel or mobile sheet), never a hidden copy.
+      setTimeout(() => [...(rootRef.current?.querySelectorAll<HTMLElement>('[aria-label="Betslip"] button, [aria-label="Betslip"] input') ?? [])].find((el) => el.getClientRects().length > 0)?.focus(), 350)
       return () => window.removeEventListener('keydown', f)
     }
     if (opener.current && document.contains(opener.current)) opener.current.focus()
@@ -275,6 +307,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [s.slipOpen, d])
   useEffect(() => {
     mainRef.current?.scrollTo({ top: 0 })
+    setSearch(false)
   }, [loc.pathname])
   useEffect(() => {
     const f = (e: KeyboardEvent) => {
@@ -319,21 +352,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </>
         )}
         <AnimatePresence>
-          {search && (
-            <motion.div key="search" className="absolute inset-0 z-[60] flex items-start justify-center @tab:pt-[10vh]" role="dialog" aria-modal="true" aria-label="Search">
-              <motion.div className="absolute inset-0 bg-[#0b0f1a]/45 backdrop-blur-[3px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSearch(false)} />
-              <motion.div
-                initial={{ opacity: 0, y: -16, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -16, scale: 0.98 }}
-                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="relative flex h-full w-full flex-col overflow-hidden bg-surface shadow-2xl @tab:h-auto @tab:max-h-[70vh] @tab:max-w-[640px] @tab:rounded-[28px]"
-              >
-                <SearchPanel onClose={() => setSearch(false)} />
-              </motion.div>
-            </motion.div>
-          )}
+          {search && <SearchModal onClose={() => setSearch(false)} />}
         </AnimatePresence>
+        {!closed && <RealityCheck />}
         <div id="overlay-root" className="pointer-events-none absolute inset-0 z-50" />
       </FlyLayer>
     </div>

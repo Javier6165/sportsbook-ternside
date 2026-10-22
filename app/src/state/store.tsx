@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
 import { EVENTS, eventById, type SportEvent, type SportId } from '../data/catalog'
 import { INITIAL_BETS, INITIAL_LEDGER, type AcceptedBet, type LedgerEntry, type Settlement } from '../domain/bets'
-import { D } from '../domain/money'
+import { D, parseAmount } from '../domain/money'
+import { promoById, rewardsOnSettle, qualifiesTwoUp, twoUpPayout, type FreeBet, type PromoEntry, type PromoId } from '../domain/promos'
 import { applySim, type F01Phase } from '../demo/sim'
 import type { DepositRecord, LimitKey } from '../domain/limits'
 import { EVENT_NOW } from '../data/catalog'
@@ -24,6 +25,8 @@ export interface DraftGroup {
   odds: string
   stake: string
   live?: boolean
+  /** a free bet chosen for this selection (replaces the cash stake) */
+  freeBetId?: string
 }
 
 export type { F01Phase }
@@ -66,6 +69,19 @@ export interface State {
   nextPlacement: 'normal' | 'price-change' | 'unknown-accepted' | 'unknown-rejected'
   /** An operation whose response was lost — reconciled by the same ID (R08) */
   pendingOp: { opId: string; bets: AcceptedBet[]; consumed: string[]; acca: boolean; resolveAs: 'accepted' | 'rejected'; at: string } | null
+  /** Promotions the customer opted into, by id */
+  promos: Partial<Record<PromoId, PromoEntry>>
+  freeBets: FreeBet[]
+  predictor: { picks: Record<string, [number, number]>; submittedAt: string } | null
+  /** Show offers on the home hubs (marketing preference) */
+  offersOnHome: boolean
+  /** Last hub opened under Sports */
+  hub: 'for-you' | 'popular'
+  /** Reality check reminder interval in minutes (0 = off) */
+  realityCheckMin: 0 | 30 | 60
+  realityOpen: boolean
+  marketingEmail: boolean
+  marketingSms: boolean
 }
 
 const initial: State = {
@@ -91,11 +107,20 @@ const initial: State = {
   accountOffsetH: 0,
   nextPlacement: 'normal',
   pendingOp: null,
+  promos: {},
+  freeBets: [],
+  predictor: null,
+  offersOnHome: true,
+  hub: 'for-you',
+  realityCheckMin: 0,
+  realityOpen: false,
+  marketingEmail: false,
+  marketingSms: false,
 }
 
 export const INITIAL_STATE = initial
 
-type Action =
+export type Action =
   | { type: 'toggleSelection'; eventId: string; leg: DraftLeg; live?: boolean }
   | { type: 'addBuilder'; eventId: string; legs: DraftLeg[]; odds: string }
   | { type: 'remove'; groupId: string }
@@ -119,15 +144,24 @@ type Action =
   | { type: 'withdraw'; amount: string; at: string }
   | { type: 'withdrawalResolve'; id: string; ok: boolean; at: string }
   | { type: 'setLimit'; key: LimitKey; value: string; at: string }
-  | { type: 'confirmIncrease' }
+  | { type: 'confirmIncrease'; at: string }
   | { type: 'cancelIncrease' }
   | { type: 'pause'; until: string }
+  | { type: 'pauseCheck'; at: string }
   | { type: 'exclude'; at: string }
   | { type: 'advanceAccount'; hours: number }
   | { type: 'patch'; patch: Partial<State> }
   | { type: 'pendingStart'; op: NonNullable<State['pendingOp']> }
   | { type: 'pendingResolve' }
   | { type: 'convertToBuilder'; groupIds: string[]; odds: string }
+  | { type: 'promoJoin'; id: PromoId; at: string }
+  | { type: 'useFreeBet'; groupId: string; freeBetId: string | null }
+  | { type: 'predictorSave'; picks: Record<string, [number, number]>; at: string }
+  | { type: 'earlyPayout'; betId: string; at: string }
+  | { type: 'offersOnHome'; on: boolean }
+  | { type: 'hub'; hub: State['hub'] }
+
+const fmtGBP = (v: string) => `£${D(v).toFixed(2)}`
 
 let seq = 0
 const newId = () => `draft-${Date.now().toString(36)}-${(seq++).toString(36)}`
@@ -178,13 +212,20 @@ export function reducer(s: State, a: Action): State {
       return { ...s, navOpen: a.open }
     case 'placed': {
       // One debit per accepted bet; the accepted groups leave the slip once (C46).
-      const total = a.bets.reduce((t, b) => t.plus(b.stake), D(0))
+      // Free-bet stakes never touch the balance; each free bet is used once.
+      const total = a.bets.reduce((t, b) => (b.freeBet ? t : t.plus(b.stake)), D(0))
+      const used = new Map(a.bets.filter((b) => b.freeBet).map((b) => [b.freeBet!.id, b.id]))
       return {
         ...s,
         available: D(s.available).minus(total).toFixed(2),
         bets: [...a.bets, ...s.bets],
+        freeBets: s.freeBets.map((f) => (used.has(f.id) ? { ...f, status: 'used' as const, usedOn: used.get(f.id) } : f)),
         ledger: [
-          ...a.bets.map((b) => ({ id: `stake-${b.id}`, type: 'stake' as const, delta: D(b.stake).neg().toFixed(2), betId: b.id, at: b.placedAt, label: `Stake · ${b.legs[0].eventLabel}` })),
+          ...a.bets.map((b) =>
+            b.freeBet
+              ? { id: `stake-${b.id}`, type: 'free_bet' as const, delta: '0.00', betId: b.id, at: b.placedAt, label: `Free bet ${fmtGBP(b.freeBet.amount)} used · ${b.legs[0].eventLabel}` }
+              : { id: `stake-${b.id}`, type: 'stake' as const, delta: D(b.stake).neg().toFixed(2), betId: b.id, at: b.placedAt, label: `Stake · ${b.legs[0].eventLabel}` },
+          ),
           ...s.ledger,
         ],
         groups: s.groups.filter((g) => !a.consumed.includes(g.id)),
@@ -195,11 +236,36 @@ export function reducer(s: State, a: Action): State {
       const bet = s.bets.find((b) => b.id === a.betId)
       if (!bet || bet.status !== 'open') return s // one terminal resolution only
       const gross = D(a.settlement.gross)
+      if (s.restriction === 'excluded') {
+        // R11: a later return is credited and immediately set aside for the administrative refund — never playable.
+        const settledBets = s.bets.map((b) => (b.id === a.betId ? { ...b, status: a.status, settlement: a.settlement } : b))
+        if (gross.lte(0)) return { ...s, bets: settledBets }
+        return {
+          ...s,
+          bets: settledBets,
+          withdrawals: [{ id: `excl-ret-${bet.id}`, amount: gross.toFixed(2), at: a.settlement.at, status: 'pending' }, ...s.withdrawals],
+          ledger: [
+            { id: `excl-res-${bet.id}`, type: 'withdrawal', delta: gross.neg().toFixed(2), betId: bet.id, at: a.settlement.at, label: `Return reserved for refund · ${bet.legs[0].eventLabel}` },
+            { id: `ret-${bet.id}`, type: a.status === 'void' ? 'void_return' : 'return', delta: gross.toFixed(2), betId: bet.id, at: a.settlement.at, label: `${a.status === 'void' ? 'Void return' : 'Return'} · ${bet.legs[0].eventLabel}` },
+            ...s.ledger,
+          ],
+        }
+      }
+      // A void free-bet bet gives the free bet back rather than cash.
+      const fbBack = bet.freeBet && a.status === 'void'
+      const rewards = rewardsOnSettle(bet, a.status, a.settlement.legResults, s.promos, a.settlement.at)
+      const promos = { ...s.promos }
+      for (const r of rewards) if (r.promo === 'matchday-free-bet') promos[r.promo] = { ...promos[r.promo]!, completedAt: a.settlement.at, note: r.note }
       return {
         ...s,
-        available: D(s.available).plus(gross).toFixed(2),
+        available: fbBack ? s.available : D(s.available).plus(gross).toFixed(2),
+        promos,
+        freeBets: [
+          ...rewards.map((r) => r.freeBet),
+          ...s.freeBets.map((f) => (fbBack && f.id === bet.freeBet!.id ? { ...f, status: 'available' as const, usedOn: undefined } : f)),
+        ],
         bets: s.bets.map((b) => (b.id === a.betId ? { ...b, status: a.status, settlement: a.settlement } : b)),
-        ledger: gross.gt(0)
+        ledger: gross.gt(0) && !fbBack
           ? [{ id: `ret-${bet.id}`, type: a.status === 'void' ? 'void_return' : 'return', delta: gross.toFixed(2), betId: bet.id, at: a.settlement.at, label: `${a.status === 'void' ? 'Void return' : 'Return'} · ${bet.legs[0].eventLabel}` }, ...s.ledger]
           : s.ledger,
       }
@@ -223,6 +289,7 @@ export function reducer(s: State, a: Action): State {
       return next
     }
     case 'deposit': {
+      if (!parseAmount(a.amount) || s.restriction !== 'none' || s.pendingOp) return s
       const id = `dep-${Date.now().toString(36)}`
       return {
         ...s,
@@ -232,6 +299,8 @@ export function reducer(s: State, a: Action): State {
       }
     }
     case 'withdraw': {
+      const amt = parseAmount(a.amount)
+      if (!amt || amt.gt(s.available) || s.restriction === 'excluded' || s.pendingOp) return s
       // R10: a withdrawal request reserves funds immediately; completing doesn't debit again.
       const id = `wd-${Date.now().toString(36)}`
       return {
@@ -252,26 +321,35 @@ export function reducer(s: State, a: Action): State {
       }
     }
     case 'setLimit': {
+      if (!parseAmount(a.value)) return s
       const cur = D(s.limits[a.key])
       if (D(a.value).lte(cur)) return { ...s, limits: { ...s.limits, [a.key]: D(a.value).toFixed(2) }, pendingIncrease: s.pendingIncrease?.key === a.key ? null : s.pendingIncrease }
       return { ...s, pendingIncrease: { key: a.key, value: D(a.value).toFixed(2), availableAt: new Date(Date.parse(a.at) + 24 * 3600_000).toISOString() } }
     }
     case 'confirmIncrease':
-      if (!s.pendingIncrease) return s
+      // R11: only after the 24-hour wait, measured on the account clock, and only by explicit confirmation.
+      if (!s.pendingIncrease || Date.parse(a.at) < Date.parse(s.pendingIncrease.availableAt)) return s
       return { ...s, limits: { ...s.limits, [s.pendingIncrease.key]: s.pendingIncrease.value }, pendingIncrease: null }
     case 'cancelIncrease':
       return { ...s, pendingIncrease: null }
     case 'pause':
       return { ...s, restriction: 'paused', pausedUntil: a.until, groups: [], slipOpen: false }
+    case 'pauseCheck':
+      // A break ends on the account clock. Self-exclusion never ends on its own.
+      if (s.restriction !== 'paused' || !s.pausedUntil || Date.parse(a.at) < Date.parse(s.pausedUntil)) return s
+      return { ...s, restriction: 'none', pausedUntil: null }
     case 'exclude':
       // R11: closes gambling immediately; open bets keep their accepted rules.
       return {
         ...s,
         restriction: 'excluded',
         groups: [],
+        // Self-exclusion ends every promotion and removes unused free bets.
+        promos: {},
+        freeBets: s.freeBets.filter((f) => f.status === 'used'),
         slipOpen: false,
         ledger: D(s.available).gt(0) ? [{ id: `excl-${Date.now().toString(36)}`, type: 'withdrawal', delta: D(s.available).neg().toFixed(2), at: a.at, label: 'Balance reserved for return · self-exclusion' }, ...s.ledger] : s.ledger,
-        withdrawals: D(s.available).gt(0) ? [{ id: `excl-ret`, amount: s.available, at: a.at, status: 'pending' }, ...s.withdrawals] : s.withdrawals,
+        withdrawals: D(s.available).gt(0) ? [{ id: `excl-ret-balance`, amount: s.available, at: a.at, status: 'pending' }, ...s.withdrawals] : s.withdrawals,
         available: '0.00',
       }
     case 'convertToBuilder': {
@@ -284,6 +362,29 @@ export function reducer(s: State, a: Action): State {
       rest.splice(Math.min(at, rest.length), 0, builder)
       return { ...s, groups: rest }
     }
+    case 'promoJoin': {
+      const p = promoById(a.id)
+      if (s.restriction !== 'none' || p.audience !== 'existing' || s.promos[a.id]) return s
+      return { ...s, promos: { ...s.promos, [a.id]: { joinedAt: a.at } } }
+    }
+    case 'useFreeBet': {
+      if (a.freeBetId && (!s.freeBets.some((f) => f.id === a.freeBetId && f.status === 'available') || s.groups.some((g) => g.freeBetId === a.freeBetId && g.id !== a.groupId))) return s
+      return { ...s, groups: s.groups.map((g) => (g.id === a.groupId ? { ...g, freeBetId: a.freeBetId ?? undefined } : g)) }
+    }
+    case 'predictorSave':
+      if (s.restriction !== 'none') return s
+      return { ...s, predictor: { picks: a.picks, submittedAt: a.at }, promos: s.promos.predictor ? s.promos : { ...s.promos, predictor: { joinedAt: a.at } } }
+    case 'earlyPayout': {
+      const bet = s.bets.find((b) => b.id === a.betId)
+      if (!bet || bet.status !== 'open' || !qualifiesTwoUp(bet, s.promos['two-up'])) return s
+      const gross = twoUpPayout(bet)
+      const settled = reducer(s, { type: 'settle', betId: bet.id, status: 'won', settlement: { odds: bet.odds, gross, reason: 'Paid early under the 2 Goals Ahead promotion: your team went two goals ahead. The match is still being played, but the result at full time no longer changes this bet.', at: a.at, legResults: { [bet.legs[0].selectionId]: 'won' } } })
+      return { ...settled, bets: settled.bets.map((b) => (b.id === bet.id ? { ...b, promo: 'two-up' } : b)) }
+    }
+    case 'offersOnHome':
+      return { ...s, offersOnHome: a.on }
+    case 'hub':
+      return { ...s, hub: a.hub }
     case 'patch':
       return { ...s, ...a.patch }
     case 'pendingStart':
@@ -312,7 +413,7 @@ function load(): State {
     if (!raw) return initial
     const parsed = JSON.parse(raw)
     if (parsed?.v !== 3) return initial
-    const st = { ...initial, ...parsed.state, slipOpen: false }
+    const st = { ...initial, ...parsed.state, slipOpen: false, realityOpen: false }
     applySim(st.f01)
     return st
   } catch {

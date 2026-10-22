@@ -21,6 +21,9 @@ export interface Settlement {
   reason: string
   at: string
   legResults?: Record<string, 'won' | 'lost' | 'void'>
+  /** R07: earlier settlement versions, kept as history */
+  version?: number
+  history?: { version: number; status: BetStatus; gross: string; at: string; reason: string }[]
 }
 
 export interface AcceptedBet {

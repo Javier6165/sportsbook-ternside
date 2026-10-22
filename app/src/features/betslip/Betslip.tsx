@@ -6,13 +6,14 @@ import { Link } from 'react-router'
 import { eventById } from '../../data/catalog'
 import { accaOdds, D, fmtMoney, fmtOdds, grossReturn, isValidStake } from '../../domain/money'
 import { kickoffTime } from '../../lib/time'
-import { currentOdds, useLiveClock, useStore, type DraftGroup } from '../../state/store'
+import { currentOdds, isClosedDraft, useLiveClock, useStore, type DraftGroup } from '../../state/store'
 import { CountUp } from '../../ui/CountUp'
 import { matchGradient } from '../../ui/MatchField'
 import { Perforation } from '../../ui/Perforation'
 import { planBets, type AcceptedBet } from '../../domain/bets'
 import { EVENT_NOW } from '../../data/catalog'
-import { DoneStep, PlacingStep, ReviewStep } from './Review'
+import { CheckingStep, DoneStep, NotPlacedStep, PlacingStep, PriceChangedStep, ReviewStep } from './Review'
+import { receiptId } from '../../domain/bets'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const money = (n: number) => fmtMoney(n.toFixed(2))
@@ -64,7 +65,8 @@ function SlipPass({ g }: { g: DraftGroup }) {
   const { tick } = useLiveClock()
   const ev = eventById(g.eventId)!
   const now = currentOdds(g, tick)
-  const changed = now !== g.odds
+  const closed = isClosedDraft(g)
+  const changed = !closed && now !== g.odds
   const isBuilder = g.type === 'builder'
 
   return (
@@ -132,12 +134,20 @@ function SlipPass({ g }: { g: DraftGroup }) {
         </AnimatePresence>
       </div>
 
+      {closed ? (
+        <div className="m-4 mt-3 rounded-[14px] bg-void px-3.5 py-3 text-[12.5px] leading-snug text-void-ink">
+          <b className="font-semibold">{isBuilder ? 'Bet Builder closed for new bets.' : 'Pre-match price closed.'}</b> The match has started, so this pre-match draft can’t be placed. It’s kept here — remove it, or pick a live price on the match page.
+        </div>
+      ) : (
+      <>
       <Perforation notch="bg-canvas" />
 
       <div className="flex gap-3 px-4 pb-4">
         <StakeInput value={g.stake} onChange={(v) => d({ type: 'stake', groupId: g.id, value: v })} label={`Stake for ${isBuilder ? 'Bet Builder' : g.legs[0].label}`} />
         <ReturnBox stake={g.stake} odds={changed ? now : g.odds} />
       </div>
+      </>
+      )}
       {isBuilder && (
         <Link to={`/event/${ev.id}?tab=builder&explain=1`} className="mx-4 mb-4 flex items-center gap-1.5 text-[12.5px] font-semibold text-sel-ink hover:underline">
           <Info size={14} /> How this bet works
@@ -173,19 +183,22 @@ function EmptySlip() {
 export function Betslip({ onClose }: { onClose?: () => void }) {
   const { s, d } = useStore()
   const { tick, elapsed } = useLiveClock()
-  const [step, setStep] = useState<'edit' | 'review' | 'placing' | 'done'>('edit')
+  const [step, setStep] = useState<'edit' | 'review' | 'placing' | 'done' | 'moved' | 'notplaced'>('edit')
+  const [moved, setMoved] = useState<string>('')
+  const [checking, setChecking] = useState(false)
   const [planned, setPlanned] = useState<AcceptedBet[]>([])
   const [consumes, setConsumes] = useState<string[]>([])
   const n = s.groups.length
-  const singles = s.groups.filter((g) => g.type === 'single')
+  const open = s.groups.filter((g) => !isClosedDraft(g))
+  const singles = open.filter((g) => g.type === 'single')
   const distinctEvents = new Set(singles.map((g) => g.eventId)).size
   const accaReason =
     n < 2
       ? 'Add two or three selections from different matches.'
-      : s.groups.some((g) => g.type === 'builder')
+      : open.some((g) => g.type === 'builder')
         ? 'Bet Builders are placed on their own. Review it in Singles or remove it.'
-        : s.groups.some((g) => g.live)
-          ? 'Accumulators use pre-match selections only.'
+        : open.some((g) => g.live) || open.length !== n
+          ? 'Accumulators use pre-match selections from matches that haven’t started.'
           : distinctEvents !== singles.length
             ? 'Two selections are from the same match. Use Bet Builder for same-match picks.'
             : n > 3
@@ -193,32 +206,88 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
               : null
   const accaPrice = accaOdds(singles.map((g) => g.odds))
 
-  const totalStake = s.mode === 'singles' ? s.groups.reduce((a, g) => (isValidStake(g.stake) ? a.plus(g.stake) : a), D(0)) : isValidStake(s.accaStake) && !accaReason ? D(s.accaStake) : D(0)
+  const totalStake = s.mode === 'singles' ? open.reduce((a, g) => (isValidStake(g.stake) ? a.plus(g.stake) : a), D(0)) : isValidStake(s.accaStake) && !accaReason ? D(s.accaStake) : D(0)
   const totalReturn =
     s.mode === 'singles'
-      ? s.groups.reduce((a, g) => (isValidStake(g.stake) ? a.plus(grossReturn(g.stake, g.odds)) : a), D(0))
+      ? open.reduce((a, g) => (isValidStake(g.stake) ? a.plus(grossReturn(g.stake, g.odds)) : a), D(0))
       : isValidStake(s.accaStake) && !accaReason
         ? grossReturn(s.accaStake, accaPrice)
         : D(0)
   const ready = totalStake.gt(0)
-  const priceMoved = s.groups.some((g) => currentOdds(g, tick) !== g.odds)
+  const priceMoved = open.some((g) => currentOdds(g, tick) !== g.odds)
 
   const startReview = () => {
     const at = new Date(Date.parse(EVENT_NOW) + elapsed * 1000).toISOString()
-    const groups = s.mode === 'acca' ? s.groups : s.groups
+    const groups = open
     const plan = planBets(groups, s.mode, s.accaStake, at)
     setPlanned(plan.map((p) => p.bet))
     setConsumes(plan.flatMap((p) => p.consumes))
     setStep('review')
   }
+  const finish = (bets: AcceptedBet[]) => {
+    d({ type: 'placed', bets, consumed: consumes, acca: s.mode === 'acca' })
+    setStep('done')
+  }
   const place = () => {
     setStep('placing')
     const live = planned.some((b) => b.live)
+    const mode = s.nextPlacement
     setTimeout(() => {
-      d({ type: 'placed', bets: planned, consumed: consumes, acca: s.mode === 'acca' })
-      setStep('done')
+      if (mode === 'price-change' && planned[0]) {
+        // C07: the joint price moves to qv2 before acceptance — ask again, debit nothing.
+        const b = planned[0]
+        const key = b.legs.map((l) => l.selectionId).join('+')
+        setMoved(b.type === 'builder' && key === 'HOME+OVER_2_5+PLAYER_2_SOT' ? '3.20' : (Math.max(1.01, Number(b.odds) - 0.1)).toFixed(2))
+        d({ type: 'patch', patch: { nextPlacement: 'normal' } })
+        setStep('moved')
+        return
+      }
+      if (mode === 'unknown-accepted' || mode === 'unknown-rejected') {
+        d({ type: 'pendingStart', op: { opId: `OP-${receiptId().slice(3)}`, bets: planned, consumed: consumes, acca: s.mode === 'acca', resolveAs: mode === 'unknown-accepted' ? 'accepted' : 'rejected', at: planned[0]?.placedAt ?? '' } })
+        setStep('edit')
+        return
+      }
+      finish(planned)
     }, live ? 2000 : 1400)
   }
+
+  if (s.pendingOp && step !== 'done')
+    return (
+      <CheckingStep
+        opId={s.pendingOp.opId}
+        stake={s.pendingOp.bets.reduce((t, b) => t + Number(b.stake), 0).toFixed(2)}
+        available={s.available}
+        checking={checking}
+        onCheck={() => {
+          setChecking(true)
+          const op = s.pendingOp!
+          setTimeout(() => {
+            setChecking(false)
+            d({ type: 'pendingResolve' })
+            if (op.resolveAs === 'accepted') {
+              setPlanned(op.bets)
+              setStep('done')
+            } else setStep('notplaced')
+          }, 1200)
+        }}
+      />
+    )
+  if (step === 'moved' && planned[0])
+    return (
+      <PriceChangedStep
+        bet={planned[0]}
+        newOdds={moved}
+        onBack={() => setStep('edit')}
+        onAccept={() => {
+          d({ type: 'acceptPrice', groupId: consumes[0], odds: moved })
+          const updated = planned.map((b, i) => (i === 0 ? { ...b, odds: moved, potentialReturn: grossReturn(b.stake, moved).toFixed(2) } : b))
+          setPlanned(updated)
+          setStep('placing')
+          setTimeout(() => finish(updated), 1200)
+        }}
+      />
+    )
+  if (step === 'notplaced') return <NotPlacedStep onBack={() => setStep('edit')} />
 
   if (step === 'review')
     return <ReviewStep planned={planned} available={s.available} blocked={s.restriction !== 'none' ? 'Betting is off while your break is active.' : priceMoved ? 'A price changed. Go back and accept the new odds first.' : null} onBack={() => setStep('edit')} onPlace={place} />

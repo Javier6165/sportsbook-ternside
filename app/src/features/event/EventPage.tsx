@@ -93,7 +93,7 @@ function Header({ ev }: { ev: SportEvent }) {
                 <div className="font-display text-[52px] leading-none font-[800] tracking-[-0.05em] tnum @tab:text-[72px]">
                   {L.score[0]}–{L.score[1]}
                 </div>
-                <div className="mt-2 text-[13px] font-semibold text-white/70">Full time</div>
+                <div className="mt-2 text-[13px] font-semibold text-white/70">{L.period}</div>
               </>
             ) : live && L ? (
               <>
@@ -159,8 +159,8 @@ function MarketCard({ ev, m, prices, i }: { ev: SportEvent; m: Market; prices?: 
       </AnimatePresence>
       {closed ? (
         <div className={clsx('mt-3.5 flex items-center justify-between rounded-[16px] px-4 py-3.5 text-[13.5px] font-semibold', dark ? 'bg-white/[.06] text-white/60' : 'bg-chip text-secondary')}>
-          {ev.status === 'finished' ? 'Market settled — see My Bets' : 'Pre-match market closed'}
-          <span className="text-[12px] font-medium opacity-70">{ev.status === 'finished' ? 'Full time' : 'No live price'}</span>
+          {ev.status === 'finished' ? 'Market closed — see My Bets for settled bets' : 'Pre-match market closed'}
+          <span className="text-[12px] font-medium opacity-70">{ev.status === 'finished' ? ev.live?.period : 'No live price'}</span>
         </div>
       ) : (
       <div className={clsx('mt-3.5 grid gap-2', cols)}>

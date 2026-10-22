@@ -56,6 +56,7 @@ export interface LiveState {
   frozen?: boolean
   sot?: number
   corrected?: boolean
+  delayed?: boolean
   quoteVersion?: string
 }
 

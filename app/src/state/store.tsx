@@ -62,6 +62,10 @@ export interface State {
   restriction: 'none' | 'paused' | 'excluded'
   pausedUntil: string | null
   accountOffsetH: number
+  /** Demo controls: how the next placement responds (SIM-01) */
+  nextPlacement: 'normal' | 'price-change' | 'unknown-accepted' | 'unknown-rejected'
+  /** An operation whose response was lost — reconciled by the same ID (R08) */
+  pendingOp: { opId: string; bets: AcceptedBet[]; consumed: string[]; acca: boolean; resolveAs: 'accepted' | 'rejected'; at: string } | null
 }
 
 const initial: State = {
@@ -85,6 +89,8 @@ const initial: State = {
   restriction: 'none',
   pausedUntil: null,
   accountOffsetH: 0,
+  nextPlacement: 'normal',
+  pendingOp: null,
 }
 
 export const INITIAL_STATE = initial
@@ -118,6 +124,9 @@ type Action =
   | { type: 'pause'; until: string }
   | { type: 'exclude'; at: string }
   | { type: 'advanceAccount'; hours: number }
+  | { type: 'patch'; patch: Partial<State> }
+  | { type: 'pendingStart'; op: NonNullable<State['pendingOp']> }
+  | { type: 'pendingResolve' }
 
 let seq = 0
 const newId = () => `draft-${Date.now().toString(36)}-${(seq++).toString(36)}`
@@ -264,12 +273,23 @@ export function reducer(s: State, a: Action): State {
         withdrawals: D(s.available).gt(0) ? [{ id: `excl-ret`, amount: s.available, at: a.at, status: 'pending' }, ...s.withdrawals] : s.withdrawals,
         available: '0.00',
       }
+    case 'patch':
+      return { ...s, ...a.patch }
+    case 'pendingStart':
+      // Nothing moves yet: confirmed balance stays, the attempt is frozen under its ID.
+      return { ...s, pendingOp: a.op, nextPlacement: 'normal' }
+    case 'pendingResolve': {
+      const op = s.pendingOp
+      if (!op) return s
+      if (op.resolveAs === 'rejected') return { ...s, pendingOp: null }
+      return reducer({ ...s, pendingOp: null }, { type: 'placed', bets: op.bets, consumed: op.consumed, acca: op.acca })
+    }
     case 'advanceAccount':
       return { ...s, accountOffsetH: s.accountOffsetH + a.hours }
     case 'f01':
       applySim(a.phase)
       // Advancing the match keeps drafts and bets; a pre-match builder draft can no longer be placed (C43).
-      return { ...s, f01: a.phase, groups: a.phase === 'pre' ? s.groups : s.groups.filter((g) => !(g.eventId === 'football-01' && !g.live)) }
+      return { ...s, f01: a.phase }
   }
 }
 
@@ -374,4 +394,10 @@ export function useAccountNow() {
   const { s } = useStore()
   const { elapsed } = useLiveClock()
   return new Date(Date.parse(EVENT_NOW) + elapsed * 1000 + s.accountOffsetH * 3600_000).toISOString()
+}
+
+/** A pre-match draft whose event has started (or finished) can't be placed — it's kept, not converted (C43). */
+export function isClosedDraft(g: DraftGroup) {
+  const ev = eventById(g.eventId)
+  return !!ev && ev.status !== 'scheduled' && !g.live
 }

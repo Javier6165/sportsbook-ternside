@@ -30,6 +30,7 @@ function liveReading(ev: SportEvent | undefined, selectionId: string): { text: s
   if (selectionId === 'UNDER_2_5') return goals >= 3 ? { text: `${goals} goals · can no longer win`, tone: 'bad' } : { text: `${goals} goals so far`, tone: 'good' }
   if (selectionId === 'PLAYER_2_SOT') {
     const sot = ev.live.sot ?? 0
+    if (ev.live.delayed) return { text: `${sot} of 2 shots · stats delayed`, tone: 'warn' }
     if (ev.live.corrected) return { text: `Corrected 2 → ${sot} · ${sot} of 2 shots`, tone: 'warn' }
     return sot >= 2 ? { text: `${sot} of 2 shots · reached, provisional`, tone: 'good' } : { text: `${sot} of 2 shots on target`, tone: 'neutral' }
   }
@@ -58,8 +59,10 @@ function CashOut({ bet }: { bet: AcceptedBet }) {
   const offer = useCashOutOffer(bet)
   const [confirm, setConfirm] = useState<string | null>(null)
   const [changed, setChanged] = useState(false)
+  const { s } = useStore()
   if (!offer) return null
   const net = offer.minus(bet.stake)
+  if (s.pendingOp) return <section className="rounded-[24px] bg-surface p-5 text-[13.5px] text-secondary"><b className="font-semibold text-ink">Cash Out is paused</b> while we check another bet.</section>
   return (
     <section className="rounded-[24px] bg-surface p-5">
       <div className="flex items-center gap-2">
@@ -243,7 +246,8 @@ export function BetDetail() {
           {live && bet.status === 'open' && (
             <div className="mx-6 mb-3 rounded-[14px] bg-chip px-4 py-3 text-[12.5px] leading-snug text-secondary">
               <b className="font-semibold text-ink">Nothing is paid from the live score.</b> Green means it’s going your way right now; the bet settles on the official result.
-              {ev?.live?.corrected && <span className="mt-1 block text-warn-ink">The data provider reclassified one of Costa’s shots. Your bet hasn’t changed — only the live count.</span>}
+              {ev?.live?.corrected && !ev.live.delayed && <span className="mt-1 block text-warn-ink">The data provider reclassified one of Costa’s shots. Your bet hasn’t changed — only the live count.</span>}
+              {ev?.live?.delayed && <span className="mt-1 block text-warn-ink">Live stats are delayed. We’re showing the last update and won’t treat missing data as zero.</span>}
             </div>
           )}
           <div className="px-6">
@@ -286,7 +290,18 @@ export function BetDetail() {
                   Accepted at {fmtOdds(bet.odds)} · settled at {fmtOdds(bet.settlement.odds)} after a void condition.
                 </div>
               )}
-              <div className="mt-1 text-[12px] opacity-70">Settled {fmtTime(bet.settlement.at)}</div>
+              <div className="mt-1 text-[12px] opacity-70">
+                {bet.settlement.version && bet.settlement.version > 1 ? `Version ${bet.settlement.version} · updated` : 'Settled'} {fmtTime(bet.settlement.at)}
+              </div>
+              {bet.settlement.history && (
+                <ul className="mt-3 border-t border-current/15 pt-3">
+                  {bet.settlement.history.map((h) => (
+                    <li key={h.version} className="text-[12.5px] opacity-80">
+                      <span className="font-semibold">Version {h.version} · {STATUS_CHIP[h.status].label} {fmtMoney(h.gross)}</span> — {h.reason} {fmtTime(h.at)}. Replaced; kept for your records.
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
         </motion.article>

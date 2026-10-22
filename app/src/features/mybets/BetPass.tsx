@@ -67,7 +67,7 @@ export function BetPass({ bet, i = 0, compact }: { bet: AcceptedBet; i?: number;
         <div className={clsx('on-dark flex items-center gap-2 px-5 py-3.5 text-white', settled && bet.status === 'lost' && 'saturate-[.35]')} style={{ background: bg }}>
           {bet.type !== 'single' && <Layers size={14} />}
           <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">{bet.type === 'acca' ? 'Accumulator · all must win' : bet.legs[0].eventLabel}</span>
-          {bet.status === 'open' && bet.type !== 'acca' ? <WhenChip eventId={bet.legs[0].eventId} /> : <span className={clsx('rounded-full px-2.5 py-1 text-[11.5px] font-bold', chip.cls)}>{chip.label}</span>}
+          {bet.status === 'open' && bet.type !== 'acca' ? <WhenChip eventId={bet.legs[0].eventId} /> : <span className={clsx('rounded-full px-2.5 py-1 text-[11.5px] font-bold', chip.cls)}>{chip.label}{bet.settlement?.version && bet.settlement.version > 1 ? ' · updated' : ''}</span>}
         </div>
         <div className="px-5 pt-4">
           <div className="flex items-start justify-between gap-3">

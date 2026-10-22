@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { AlertTriangle, ArrowLeft, Check, Layers } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, Check, Clock4, Layers } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useNavigate } from 'react-router'
 import { eventById } from '../../data/catalog'
@@ -56,7 +56,7 @@ export function BetMiniPass({ bet, stamped, i = 0 }: { bet: AcceptedBet; stamped
           initial={{ scale: 2.2, opacity: 0, rotate: -24 }}
           animate={{ scale: 1, opacity: 1, rotate: -12 }}
           transition={{ delay: 0.25 + i * 0.12, type: 'spring', stiffness: 420, damping: 16 }}
-          className="pointer-events-none absolute right-5 bottom-[52px] rounded-[8px] border-[2.5px] border-action px-2 py-0.5 font-display text-[15px] font-[800] tracking-[.04em] text-action uppercase"
+          className="pointer-events-none absolute top-[46%] right-6 -translate-y-1/2 rounded-[8px] bg-surface/80 border-[2.5px] border-action px-2 py-0.5 font-display text-[15px] font-[800] tracking-[.04em] text-action uppercase"
         >
           Accepted
         </motion.span>
@@ -198,6 +198,106 @@ export function DoneStep({ placed, onClose }: { placed: AcceptedBet[]; onClose: 
           className="h-12 rounded-[16px] bg-ink text-[15px] font-semibold text-white hover:bg-black"
         >
           {placed.length === 1 ? 'Track bet' : 'View in My Bets'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export function PriceChangedStep({ bet, newOdds, onAccept, onBack }: { bet: AcceptedBet; newOdds: string; onAccept: () => void; onBack: () => void }) {
+  const oldRet = bet.potentialReturn
+  const newRet = (Number(bet.stake) * Number(newOdds)).toFixed(2)
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-canvas">
+      <div className="px-5 pt-6 pb-3">
+        <span className="grid size-12 place-items-center rounded-full bg-warn text-warn-ink">
+          <AlertTriangle size={22} />
+        </span>
+        <h2 className="mt-3 font-display text-[26px] leading-none font-[800] tracking-[-0.045em]">The price moved</h2>
+        <p className="mt-2 text-[14px] text-secondary">Before we could accept your bet, the price changed. Nothing has been placed and no money has moved.</p>
+      </div>
+      <div className="px-4">
+        <div className="rounded-[22px] bg-surface p-5">
+          <div className="text-[12.5px] font-semibold text-secondary">{bet.type === 'builder' ? 'Bet Builder' : bet.legs[0].label} · {bet.legs[0].eventLabel}</div>
+          <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-center">
+            <div>
+              <div className="text-[11.5px] font-semibold text-muted">Was</div>
+              <div className="font-display text-[30px] font-[780] tracking-[-0.04em] text-muted line-through tnum">{fmtOdds(bet.odds)}</div>
+              <div className="text-[12.5px] text-muted tnum">returns {fmtMoney(oldRet)}</div>
+            </div>
+            <span className="text-secondary">→</span>
+            <div>
+              <div className="text-[11.5px] font-semibold text-warn-ink">Now</div>
+              <div className="font-display text-[30px] font-[800] tracking-[-0.04em] tnum">{fmtOdds(newOdds)}</div>
+              <div className="text-[12.5px] font-semibold tnum">returns {fmtMoney(newRet)}</div>
+            </div>
+          </div>
+          <p className="mt-4 text-[12px] text-secondary">Stake {fmtMoney(bet.stake)}. We never accept a different price for you — not even a better one.</p>
+        </div>
+      </div>
+      <div className="mt-auto grid gap-2 border-t border-line bg-surface px-5 pt-4 pb-5">
+        <button onClick={onAccept} className="h-14 rounded-[18px] bg-action text-[16px] font-semibold text-white hover:bg-action-hover">
+          Place at {fmtOdds(newOdds)} · {fmtMoney(bet.stake)}
+        </button>
+        <button onClick={onBack} className="h-12 rounded-[16px] bg-chip text-[15px] font-semibold">
+          Back to betslip
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export function CheckingStep({ opId, stake, available, onCheck, checking }: { opId: string; stake: string; available: string; onCheck: () => void; checking: boolean }) {
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-canvas">
+      <div className="px-5 pt-6 pb-3">
+        <motion.span animate={{ rotate: checking ? 360 : 0 }} transition={{ duration: 1, repeat: checking ? Infinity : 0, ease: 'linear' }} className="grid size-12 place-items-center rounded-full bg-sel text-sel-ink">
+          <Clock4 size={22} />
+        </motion.span>
+        <h2 className="mt-3 font-display text-[26px] leading-none font-[800] tracking-[-0.045em]" role="status">
+          Checking your bet
+        </h2>
+        <p className="mt-2 text-[14px] text-secondary">The connection dropped before we heard back. We’re checking whether this exact bet was accepted — it won’t be sent again.</p>
+      </div>
+      <div className="space-y-3 px-4">
+        <dl className="rounded-[22px] bg-surface p-5 text-[13.5px]">
+          <div className="flex justify-between py-1.5">
+            <dt className="text-secondary">Operation</dt>
+            <dd className="font-semibold tnum">{opId}</dd>
+          </div>
+          <div className="flex justify-between border-t border-line py-1.5">
+            <dt className="text-secondary">Stake in question</dt>
+            <dd className="font-semibold tnum">{fmtMoney(stake)}</dd>
+          </div>
+          <div className="flex justify-between border-t border-line py-1.5">
+            <dt className="text-secondary">Confirmed balance</dt>
+            <dd className="font-semibold tnum">{fmtMoney(available)}</dd>
+          </div>
+        </dl>
+        <p className="px-1 text-[12.5px] text-secondary">Until we know, new bets, deposits and withdrawals are paused. You can keep browsing.</p>
+      </div>
+      <div className="mt-auto border-t border-line bg-surface px-5 pt-4 pb-5">
+        <button onClick={onCheck} disabled={checking} className="h-14 w-full rounded-[18px] bg-ink text-[16px] font-semibold text-white disabled:opacity-60">
+          {checking ? 'Checking…' : 'Check now'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export function NotPlacedStep({ onBack }: { onBack: () => void }) {
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-canvas">
+      <div className="px-5 pt-6">
+        <span className="grid size-12 place-items-center rounded-full bg-void text-void-ink">
+          <ArrowLeft size={22} />
+        </span>
+        <h2 className="mt-3 font-display text-[26px] leading-none font-[800] tracking-[-0.045em]">Your bet wasn’t placed</h2>
+        <p className="mt-2 text-[14px] text-secondary">We checked: it was never accepted, so no money was taken. Your selections and stakes are still in the slip — place them again only if you want to.</p>
+      </div>
+      <div className="mt-auto border-t border-line bg-surface px-5 pt-4 pb-5">
+        <button onClick={onBack} className="h-14 w-full rounded-[18px] bg-ink text-[16px] font-semibold text-white">
+          Back to betslip
         </button>
       </div>
     </div>

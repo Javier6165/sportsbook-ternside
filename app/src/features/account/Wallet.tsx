@@ -40,7 +40,7 @@ function Deposit() {
   const blocked = s.restriction !== 'none'
   const amount = v ? D(v) : D(0)
   const over = amount.gt(r.left)
-  const valid = amount.gte(5) && !over && !blocked
+  const valid = amount.gte(5) && !over && !blocked && !s.pendingOp
   return (
     <section className="rounded-[26px] bg-surface p-5 @tab:p-6">
       <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ function Withdraw() {
   const now = useAccountNow()
   const [v, setV] = useState('')
   const amount = v ? D(v) : D(0)
-  const valid = amount.gte(1) && amount.lte(s.available) && s.restriction !== 'excluded'
+  const valid = amount.gte(1) && amount.lte(s.available) && s.restriction !== 'excluded' && !s.pendingOp
   return (
     <section className="rounded-[26px] bg-surface p-5 @tab:p-6">
       <div className="flex items-center gap-2">

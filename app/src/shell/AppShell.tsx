@@ -254,7 +254,7 @@ function MobileSlipSheet() {
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { s } = useStore()
+  const { s, d } = useStore()
   const closed = s.restriction === 'excluded'
   const rootRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
@@ -285,6 +285,11 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div className="sticky top-0 z-30 flex items-center justify-center gap-2 bg-ink px-4 py-2.5 text-center text-[13px] font-medium text-white">
                 You’re on a break until {new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(s.pausedUntil))}. Betting and deposits are off.
               </div>
+            )}
+            {s.pendingOp && !s.slipOpen && (
+              <button onClick={() => d({ type: 'slip', open: true })} className="sticky top-0 z-30 flex w-full items-center justify-center gap-2 bg-sel px-4 py-2.5 text-center text-[13px] font-semibold text-sel-ink">
+                <span className="size-2 animate-pulse rounded-full bg-sel-ink" /> Checking a bet ({s.pendingOp.opId}). New bets, deposits and withdrawals wait until we know. · Open
+              </button>
             )}
             {closed ? <AccountClosed /> : children}
             <div className="h-24 @desk:h-28" />

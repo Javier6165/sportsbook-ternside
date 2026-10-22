@@ -260,6 +260,19 @@ export function AppShell({ children }: { children: ReactNode }) {
   const mainRef = useRef<HTMLDivElement>(null)
   const loc = useLocation()
   const [search, setSearch] = useState(false)
+  // Return focus to whatever opened the betslip; Escape closes it.
+  const opener = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    if (s.slipOpen) {
+      opener.current = document.activeElement as HTMLElement
+      const f = (e: KeyboardEvent) => e.key === 'Escape' && d({ type: 'slip', open: false })
+      window.addEventListener('keydown', f)
+      setTimeout(() => rootRef.current?.querySelector<HTMLElement>('[role="dialog"][aria-label="Betslip"] button, [role="dialog"][aria-label="Betslip"] input')?.focus(), 350)
+      return () => window.removeEventListener('keydown', f)
+    }
+    if (opener.current && document.contains(opener.current)) opener.current.focus()
+    opener.current = null
+  }, [s.slipOpen, d])
   useEffect(() => {
     mainRef.current?.scrollTo({ top: 0 })
   }, [loc.pathname])

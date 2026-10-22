@@ -21,7 +21,7 @@ La demo se ejecuta con `npm --prefix app run dev`. La fuente está en `app/` y e
 | Búsqueda | Hecho: ⌘K con desambiguación (C21) y búsquedas recientes | botón Search |
 | Demo controls | Hecho: Fresh start, Bet placed, Live tracking (68′ → 72′ → corrección), Cash Out, Settled con void. Más Reset | botón «Scenes» |
 | Full / Mobile | Hecho: mismo árbol y misma sesión, iPhone 390×844, escenas al lado en pantallas anchas | dock de demo |
-| Tests | 22 tests de dominio en Vitest (`npm --prefix app test`) | `app/tests/domain.test.ts` |
+| Tests | 25 tests de dominio en Vitest (`npm --prefix app test`); escaneo axe (WCAG 2 A/AA) sin incidencias en 8 rutas; recorrido por teclado comprobado | `app/tests/`, `app/scripts/a11y.mjs` |
 
 ## 2. Cambios respecto a HANDOFF-01
 
@@ -47,18 +47,22 @@ La demo se ejecuta con `npm --prefix app run dev`. La fuente está en `app/` y e
 
 ## 3. Cobertura de tus casos
 
-**En la interfaz y en escenas:**
-- C01–C03, C05 (2.70 / £27, en escena) y C07 (aviso de cambio de cuota en directo + Accept).
-- C11 (corrección 2 → 1, en escena) y C12/C13 (Cash Out £8, neto −£2; el cambio de oferta pide confirmar otra vez).
-- C15–C17, C19/C21/C22, C26, C27, C37, C41–C43 y C45/C46.
-- C43: al pasar a directo se quitan los borradores prepartido del Builder.
+**En la interfaz y en escenas (Demo controls → Scenes):**
+- Colocación: C01–C03, C05 (2.70 / £27), C07 (escena «Price change at review»: 3.40 → 3.20, sin débito hasta confirmar), C09/C10 (escena «Checking your bet»: mismo ID de operación, saldo confirmado visible, acciones de dinero bloqueadas, rama aceptada o rechazada).
+- Directo: C11 (corrección 2 → 1), C28 (estadísticas con retraso: último dato, nunca cero), C42, C43 (al empezar, el borrador prepartido se conserva marcado como cerrado y no se puede colocar).
+- Liquidación: C30 (abandono: £18 solo con Over), C33 (reliquidación versionada con historial y un único ajuste), C23 (retirada en tenis → void).
+- Dinero y juego seguro: C12/C13 (Cash Out), C15–C17, C19, C29 (autoexclusión con apuesta abierta), C41.
+- Otros: C21, C22, C26, C27, C37, C45, C46.
 
-**Además, en tests:** C04, C06, C14, C30, C32, C38–C40 y C44.
+**Además, en tests (25 casos, Vitest):** C04, C06, C09, C10, C14, C30, C32, C38–C40, C43, C44.
 
-**Pendiente:**
-- C09/C10 (respuesta desconocida) y C33/C34 (reliquidación versionada).
-- C23/C24 (retirada en tenis, prórroga en basket, solo como escena), C28 (feed caído), C29/C35/C36 (exclusión con apuestas abiertas o con respuesta desconocida) y C20 (sesión caducada).
-- La lógica está pensada para añadirlos como escenas; los priorizaré en la siguiente ronda.
+**Pendiente o parcial:** C20 (sesión caducada), C24 como escena, C31, C34–C36 como escenas (la lógica de reducer las soporta) y C47/C48 (edición y conversión explícita de builders desde el betslip).
+
+## 3b. Banners rotatorios
+
+Petición de Javier: banner grande a ancho completo y rotatorio en la home y en las cabeceras de deporte y de Live. Para no romper el principio de no ser depredadores, **los banners no son promociones**: alternan partidos destacados (con su cuota principal) y banners de funciones (Explore outcomes, límites, Tune your feed), cada uno con una pequeña animación del producto funcionando. Para el case study es un buen contraste con los carruseles de boosts de la competencia.
+
+Imágenes provisionales: Unsplash por deporte (`IMAGES` / `imageFor()` en `catalog.ts`). En la fase de pulido se estudiarán animaciones de entrada más elaboradas para banners y directo.
 
 ## 4. Lo que te pedimos
 

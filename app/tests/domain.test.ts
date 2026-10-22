@@ -134,3 +134,33 @@ describe('Ledger: one debit, one terminal resolution', () => {
     expect(ex.withdrawals[0].amount).toBe('100.00')
   })
 })
+
+describe('R08 unknown response and C43 closed drafts', () => {
+  const g = { id: 'g9', eventId: 'football-02', type: 'single' as const, legs: [{ marketId: 'RESULT_90', marketName: 'Match result', selectionId: 'HOME', label: 'Eastford Rovers', odds: '1.80', period: '90' }], odds: '1.80', stake: '10' }
+  const [p] = planBets([g], 'singles', '', '2026-10-20T18:00:00Z')
+  const op = { opId: 'OP-1', bets: [p.bet], consumed: ['g9'], acca: false, at: '' }
+  it('C09 while unknown nothing is debited; recovering as accepted debits exactly once', () => {
+    const pending = reducer({ ...INITIAL_STATE, groups: [g] }, { type: 'pendingStart', op: { ...op, resolveAs: 'accepted' } })
+    expect(pending.available).toBe('100.00')
+    expect(pending.groups).toHaveLength(1)
+    const done = reducer(pending, { type: 'pendingResolve' })
+    expect(done.available).toBe('90.00')
+    expect(done.groups).toHaveLength(0)
+    expect(reducer(done, { type: 'pendingResolve' }).available).toBe('90.00')
+  })
+  it('C10 recovering as rejected debits nothing and keeps the draft', () => {
+    const pending = reducer({ ...INITIAL_STATE, groups: [g] }, { type: 'pendingStart', op: { ...op, resolveAs: 'rejected' } })
+    const done = reducer(pending, { type: 'pendingResolve' })
+    expect(done.available).toBe('100.00')
+    expect(done.groups).toHaveLength(1)
+    expect(done.bets.filter((b) => b.status === 'open')).toHaveLength(0)
+  })
+  it('C43 kick-off keeps a pre-match builder draft but marks it closed', async () => {
+    const { isClosedDraft } = await import('../src/state/store')
+    const b = { id: 'b1', eventId: 'football-01', type: 'builder' as const, legs: [], odds: '3.40', stake: '10' }
+    const live = reducer({ ...INITIAL_STATE, groups: [b] }, { type: 'f01', phase: 'live-68' })
+    expect(live.groups).toHaveLength(1)
+    expect(isClosedDraft(live.groups[0])).toBe(true)
+    reducer(live, { type: 'f01', phase: 'pre' })
+  })
+})

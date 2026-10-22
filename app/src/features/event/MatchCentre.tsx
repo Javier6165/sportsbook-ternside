@@ -283,7 +283,7 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
         </div>
         <p className="mt-2 text-[11.5px] text-white/50">What the prices imply right now — not a prediction.</p>
 
-        <div className="mt-6 hidden @desk:block">
+        <div className="mt-5 @desk:mt-6">
           <div className="mb-2 text-[12px] font-bold tracking-[.1em] text-white/50 uppercase">Latest</div>
           <ul className="space-y-1.5">
             <AnimatePresence initial={false}>
@@ -297,7 +297,7 @@ export function MatchCentre({ ev }: { ev: SportEvent }) {
                     initial={{ opacity: 0, x: 12 }}
                     animate={{ opacity: 1 - k * 0.2, x: 0 }}
                     exit={{ opacity: 0 }}
-                    className="flex items-center gap-2.5 rounded-[12px] bg-white/[.07] px-3 py-2 text-[13px]"
+                    className={clsx('items-center gap-2.5 rounded-[12px] bg-white/[.07] px-3 py-2 text-[13px]', k < 2 ? 'flex' : 'hidden @desk:flex')}
                   >
                     <span className="h-5 w-1 rounded-full" style={{ background: lighten(tColor(m.side), 80) }} />
                     <span className="font-semibold">{m.kind}</span>

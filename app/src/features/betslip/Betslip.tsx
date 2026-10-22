@@ -14,6 +14,8 @@ import { planBets, type AcceptedBet } from '../../domain/bets'
 import { EVENT_NOW } from '../../data/catalog'
 import { CheckingStep, DoneStep, NotPlacedStep, PlacingStep, PriceChangedStep, ReviewStep } from './Review'
 import { receiptId } from '../../domain/bets'
+import { groupOf, quoteFor } from '../../data/quotes'
+import { Layers as LayersIcon } from 'lucide-react'
 
 const ease = [0.16, 1, 0.3, 1] as const
 const money = (n: number) => fmtMoney(n.toFixed(2))
@@ -65,7 +67,9 @@ function SlipPass({ g }: { g: DraftGroup }) {
   const { tick } = useLiveClock()
   const ev = eventById(g.eventId)!
   const now = currentOdds(g, tick)
+  const { s } = useStore()
   const closed = isClosedDraft(g)
+  const overlap = g.legs.some((l) => s.groups.some((o) => o.id !== g.id && o.eventId === g.eventId && o.type !== g.type && o.legs.some((x) => x.selectionId === l.selectionId)))
   const changed = !closed && now !== g.odds
   const isBuilder = g.type === 'builder'
 
@@ -117,6 +121,7 @@ function SlipPass({ g }: { g: DraftGroup }) {
           <span className={clsx('font-display text-[22px] leading-none font-[760] tracking-[-0.03em] tnum', changed ? 'text-warn-ink' : 'text-ink')}>{fmtOdds(changed ? now : g.odds)}</span>
         </div>
 
+        {overlap && <p className="mt-2 text-[12px] font-medium text-warn-ink">{isBuilder ? 'One of these conditions' : `${g.legs[0].label}`} also appears in another bet in your slip. They’re separate bets with separate stakes.</p>}
         <AnimatePresence>
           {changed && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
@@ -154,6 +159,69 @@ function SlipPass({ g }: { g: DraftGroup }) {
         </Link>
       )}
     </motion.li>
+  )
+}
+
+const BUILDABLE = ['HOME', 'DRAW', 'AWAY', 'OVER_2_5', 'UNDER_2_5', 'PLAYER_2_SOT']
+
+/** C48 · Offer an explicit Bet Builder when 2–3 compatible singles share a builder match. */
+function ConvertOffer({ groups }: { groups: DraftGroup[] }) {
+  const { d } = useStore()
+  const [open, setOpen] = useState(false)
+  const byEvent = new Map<string, DraftGroup[]>()
+  for (const g of groups) {
+    if (g.type !== 'single' || g.live || !BUILDABLE.includes(g.legs[0].selectionId)) continue
+    const ev = eventById(g.eventId)
+    if (!ev?.builder || ev.status !== 'scheduled') continue
+    byEvent.set(g.eventId, [...(byEvent.get(g.eventId) ?? []), g])
+  }
+  const cand = [...byEvent.values()].find((gs) => gs.length >= 2)
+  if (!cand) return null
+  const ids = cand.map((g) => g.legs[0].selectionId)
+  const distinctGroups = new Set(ids.map(groupOf)).size === ids.length
+  const pick = cand.slice(0, 3)
+  const price = distinctGroups ? quoteFor(pick.map((g) => g.legs[0].selectionId)) : undefined
+  const ev = eventById(cand[0].eventId)!
+  return (
+    <div className="mb-3 rounded-[20px] border border-dashed border-sel-ink/40 bg-sel/60 p-4 text-[13px]">
+      <div className="flex items-start gap-2.5">
+        <LayersIcon size={17} className="mt-0.5 shrink-0 text-sel-ink" />
+        <div className="min-w-0 flex-1">
+          <div className="font-semibold text-sel-ink">{pick.length} picks from {ev.home.name.split(' ')[0]} v {ev.away.name.split(' ')[0]}</div>
+          <p className="mt-0.5 text-secondary">
+            {price ? 'You can combine them into one Bet Builder, priced together.' : 'Two of these are from the same market, so they can’t share a Bet Builder. They stay as separate singles.'}
+          </p>
+          {price && !open && (
+            <button onClick={() => setOpen(true)} className="mt-2 font-semibold text-sel-ink hover:underline">
+              Review as Bet Builder
+            </button>
+          )}
+        </div>
+      </div>
+      <AnimatePresence>
+        {open && price && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+            <div className="mt-3 rounded-[14px] bg-surface p-3.5">
+              <div className="flex items-baseline justify-between">
+                <span className="font-semibold">Bet Builder · one joint price</span>
+                <span className="font-display text-[20px] font-[780] tnum">{price}</span>
+              </div>
+              <p className="mt-1.5 text-[12px] text-secondary">
+                This replaces the {pick.length} singles above. All conditions must win. Your stake starts empty — separate stakes aren’t carried over or added up.
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <button onClick={() => setOpen(false)} className="h-10 rounded-[12px] bg-chip font-semibold">
+                  Keep singles
+                </button>
+                <button onClick={() => d({ type: 'convertToBuilder', groupIds: pick.map((g) => g.id), odds: price })} className="h-10 rounded-[12px] bg-ink font-semibold text-white">
+                  Use as Bet Builder
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
@@ -347,6 +415,8 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
         {n === 0 ? (
           <EmptySlip />
         ) : s.mode === 'singles' ? (
+          <>
+          <ConvertOffer groups={s.groups} />
           <ul className="space-y-3">
             <AnimatePresence initial={false} mode="popLayout">
               {s.groups.map((g) => (
@@ -354,6 +424,7 @@ export function Betslip({ onClose }: { onClose?: () => void }) {
               ))}
             </AnimatePresence>
           </ul>
+          </>
         ) : accaReason ? (
           <div className="rounded-[24px] bg-surface p-5 text-[14px] text-secondary">
             <div className="mb-1 font-display text-[18px] font-[720] tracking-[-0.03em] text-ink">Accumulator not available</div>

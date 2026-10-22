@@ -127,6 +127,7 @@ type Action =
   | { type: 'patch'; patch: Partial<State> }
   | { type: 'pendingStart'; op: NonNullable<State['pendingOp']> }
   | { type: 'pendingResolve' }
+  | { type: 'convertToBuilder'; groupIds: string[]; odds: string }
 
 let seq = 0
 const newId = () => `draft-${Date.now().toString(36)}-${(seq++).toString(36)}`
@@ -273,6 +274,16 @@ export function reducer(s: State, a: Action): State {
         withdrawals: D(s.available).gt(0) ? [{ id: `excl-ret`, amount: s.available, at: a.at, status: 'pending' }, ...s.withdrawals] : s.withdrawals,
         available: '0.00',
       }
+    case 'convertToBuilder': {
+      // C48: explicit replacement; the new builder starts with an empty stake (nothing inherited).
+      const picked = s.groups.filter((g) => a.groupIds.includes(g.id))
+      if (picked.length < 2) return s
+      const at = s.groups.findIndex((g) => g.id === picked[0].id)
+      const builder: DraftGroup = { id: newId(), eventId: picked[0].eventId, type: 'builder', legs: picked.map((g) => g.legs[0]), odds: a.odds, stake: '' }
+      const rest = s.groups.filter((g) => !a.groupIds.includes(g.id))
+      rest.splice(Math.min(at, rest.length), 0, builder)
+      return { ...s, groups: rest }
+    }
     case 'patch':
       return { ...s, ...a.patch }
     case 'pendingStart':

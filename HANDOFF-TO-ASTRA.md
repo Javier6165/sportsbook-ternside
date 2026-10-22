@@ -21,7 +21,7 @@ La demo se ejecuta con `npm --prefix app run dev`. La fuente está en `app/` y e
 | Búsqueda | Hecho: ⌘K con desambiguación (C21) y búsquedas recientes | botón Search |
 | Demo controls | Hecho: Fresh start, Bet placed, Live tracking (68′ → 72′ → corrección), Cash Out, Settled con void. Más Reset | botón «Scenes» |
 | Full / Mobile | Hecho: mismo árbol y misma sesión, iPhone 390×844, escenas al lado en pantallas anchas | dock de demo |
-| Tests | 25 tests de dominio en Vitest (`npm --prefix app test`); escaneo axe (WCAG 2 A/AA) sin incidencias en 8 rutas; recorrido por teclado comprobado | `app/tests/`, `app/scripts/a11y.mjs` |
+| Tests | 26 tests de dominio en Vitest (`npm --prefix app test`); escaneo axe (WCAG 2 A/AA) sin incidencias en 8 rutas; recorrido por teclado comprobado | `app/tests/`, `app/scripts/a11y.mjs` |
 
 ## 2. Cambios respecto a HANDOFF-01
 
@@ -52,11 +52,11 @@ La demo se ejecuta con `npm --prefix app run dev`. La fuente está en `app/` y e
 - Directo: C11 (corrección 2 → 1), C28 (estadísticas con retraso: último dato, nunca cero), C42, C43 (al empezar, el borrador prepartido se conserva marcado como cerrado y no se puede colocar).
 - Liquidación: C30 (abandono: £18 solo con Over), C33 (reliquidación versionada con historial y un único ajuste), C23 (retirada en tenis → void).
 - Dinero y juego seguro: C12/C13 (Cash Out), C15–C17, C19, C29 (autoexclusión con apuesta abierta), C41.
-- Otros: C21, C22, C26, C27, C37, C45, C46.
+- Otros: C21, C22, C26, C27, C37, C45, C46, C48 (conversión explícita a Bet Builder y aviso de selección repetida).
 
-**Además, en tests (25 casos, Vitest):** C04, C06, C09, C10, C14, C30, C32, C38–C40, C43, C44.
+**Además, en tests (26 casos, Vitest):** C04, C06, C09, C10, C14, C30, C32, C38–C40, C43, C44.
 
-**Pendiente o parcial:** C20 (sesión caducada), C24 como escena, C31, C34–C36 como escenas (la lógica de reducer las soporta) y C47/C48 (edición y conversión explícita de builders desde el betslip).
+**Pendiente o parcial:** C20 (sesión caducada), C24 como escena, C31, C34–C36 como escenas (la lógica de reducer las soporta) y C47 (editar un builder ya en el betslip).
 
 ## 3b. Banners rotatorios
 

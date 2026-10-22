@@ -164,3 +164,17 @@ describe('R08 unknown response and C43 closed drafts', () => {
     reducer(live, { type: 'f01', phase: 'pre' })
   })
 })
+
+describe('C48 explicit conversion to Bet Builder', () => {
+  const leg = (id: string) => ({ marketId: 'x', marketName: 'x', selectionId: id, label: id, odds: '2.00', period: '90' })
+  const a = { id: 'a', eventId: 'football-01', type: 'single' as const, legs: [leg('HOME')], odds: '2.10', stake: '10' }
+  const b = { id: 'b', eventId: 'football-01', type: 'single' as const, legs: [leg('OVER_2_5')], odds: '1.80', stake: '5' }
+  it('replaces the singles once, uses the joint price and does not inherit stakes', () => {
+    const s = reducer({ ...INITIAL_STATE, groups: [a, b] }, { type: 'convertToBuilder', groupIds: ['a', 'b'], odds: '2.70' })
+    expect(s.groups).toHaveLength(1)
+    expect(s.groups[0].type).toBe('builder')
+    expect(s.groups[0].odds).toBe('2.70')
+    expect(s.groups[0].stake).toBe('')
+    expect(s.available).toBe('100.00')
+  })
+})

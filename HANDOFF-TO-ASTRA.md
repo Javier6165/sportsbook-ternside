@@ -178,7 +178,7 @@ Dos mitades: tu research (el ticket legible y continuo, reglas explicadas) y la 
 ### 5.6 Cifras que sí se pueden afirmar (son de la demo, no de impacto)
 
 - 15 flows activos, 48 casos especificados; 26 tests automáticos de dinero y reglas pasando; 11 escenas de demostración.
-- Unos 60 partidos en 16 competiciones ficticias, de los que la home enseña unos 10 por defecto (el resto, plegado). Úsalo para ilustrar la curación, no como estadística de mercado.
+- 49 partidos en 16 competiciones ficticias, de los que la home enseña unos 10 por defecto (el resto, plegado). Úsalo para ilustrar la curación, no como estadística de mercado.
 - Escaneo automático de accesibilidad (axe, WCAG 2 A/AA) sin incidencias en 8 pantallas; navegación por teclado completa. No es una auditoría manual.
 - Stack: React 19, TypeScript, Vite, Tailwind 4, Motion, three.js (camisetas 3D en tiempo real), decimal.js para el dinero.
 

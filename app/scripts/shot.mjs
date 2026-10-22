@@ -2,7 +2,7 @@
 import { chromium } from 'playwright'
 const [name, w = '1440', h = '900', hash = '#/sports', view = 'full', actions = '[]'] = process.argv.slice(2)
 const out = process.env.SHOT_DIR || '/private/tmp/claude-501/-Users-javierortiz-Documents-Vibecoding-Sportsbook-Portfolio/caebd44d-a842-4a3a-b712-03984b9229b2/scratchpad'
-const b = await chromium.launch()
+const b = await chromium.launch({ args: ['--use-gl=angle', '--enable-webgl', '--ignore-gpu-blocklist'] })
 const p = await b.newPage({ viewport: { width: +w, height: +h }, deviceScaleFactor: 2 })
 await p.addInitScript((v) => {
   localStorage.setItem('ternside.demo.v3', JSON.stringify({ v: 3, state: { view: v } }))

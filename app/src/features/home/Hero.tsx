@@ -10,6 +10,10 @@ import { useLiveClock, useLiveEvent } from '../../state/store'
 import { Crest } from '../../ui/Crest'
 import { LiveBadge } from '../../ui/LiveBadge'
 import { OddsButton } from '../../ui/OddsButton'
+import { Reveal } from '../../ui/Reveal'
+import { lazy, Suspense } from 'react'
+
+const Kits3D = lazy(() => import('../../ui/Kit3D'))
 
 const ease = [0.16, 1, 0.3, 1] as const
 const first = shortName
@@ -75,8 +79,17 @@ export function Hero({ ev, reason, compact }: { ev: SportEvent; reason: Reason |
       {/* Colour of the game: home colour from the left, away colour from the right */}
       <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: `linear-gradient(100deg, color-mix(in oklab, ${hc} 92%, #05070d) 0%, color-mix(in oklab, ${hc} 70%, transparent) 38%, transparent 62%, color-mix(in oklab, ${ac} 55%, transparent) 100%)` }} />
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-[#05070d]/85 via-[#05070d]/15 to-[#05070d]/30" />
+      {/* Colour sweep on entry */}
+      <motion.div aria-hidden="true" className="absolute inset-0 -z-10" initial={{ opacity: 0.9, x: '-30%' }} animate={{ opacity: 0, x: '30%' }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }} style={{ background: `linear-gradient(100deg, transparent, ${hc} 45%, ${ac} 70%, transparent)` }} />
+      {ev.home.crest && ev.away.crest && (
+        <div aria-hidden="true" className="pointer-events-none absolute top-[13%] right-[-10%] -z-[5] h-[30%] w-[82%] @tab:top-[3%] @tab:right-[1%] @tab:h-[60%] @tab:w-[50%] @desk:right-[2%] @desk:h-[62%] @desk:w-[44%]">
+          <Suspense fallback={null}>
+            <Kits3D home={ev.home} away={ev.away} kind={ev.sport === 'basketball' ? 'vest' : 'shirt'} />
+          </Suspense>
+        </div>
+      )}
 
-      <div className={clsx('mx-auto flex h-full max-w-[1220px] flex-col px-4 pt-6 pb-20 @tab:px-8 @tab:pt-9 @tab:pb-24', compact ? 'min-h-[460px] @tab:min-h-[480px]' : 'min-h-[580px] @tab:min-h-[620px]')}>
+      <div className={clsx('mx-auto flex h-full max-w-[1220px] flex-col px-4 pt-6 pb-20 @tab:px-8 @tab:pt-9 @tab:pb-24', compact ? 'min-h-[600px] @tab:min-h-[480px]' : 'min-h-[700px] @tab:min-h-[620px]')}>
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-white/[.16] px-3 py-1.5 text-[12.5px] font-semibold backdrop-blur-md">{comp.name}</span>
           <span className="text-[13px] font-medium text-white/75">{ev.stage}</span>
@@ -91,17 +104,15 @@ export function Hero({ ev, reason, compact }: { ev: SportEvent; reason: Reason |
           <div className="min-w-0">
             <h2 className="font-display leading-[.88] font-[800] tracking-[-0.055em]">
               {[ev.home, ev.away].map((t, i) => (
-                <motion.span
-                  key={t.id}
-                  initial={{ opacity: 0, y: 26 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.85, delay: 0.1 + i * 0.1, ease }}
-                  className="flex items-center gap-3 text-[clamp(48px,14cqi,112px)] @desk:text-[clamp(56px,6.2cqi,108px)]"
-                >
-                  {i === 1 && <span className="text-white/45">v</span>}
-                  {first(t.name)}
-                  {t.crest && <Crest team={t} size={56} className="hidden shrink-0 self-center drop-shadow-[0_10px_20px_rgba(0,0,0,.45)] @tab:block" />}
-                </motion.span>
+                <span key={t.id} className="flex items-center gap-3 text-[clamp(48px,14cqi,112px)] @desk:text-[clamp(56px,6.2cqi,108px)]">
+                  {i === 1 && <Reveal text="v" delay={0.35} className="text-white/45" />}
+                  <Reveal text={first(t.name)} delay={0.15 + i * 0.22} />
+                  {t.crest && (
+                    <motion.span initial={{ scale: 0, rotate: -40 }} animate={{ scale: 1, rotate: 0 }} transition={{ delay: 0.6 + i * 0.15, type: 'spring', stiffness: 260, damping: 14 }} className="hidden shrink-0 self-center @tab:block">
+                      <Crest team={t} size={56} className="drop-shadow-[0_10px_20px_rgba(0,0,0,.45)]" />
+                    </motion.span>
+                  )}
+                </span>
               ))}
               <span className="sr-only">
                 {' '}

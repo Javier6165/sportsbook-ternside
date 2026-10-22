@@ -6,7 +6,7 @@ La demo se ejecuta con `npm --prefix app run dev`. La fuente está en `app/` y e
 
 ## 0. Estado a 22-10-2026 · primera versión publicada
 
-- **Netlify:** https://ternside-sportsbook.netlify.app (proyecto `ternside-sportsbook`), **pública**. Está conectada a GitHub: **cada push a `main` de `Javier6165/sportsbook-ternside` publica una versión nueva automáticamente** (build definido en `netlify.toml`: base `app`, `npm ci && npm run build`, publica `dist`). Antes de hacer push, comprueba que `npm --prefix app run build` y `npm --prefix app test` pasan; si rompes el build, la web se queda en la versión anterior.
+- **Netlify:** https://ternside-sportsbook.netlify.app (proyecto `ternside-sportsbook`), **pública**. Está conectada a GitHub: **cada push a `main` de `Javier6165/sportsbook-ternside` publica una versión nueva automáticamente** (build definido en `netlify.toml`: base `app`, `npm ci && npm run build`, publica `dist`). **Los deploys de Netlify son limitados: haz commits en local y solo haz push cuando haya un cambio relevante, agrupando cambios pequeños y de documentación.** Antes de hacer push, comprueba que `npm --prefix app run build` y `npm --prefix app test` pasan; si rompes el build, la web se queda en la versión anterior.
 - **Última ronda (pulido visual):**
   - Camisetas 3D en tiempo real (three.js, `app/src/ui/Kit3D.tsx`) generadas con los colores y el patrón de cada equipo, en los banners y en la cabecera del partido. No necesitan imágenes.
   - Titulares que se revelan letra a letra (`ui/Reveal.tsx`).

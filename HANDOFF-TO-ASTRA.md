@@ -4,6 +4,17 @@
 
 La demo se ejecuta con `npm --prefix app run dev`. La fuente está en `app/` y el repositorio en GitHub es `Javier6165/sportsbook-ternside`.
 
+## 0. Estado a 22-10-2026 · primera versión publicada
+
+- **Netlify:** https://ternside-sportsbook.netlify.app (proyecto `ternside-sportsbook`). Se construye desde `netlify.toml` en la raíz (base `app`, `npm ci && npm run build`, publica `dist`). Ahora mismo pide el login de equipo de Netlify; Javier decide cuándo se abre al público.
+- **Última ronda (pulido visual):**
+  - Camisetas 3D en tiempo real (three.js, `app/src/ui/Kit3D.tsx`) generadas con los colores y el patrón de cada equipo, en los banners y en la cabecera del partido. No necesitan imágenes.
+  - Titulares que se revelan letra a letra (`ui/Reveal.tsx`).
+  - Banners rotatorios con cortinilla.
+  - Campo del directo que se levanta y dibuja sus líneas, con estela del balón y ondas en los momentos clave.
+  - Tarjetas con inclinación y foco de luz (`ui/Tilt.tsx`), onda en las cuotas, partículas en favoritos y transiciones entre páginas.
+- **Tu siguiente tarea principal son las imágenes de la sección 4.1.** Lo que generes sustituye a las fotos provisionales de Unsplash.
+
 ## 1. Qué existe ya
 
 | Área | Estado | Dónde mirarlo |
@@ -66,16 +77,28 @@ Imágenes provisionales: Unsplash por deporte (`IMAGES` / `imageFor()` en `catal
 
 ## 4. Lo que te pedimos
 
-### 4.1 Imágenes (cuando puedas)
+### 4.1 Imágenes · prioridad alta
 
-Ahora hay fotos provisionales de Unsplash enlazadas en directo (`IMAGES` en `catalog.ts`). Los huecos están marcados con `data-asset-slot`.
+Ahora hay fotos provisionales de Unsplash enlazadas en directo (`IMAGES` e `imageFor()` en `app/src/data/catalog.ts`). Javier dice que esto se te da muy bien: genera las imágenes y **déjalas en `app/public/images/`** con los nombres de la tabla. Avísame en tu nota de vuelta y yo las conecto (o cámbialo tú en `catalog.ts`, sustituyendo la URL de Unsplash por `./images/<nombre>`).
 
-| Slot | Uso | Especificación |
+**Reglas para todas:**
+- Nada real: ni escudos, ni patrocinadores, ni camisetas, ni caras reconocibles, ni estadios identificables.
+- Ambiente de noche y luz de focos, con buena profundidad.
+- Formato WebP o JPG, calidad alta, como máximo unos 500 KB cada una.
+- La interfaz las desenfoca ligeramente (`blur 3px`) y les pone encima los colores de los dos equipos, de lado a lado. Por eso deben funcionar oscuras y poco detalladas en el tercio izquierdo, donde van los titulares enormes, y con la acción o los focos en el tercio derecho, donde flotan las camisetas 3D.
+
+| Archivo | Dónde se ve | Especificación |
 | --- | --- | --- |
-| `hero-matchday` | Foto bajo el partido destacado y la cabecera del partido | 2400×1100, estadio de noche con focos y público, **sin logos, patrocinadores ni camisetas reales**. Se verá desenfocada y teñida (azul Northbridge a la izquierda, rojo Southport a la derecha); el 60 % izquierdo debe ser tranquilo |
-| `live-video` (nuevo, opcional) | Fondo en bucle del match centre | 8–12 s en bucle, 1920×1080, plano general de estadio de noche, oscuro, sin marcas |
-| `player-costa` | Jugador ficticio para la tarjeta del Builder y las stats | Recorte de cintura arriba, PNG transparente de unos 1200×1500, camiseta de rayas navy y blanco sin escudo |
-| `og-share` | Vista previa del enlace de Netlify y del case study | 1200×630, logotipo «Ternside.» y un pase sobre un campo de colores |
+| `hero-football-01.webp` | Banner del partido destacado (Northbridge FC v Southport Athletic) y su cabecera | 2400×1100. Estadio grande de noche, gradas llenas desenfocadas, focos encendidos arriba a la derecha, césped visible abajo. Sin jugadores en primer plano |
+| `hero-football-live.webp` | Banners de partidos de fútbol en directo | 2400×1100. Misma estética pero «en juego»: tensión, bengalas de humo de color neutro, focos intensos, jugadores pequeños y desenfocados al fondo |
+| `hero-football-generic.webp` | Resto de partidos de fútbol | 2400×1100. Campo vacío con las luces encendidas antes del partido, nebulosa ligera |
+| `hero-tennis.webp` | Banners y cabeceras de tenis | 2400×1100. Pista dura azul de noche vista en picado o 3/4, focos y grada oscura. Sin jugadores reconocibles |
+| `hero-basketball.webp` | Banners y cabeceras de baloncesto | 2400×1100. Pabellón lleno con luces de marcador y canasta desenfocadas, parquet brillante |
+| `player-costa.png` | Tarjeta del Bet Builder y estadísticas de Daniel Costa (opcional) | Unos 1200×1500, PNG con fondo transparente. Jugador ficticio de cintura arriba con camiseta de rayas verticales navy (#13204A) y blanco, sin escudo ni números. Pose de celebración contenida |
+| `og-share.png` | Vista previa del enlace (Netlify, LinkedIn, case study) | 1200×630. Logotipo «Ternside.» en Inter Tight Extra Bold con el punto en cobalto (#2948FF), sobre un campo con el degradado navy (#13204A) → rojo (#C8102E). A la derecha, un pase de apuesta (ticket con troquel) con «Bet Builder 3.40». Puedes usar una captura de la demo como base |
+| `live-loop.mp4` (opcional) | Fondo del match centre en directo | 8–12 s en bucle perfecto, 1920×1080, H.264 de unos 3 MB como máximo. Gradas y focos de noche con movimiento lento de cámara, muy oscuro |
+
+**Para el case study** (no van en la app, pero ayudan mucho): 3–4 mockups de la demo en dispositivos (iPhone y portátil) sobre fondo neutro, a partir de capturas de https://ternside-sportsbook.netlify.app o de la demo en local. Déjalos en `Astra Research/case-study/assets/`.
 
 ### 4.2 Research para el case study
 

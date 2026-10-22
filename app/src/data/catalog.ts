@@ -481,6 +481,38 @@ const CORE_EVENTS: SportEvent[] = [
 
 export const EVENTS: SportEvent[] = [...CORE_EVENTS, ...buildExtraEvents()]
 
+// Secondary-sport depth: a few well-understood markets per match, each with its own rule.
+const tennisExtras = (a: number): Market[] => {
+  const fav = a < 2
+  return [
+    { id: 'SET_BETTING', name: 'Set betting', period: 'Match must complete', selections: [
+      { id: 'SB_20', label: 'Home 2–0', odds: (fav ? 2.6 : 4.5).toFixed(2) },
+      { id: 'SB_21', label: 'Home 2–1', odds: (fav ? 4.0 : 5.0).toFixed(2) },
+      { id: 'SB_12', label: 'Away 2–1', odds: (fav ? 5.5 : 4.0).toFixed(2) },
+      { id: 'SB_02', label: 'Away 2–0', odds: (fav ? 4.75 : 2.7).toFixed(2) },
+    ] },
+    { id: 'TOTAL_GAMES', name: 'Total games 22.5', period: 'Match must complete', selections: [
+      { id: 'TG_O', label: 'Over 22.5', odds: '1.95' },
+      { id: 'TG_U', label: 'Under 22.5', odds: '1.85' },
+    ] },
+  ]
+}
+const basketExtras = (): Market[] => [
+  { id: 'HANDICAP', name: 'Handicap −4.5', period: 'Includes overtime', selections: [
+    { id: 'H_HOME', label: 'Home −4.5', odds: '1.90' },
+    { id: 'H_AWAY', label: 'Away +4.5', odds: '1.90' },
+  ] },
+  { id: 'TOTAL_POINTS', name: 'Total points 162.5', period: 'Includes overtime', selections: [
+    { id: 'TP_O', label: 'Over 162.5', odds: '1.87' },
+    { id: 'TP_U', label: 'Under 162.5', odds: '1.93' },
+  ] },
+]
+for (const e of CORE_EVENTS) {
+  if (e.status !== 'scheduled') continue
+  if (e.sport === 'tennis') e.markets.push(...tennisExtras(Number(e.markets[0].selections[0].odds)).map((m) => ({ ...m, selections: m.selections.map((x) => ({ ...x, label: x.label.replace('Home', shortName(e.home.name)).replace('Away', shortName(e.away.name)) })) })))
+  if (e.sport === 'basketball') e.markets.push(...basketExtras().map((m) => ({ ...m, selections: m.selections.map((x) => ({ ...x, label: x.label.replace('Home', shortName(e.home.name)).replace('Away', shortName(e.away.name)) })) })))
+}
+
 const POPULAR = ['football-01', 'football-cc-02', 'football-02', 'football-03', 'tennis-01', 'basketball-01', 'football-ib-live', 'football-cc-live', 'tennis-live']
 EVENTS.forEach((e) => (e.popular = POPULAR.includes(e.id)))
 

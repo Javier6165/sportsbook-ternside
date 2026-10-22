@@ -17,7 +17,7 @@ import { LiveBadge } from '../../ui/LiveBadge'
 import { LiveStory, PreMatchStats } from './StatsViews'
 
 const ease = [0.16, 1, 0.3, 1] as const
-const POPULAR_IDS = ['RESULT_90', 'WINNER', 'TOTAL_2_5_90', 'PLAYER_SOT_90', 'BTTS_90']
+const POPULAR_IDS = ['RESULT_90', 'WINNER', 'TOTAL_2_5_90', 'PLAYER_SOT_90', 'BTTS_90', 'SET_BETTING', 'HANDICAP']
 
 function Countdown({ iso }: { iso: string }) {
   const { elapsed } = useLiveClock()
@@ -140,7 +140,7 @@ function MarketCard({ ev, m, prices, i }: { ev: SportEvent; m: Market; prices?: 
   const dark = false
   const closed = ev.status === 'finished' || (ev.status === 'live' && m.id !== 'RESULT_90' && m.id !== 'WINNER')
   const n = m.selections.length
-  const cols = n === 3 ? 'grid-cols-3' : n === 2 ? 'grid-cols-2' : n === 1 ? 'grid-cols-1' : 'grid-cols-2 @tab:grid-cols-3'
+  const cols = n === 3 ? 'grid-cols-3' : n === 2 ? 'grid-cols-2' : n === 1 ? 'grid-cols-1' : n === 4 ? 'grid-cols-2 @tab:grid-cols-4' : 'grid-cols-2 @tab:grid-cols-3'
   return (
     <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 6) * 0.04, duration: 0.5, ease }} className={clsx('rounded-[24px] p-5', dark ? 'bg-white/[.05] ring-1 ring-white/[.06]' : 'bg-surface')}>
       <div className="flex items-center gap-2">
@@ -215,7 +215,7 @@ function Markets({ ev }: { ev: SportEvent }) {
         <>
           <button onClick={() => setMore((x) => !x)} aria-expanded={more} className="flex w-full items-center justify-between rounded-[24px] bg-surface px-5 py-4 text-left">
             <span>
-              <span className="block font-display text-[18px] font-[740] tracking-[-0.03em]">{more ? 'Fewer markets' : `${rest.length} more markets`}</span>
+              <span className="block font-display text-[18px] font-[740] tracking-[-0.03em]">{more ? 'Fewer markets' : `${rest.length} more ${rest.length === 1 ? 'market' : 'markets'}`}</span>
               <span className="block text-[13px] text-secondary">{rest.map((m) => m.name).join(' · ')}</span>
             </span>
             <motion.span animate={{ rotate: more ? 180 : 0 }} className="grid size-9 place-items-center rounded-full bg-chip">

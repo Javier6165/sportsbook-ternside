@@ -54,6 +54,10 @@ export const MARKET_RULES: Record<string, string> = {
     'Daniel Costa has to take part — even as a late sub. If he doesn’t play at all, this is void: a single returns your stake; in a Bet Builder the other conditions carry on at their archived price. Only shots on target count.',
   ANYTIME_SCORER_90: 'Your player must score in 90 minutes plus stoppage time. If he doesn’t take part, it’s void. Own goals don’t count.',
   CORRECT_SCORE_90: 'The exact score after 90 minutes plus stoppage time.',
+  SET_BETTING: 'The exact score in sets. The match must be completed; a retirement or walkover makes it void.',
+  TOTAL_GAMES: 'Games won by both players across the whole match. A tie-break counts as one game. The match must be completed.',
+  HANDICAP: 'Add or subtract the handicap from the final score, including overtime. Home −4.5 needs a win by 5 or more.',
+  TOTAL_POINTS: 'Points scored by both teams, including overtime. Over needs 163 or more.',
   WINNER_TENNIS: 'The match must be completed. A retirement, disqualification or walkover makes it void and your stake comes back.',
   WINNER_BASKETBALL: 'Includes overtime. If the game is cancelled for good, it’s void.',
 }

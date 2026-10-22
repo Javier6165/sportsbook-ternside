@@ -506,8 +506,29 @@ export const eventById = (id: string) => EVENTS.find((e) => e.id === id)
 export const competitionById = (id: string) => COMPETITIONS.find((c) => c.id === id)!
 
 /** Placeholder imagery (Unsplash, hotlinked) until Astra's art lands. */
+const U = (id: string) => `https://images.unsplash.com/photo-${id}?w=2400&q=80&auto=format&fit=crop`
 export const IMAGES = {
-  heroNight: 'https://images.unsplash.com/photo-1706675780107-7c43cc487928?w=2400&q=80&auto=format&fit=crop',
+  heroNight: U('1706675780107-7c43cc487928'),
+  stadiumCrowd: U('1762013315117-1c8005ad2b41'),
+  pitchLights: U('1676746424139-77f8bd8922a8'),
+  tennisNight: U('1641576733595-34f6488653fa'),
+  basketArena: U('1771882856158-c8e083134ee3'),
+}
+
+/** Placeholder imagery per event until Astra's art lands. */
+export function imageFor(ev: SportEvent) {
+  if (ev.id === 'football-01') return IMAGES.heroNight
+  if (ev.sport === 'tennis') return IMAGES.tennisNight
+  if (ev.sport === 'basketball') return IMAGES.basketArena
+  return ev.status === 'live' ? IMAGES.stadiumCrowd : IMAGES.pitchLights
+}
+
+/** Display name for big type: "Northbridge" for teams, "Lindqvist" for "A. Lindqvist". */
+export function shortName(n: string) {
+  const w = n.split(' ')
+  if (w[0].endsWith('.')) return w[w.length - 1]
+  if (w.length > 1 && /^[A-Z]{2,3}$/.test(w[0])) return w[1]
+  return w[0]
 }
 
 /**

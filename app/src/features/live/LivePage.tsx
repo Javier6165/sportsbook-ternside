@@ -1,3 +1,4 @@
+import { shortName } from '../../data/catalog'
 import clsx from 'clsx'
 import { motion } from 'motion/react'
 import { useState } from 'react'
@@ -8,6 +9,8 @@ import { SportIcon } from '../../ui/SportIcon'
 import { LiveBadge } from '../../ui/LiveBadge'
 import { LiveCard } from '../home/LiveNow'
 import { PickCard } from '../home/Picks'
+import { Hero } from '../home/Hero'
+import { HeroCarousel } from '../home/HeroCarousel'
 
 export function LivePage() {
   const { s } = useStore()
@@ -30,6 +33,21 @@ export function LivePage() {
           </h1>
           <p className="mt-2 text-[15.5px] text-secondary">Every score here is an observation. Bets settle on the official result.</p>
         </motion.header>
+      </div>
+
+      {live.length > 0 && (
+        <div className="mt-6 @tab:px-8">
+          <div className="mx-auto max-w-[1600px] overflow-hidden @tab:rounded-[32px]">
+            <HeroCarousel
+              key={sport}
+              label="Live highlights"
+              slides={[...mine, ...others].slice(0, 3).map((e) => ({ id: e.id, label: `${shortName(e.home.name)} v ${shortName(e.away.name)}`, node: <Hero ev={e} reason={reasonFor(e, s.prefs)} compact /> }))}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="mx-auto max-w-[1220px] px-4 @tab:px-8">
 
         <div className="no-scrollbar -mx-4 mt-6 flex gap-2 overflow-x-auto px-4 @tab:mx-0 @tab:px-0">
           {[{ id: 'all' as const, name: 'All sports' }, ...SPORTS].map((x) => (

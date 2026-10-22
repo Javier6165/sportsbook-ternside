@@ -1,3 +1,4 @@
+import { shortName } from '../../data/catalog'
 import { ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
@@ -6,6 +7,8 @@ import { buildFeed, reasonFor } from '../../lib/feed'
 import { useStore } from '../../state/store'
 import { BuilderRow } from './BuilderRow'
 import { Hero } from './Hero'
+import { HeroCarousel, type Slide } from './HeroCarousel'
+import { FeatureSlide } from './FeatureSlide'
 import { SportsBar } from '../../shell/SportsBar'
 import { LiveNow } from './LiveNow'
 import { EverythingElse, Picks } from './Picks'
@@ -38,6 +41,13 @@ export function Home() {
   const feed = useMemo(() => buildFeed(s.prefs), [s.prefs])
   const reason = reasonFor(feed.featured, s.prefs)
   const teamPlaying = feed.featured.home.id === 'northbridge' || reason?.kind === 'team'
+  const second = feed.liveMine[0] ?? feed.picks[0]?.e
+  const slides: Slide[] = [
+    { id: feed.featured.id, label: `${shortName(feed.featured.home.name)} v ${shortName(feed.featured.away.name)}`, node: <Hero ev={feed.featured} reason={reason} /> },
+    ...(second ? [{ id: second.id, label: second.status === 'live' ? `Live · ${shortName(second.home.name)} v ${shortName(second.away.name)}` : `${shortName(second.home.name)} v ${shortName(second.away.name)}`, node: <Hero ev={second} reason={reasonFor(second, s.prefs)} /> }] : []),
+    { id: 'f-explore', label: 'Explore outcomes', node: <FeatureSlide kind="explore" /> },
+    { id: 'f-limits', label: 'Your limits', node: <FeatureSlide kind="limits" /> },
+  ]
 
   return (
     <>
@@ -66,7 +76,7 @@ export function Home() {
 
       <div className="@tab:px-8">
         <div className="mx-auto max-w-[1600px] overflow-hidden @tab:rounded-[32px]">
-          <Hero ev={feed.featured} reason={reason} />
+          <HeroCarousel slides={slides} label="Featured" />
         </div>
       </div>
 

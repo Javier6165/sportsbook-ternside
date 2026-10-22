@@ -1,3 +1,4 @@
+import { shortName } from '../../data/catalog'
 import clsx from 'clsx'
 import { motion } from 'motion/react'
 import { Link, useParams, useSearchParams } from 'react-router'
@@ -11,6 +12,9 @@ import { Footer } from '../home/Home'
 import { LiveCard } from '../home/LiveNow'
 import { CompetitionFold, PickCard } from '../home/Picks'
 import { NotFound } from '../NotFound'
+import { Hero } from '../home/Hero'
+import { HeroCarousel, type Slide } from '../home/HeroCarousel'
+import { FeatureSlide } from '../home/FeatureSlide'
 
 const byTime = (a: SportEvent, b: SportEvent) => a.startsAt.localeCompare(b.startsAt)
 
@@ -41,6 +45,11 @@ export function SportPage() {
   const groups = comps.map((c) => ({ c, evs: scheduled.filter((e) => e.competitionId === c.id && !shown.has(e.id)) })).filter((g) => g.evs.length && (!comp || g.c.id === comp.id))
 
   const title = team ? team.name : comp ? comp.name : sport.name
+  const bannerEvents = [...live.slice(0, 1), ...highlights.slice(0, 2).map((h) => h.e)]
+  const slides: Slide[] = [
+    ...bannerEvents.map((e) => ({ id: e.id, label: `${e.status === 'live' ? 'Live · ' : ''}${shortName(e.home.name)} v ${shortName(e.away.name)}`, node: <Hero ev={e} reason={reasonFor(e, s.prefs)} compact /> })),
+    ...(sport.id === 'football' && !comp && !team ? [{ id: 'f-explore', label: 'Explore outcomes', node: <FeatureSlide kind="explore" /> }] : []),
+  ]
 
   return (
     <>
@@ -84,6 +93,17 @@ export function SportPage() {
           </div>
         )}
 
+      </div>
+
+      {slides.length > 0 && (
+        <div className="mt-6 @tab:px-8">
+          <div className="mx-auto max-w-[1600px] overflow-hidden @tab:rounded-[32px]">
+            <HeroCarousel key={`${sport.id}-${comp?.id}-${team?.id}`} slides={slides} label={`${title} featured`} />
+          </div>
+        </div>
+      )}
+
+      <div className="mx-auto max-w-[1220px] px-4 @tab:px-8">
         {live.length > 0 && (
           <section className="mt-10" aria-labelledby="sp-live">
             <h2 id="sp-live" className="mb-4 font-display text-[28px] leading-none font-[780] tracking-[-0.045em]">

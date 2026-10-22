@@ -1,8 +1,9 @@
+import clsx from 'clsx'
 import { ArrowUpRight, ChevronDown, MapPin, Sparkles, Star } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { IMAGES, competitionById, teamColor, type SportEvent } from '../../data/catalog'
+import { competitionById, imageFor, shortName, teamColor, type SportEvent } from '../../data/catalog'
 import type { Reason } from '../../lib/feed'
 import { dayLabel, kickoffTime, secondsUntil } from '../../lib/time'
 import { useLiveClock, useLiveEvent } from '../../state/store'
@@ -11,7 +12,7 @@ import { LiveBadge } from '../../ui/LiveBadge'
 import { OddsButton } from '../../ui/OddsButton'
 
 const ease = [0.16, 1, 0.3, 1] as const
-const first = (n: string) => n.split(' ')[0]
+const first = shortName
 
 function Countdown({ iso }: { iso: string }) {
   const { elapsed } = useLiveClock()
@@ -50,7 +51,7 @@ function Form({ form, label }: { form: string; label: string }) {
   )
 }
 
-export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) {
+export function Hero({ ev, reason, compact }: { ev: SportEvent; reason: Reason | null; compact?: boolean }) {
   const comp = competitionById(ev.competitionId)
   const result = ev.markets[0]
   const [why, setWhy] = useState(false)
@@ -60,11 +61,11 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
   const live = ev.status === 'live'
 
   return (
-    <section aria-labelledby="featured-title" className="on-dark relative isolate overflow-hidden bg-night text-white">
+    <section aria-label={`${ev.home.name} v ${ev.away.name}`} className="on-dark relative isolate h-full overflow-hidden bg-night text-white">
       {/* Placeholder photo (Unsplash) — slot for Astra's matchday key art */}
       <motion.img
         data-asset-slot="hero-matchday"
-        src={IMAGES.heroNight}
+        src={imageFor(ev)}
         alt=""
         initial={{ scale: 1.12, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -75,7 +76,7 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
       <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: `linear-gradient(100deg, color-mix(in oklab, ${hc} 92%, #05070d) 0%, color-mix(in oklab, ${hc} 70%, transparent) 38%, transparent 62%, color-mix(in oklab, ${ac} 55%, transparent) 100%)` }} />
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-[#05070d]/85 via-[#05070d]/15 to-[#05070d]/30" />
 
-      <div className="mx-auto flex min-h-[560px] max-w-[1220px] flex-col px-4 pt-6 pb-6 @tab:min-h-[600px] @tab:px-8 @tab:pt-9 @tab:pb-9">
+      <div className={clsx('mx-auto flex h-full max-w-[1220px] flex-col px-4 pt-6 pb-20 @tab:px-8 @tab:pt-9 @tab:pb-24', compact ? 'min-h-[460px] @tab:min-h-[480px]' : 'min-h-[580px] @tab:min-h-[620px]')}>
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-white/[.16] px-3 py-1.5 text-[12.5px] font-semibold backdrop-blur-md">{comp.name}</span>
           <span className="text-[13px] font-medium text-white/75">{ev.stage}</span>
@@ -88,7 +89,7 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
 
         <div className="mt-auto grid items-end gap-6 pt-10 @desk:grid-cols-[minmax(0,1fr)_auto]">
           <div className="min-w-0">
-            <h2 id="featured-title" className="font-display leading-[.88] font-[800] tracking-[-0.055em]">
+            <h2 className="font-display leading-[.88] font-[800] tracking-[-0.055em]">
               {[ev.home, ev.away].map((t, i) => (
                 <motion.span
                   key={t.id}
@@ -99,7 +100,7 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
                 >
                   {i === 1 && <span className="text-white/45">v</span>}
                   {first(t.name)}
-                  <Crest team={t} size={56} className="hidden shrink-0 self-center drop-shadow-[0_10px_20px_rgba(0,0,0,.45)] @tab:block" />
+                  {t.crest && <Crest team={t} size={56} className="hidden shrink-0 self-center drop-shadow-[0_10px_20px_rgba(0,0,0,.45)] @tab:block" />}
                 </motion.span>
               ))}
               <span className="sr-only">
@@ -112,10 +113,10 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
               {live && ev.live ? (
                 <div>
                   <div className="mb-2">
-                    <LiveBadge tone="solid" size="lg" clock={`${ev.live.minute}'`} />
+                    <LiveBadge tone="solid" size="lg" clock={ev.sport === 'football' ? `${ev.live.minute}'` : ev.sport === 'basketball' ? `${ev.live.period} ${ev.live.clock}` : ev.live.period} />
                   </div>
                   <div className="font-display text-[44px] leading-none font-[800] tracking-[-0.05em] tnum">
-                    {ev.live.score[0]}–{ev.live.score[1]}
+                    {ev.sport === 'tennis' ? `${ev.live.sets![0]}–${ev.live.sets![1]} sets` : `${ev.live.score[0]}–${ev.live.score[1]}`}
                   </div>
                 </div>
               ) : (
@@ -128,9 +129,11 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
                 <div className="font-semibold">
                   {live ? `Kicked off ${kickoffTime(ev.startsAt)}` : `${dayLabel(ev.startsAt)} · ${kickoffTime(ev.startsAt)}`}
                 </div>
-                <div className="flex items-center gap-1 text-white/70">
-                  <MapPin size={13} /> {ev.venue}
-                </div>
+                {ev.venue && (
+                  <div className="flex items-center gap-1 text-white/70">
+                    <MapPin size={13} /> {ev.venue}
+                  </div>
+                )}
               </div>
               {ev.form && (
                 <div className="hidden space-y-1.5 @tab:block">
@@ -143,14 +146,14 @@ export function Hero({ ev, reason }: { ev: SportEvent; reason: Reason | null }) 
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.7, ease }} className="w-full @desk:w-[460px]">
             <div className="mb-2.5 flex items-baseline justify-between text-[12.5px] font-medium text-white/75">
-              <span>{live ? 'Live · ' : ''}Match result · {result.period}</span>
+              <span>{live ? 'Live · ' : ''}{result.name} · {result.period}</span>
               <Link to={`/event/${ev.id}`} className="flex items-center gap-1 font-semibold text-white hover:underline">
                 All markets <ArrowUpRight size={15} />
               </Link>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className={clsx('grid gap-2', result.selections.length === 3 ? 'grid-cols-3' : 'grid-cols-2')}>
               {result.selections.map((sel, i) => (
-                <OddsButton key={sel.id} ev={ev} market={result} sel={sel} odds={live ? prices[i] : sel.odds} variant="field" size="lg" label={i === 0 ? first(ev.home.name) : i === 1 ? 'Draw' : first(ev.away.name)} />
+                <OddsButton key={sel.id} ev={ev} market={result} sel={sel} odds={live ? prices[i] : sel.odds} variant="field" size="lg" label={sel.id === 'DRAW' ? 'Draw' : sel.id === 'HOME' ? first(ev.home.name) : first(ev.away.name)} />
               ))}
             </div>
             {ev.brief && !live && (
